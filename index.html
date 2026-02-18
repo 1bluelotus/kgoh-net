@@ -10,257 +10,257 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <!-- HUD Corner Decorations -->
-    <div class="corner-decoration top-left"></div>
-    <div class="corner-decoration top-right"></div>
-    <div class="corner-decoration bottom-left"></div>
-    <div class="corner-decoration bottom-right"></div>
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration top-right"></div>
+        <div class="corner-decoration bottom-left"></div>
+        <div class="corner-decoration bottom-right"></div>
 
-    <!-- Minimap and Navigation -->
-    <div class="hud-nav">
-        <div class="minimap-container">
-            <svg class="minimap" viewBox="0 0 200 200">
-                <!-- Map background grid -->
-                <defs>
-                    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-                    </pattern>
-                </defs>
-                <rect width="200" height="200" fill="url(#grid)"/>
-                
-                <!-- Map border -->
-                <rect x="1" y="1" width="198" height="198" fill="none" stroke="white" stroke-width="2"/>
-                
-                <!-- Waypoints: home(50,50) about(150,50) studies(100,80) blog(50,120) photos(150,120) resume(100,155) -->
-                <circle class="waypoint" data-section="home" cx="50" cy="50" r="4" fill="white"/>
-                <g class="waypoint-lock" data-section="home">
-                    <line x1="42" y1="42" x2="42" y2="47" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="42" y1="42" x2="47" y2="42" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="58" y1="42" x2="58" y2="47" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="53" y1="42" x2="58" y2="42" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="42" y1="58" x2="42" y2="53" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="42" y1="58" x2="47" y2="58" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="58" y1="58" x2="58" y2="53" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="53" y1="58" x2="58" y2="58" stroke="#ff0000" stroke-width="1.5"/>
-                </g>
+        <!-- Minimap and Navigation -->
+        <div class="hud-nav">
+            <div class="minimap-container">
+                <svg class="minimap" viewBox="0 0 200 200">
+                    <!-- Map background grid -->
+                    <defs>
+                        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+                        </pattern>
+                    </defs>
+                    <rect width="200" height="200" fill="url(#grid)"/>
+                    
+                    <!-- Map border -->
+                    <rect x="1" y="1" width="198" height="198" fill="none" stroke="white" stroke-width="2"/>
+                    
+                    <!-- Waypoints: home(50,50) about(150,50) studies(100,80) blog(50,120) photos(150,120) resume(100,155) -->
+                    <circle class="waypoint" data-section="home" cx="50" cy="50" r="4" fill="white"/>
+                    <g class="waypoint-lock" data-section="home">
+                        <line x1="42" y1="42" x2="42" y2="47" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="42" y1="42" x2="47" y2="42" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="58" y1="42" x2="58" y2="47" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="53" y1="42" x2="58" y2="42" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="42" y1="58" x2="42" y2="53" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="42" y1="58" x2="47" y2="58" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="58" y1="58" x2="58" y2="53" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="53" y1="58" x2="58" y2="58" stroke="#ff0000" stroke-width="1.5"/>
+                    </g>
 
-                <circle class="waypoint" data-section="about" cx="150" cy="50" r="4" fill="white"/>
-                <g class="waypoint-lock" data-section="about">
-                    <line x1="142" y1="42" x2="142" y2="47" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="142" y1="42" x2="147" y2="42" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="158" y1="42" x2="158" y2="47" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="153" y1="42" x2="158" y2="42" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="142" y1="58" x2="142" y2="53" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="142" y1="58" x2="147" y2="58" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="158" y1="58" x2="158" y2="53" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="153" y1="58" x2="158" y2="58" stroke="#ff0000" stroke-width="1.5"/>
-                </g>
+                    <circle class="waypoint" data-section="about" cx="150" cy="50" r="4" fill="white"/>
+                    <g class="waypoint-lock" data-section="about">
+                        <line x1="142" y1="42" x2="142" y2="47" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="142" y1="42" x2="147" y2="42" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="158" y1="42" x2="158" y2="47" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="153" y1="42" x2="158" y2="42" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="142" y1="58" x2="142" y2="53" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="142" y1="58" x2="147" y2="58" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="158" y1="58" x2="158" y2="53" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="153" y1="58" x2="158" y2="58" stroke="#ff0000" stroke-width="1.5"/>
+                    </g>
 
-                <circle class="waypoint" data-section="studies" cx="100" cy="80" r="4" fill="white"/>
-                <g class="waypoint-lock" data-section="studies">
-                    <line x1="92" y1="72" x2="92" y2="77" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="92" y1="72" x2="97" y2="72" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="108" y1="72" x2="108" y2="77" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="103" y1="72" x2="108" y2="72" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="92" y1="88" x2="92" y2="83" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="92" y1="88" x2="97" y2="88" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="108" y1="88" x2="108" y2="83" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="103" y1="88" x2="108" y2="88" stroke="#ff0000" stroke-width="1.5"/>
-                </g>
+                    <circle class="waypoint" data-section="studies" cx="100" cy="80" r="4" fill="white"/>
+                    <g class="waypoint-lock" data-section="studies">
+                        <line x1="92" y1="72" x2="92" y2="77" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="92" y1="72" x2="97" y2="72" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="108" y1="72" x2="108" y2="77" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="103" y1="72" x2="108" y2="72" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="92" y1="88" x2="92" y2="83" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="92" y1="88" x2="97" y2="88" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="108" y1="88" x2="108" y2="83" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="103" y1="88" x2="108" y2="88" stroke="#ff0000" stroke-width="1.5"/>
+                    </g>
 
-                <circle class="waypoint" data-section="blog" cx="50" cy="120" r="4" fill="white"/>
-                <g class="waypoint-lock" data-section="blog">
-                    <line x1="42" y1="112" x2="42" y2="117" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="42" y1="112" x2="47" y2="112" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="58" y1="112" x2="58" y2="117" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="53" y1="112" x2="58" y2="112" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="42" y1="128" x2="42" y2="123" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="42" y1="128" x2="47" y2="128" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="58" y1="128" x2="58" y2="123" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="53" y1="128" x2="58" y2="128" stroke="#ff0000" stroke-width="1.5"/>
-                </g>
+                    <circle class="waypoint" data-section="blog" cx="50" cy="120" r="4" fill="white"/>
+                    <g class="waypoint-lock" data-section="blog">
+                        <line x1="42" y1="112" x2="42" y2="117" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="42" y1="112" x2="47" y2="112" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="58" y1="112" x2="58" y2="117" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="53" y1="112" x2="58" y2="112" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="42" y1="128" x2="42" y2="123" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="42" y1="128" x2="47" y2="128" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="58" y1="128" x2="58" y2="123" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="53" y1="128" x2="58" y2="128" stroke="#ff0000" stroke-width="1.5"/>
+                    </g>
 
-                <circle class="waypoint" data-section="photos" cx="150" cy="120" r="4" fill="white"/>
-                <g class="waypoint-lock" data-section="photos">
-                    <line x1="142" y1="112" x2="142" y2="117" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="142" y1="112" x2="147" y2="112" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="158" y1="112" x2="158" y2="117" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="153" y1="112" x2="158" y2="112" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="142" y1="128" x2="142" y2="123" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="142" y1="128" x2="147" y2="128" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="158" y1="128" x2="158" y2="123" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="153" y1="128" x2="158" y2="128" stroke="#ff0000" stroke-width="1.5"/>
-                </g>
+                    <circle class="waypoint" data-section="photos" cx="150" cy="120" r="4" fill="white"/>
+                    <g class="waypoint-lock" data-section="photos">
+                        <line x1="142" y1="112" x2="142" y2="117" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="142" y1="112" x2="147" y2="112" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="158" y1="112" x2="158" y2="117" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="153" y1="112" x2="158" y2="112" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="142" y1="128" x2="142" y2="123" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="142" y1="128" x2="147" y2="128" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="158" y1="128" x2="158" y2="123" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="153" y1="128" x2="158" y2="128" stroke="#ff0000" stroke-width="1.5"/>
+                    </g>
 
-                <circle class="waypoint" data-section="resume" cx="100" cy="155" r="4" fill="white"/>
-                <g class="waypoint-lock" data-section="resume">
-                    <line x1="92" y1="147" x2="92" y2="152" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="92" y1="147" x2="97" y2="147" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="108" y1="147" x2="108" y2="152" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="103" y1="147" x2="108" y2="147" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="92" y1="163" x2="92" y2="158" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="92" y1="163" x2="97" y2="163" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="108" y1="163" x2="108" y2="158" stroke="#ff0000" stroke-width="1.5"/>
-                    <line x1="103" y1="163" x2="108" y2="163" stroke="#ff0000" stroke-width="1.5"/>
-                </g>
-                
-                <!-- Arrow indicator -->
-                <polygon id="arrow" points="0,-8 -6,8 6,8" fill="#00ffff" transform="translate(50, 50) rotate(0)"/>
-                
-                <!-- Target Lock Indicator -->
-                <g id="target-lock-indicator" opacity="0">
-                    <rect x="10" y="175" width="180" height="15" fill="rgba(255, 0, 0, 0.8)" stroke="#ff0000" stroke-width="1"/>
-                    <text x="100" y="186" text-anchor="middle" fill="white" font-family="'Share Tech Mono', monospace" font-size="10" letter-spacing="2">TARGET: LOCKED</text>
-                </g>
-            </svg>
-        </div>
-        
-        <div class="nav-panel">
-            <div class="nav-header">NAVIGATION</div>
-            <nav>
-                <a href="#home" class="nav-link active" data-section="home">
-                    <span class="nav-icon">▲</span> HOME
-                </a>
-                <a href="#about" class="nav-link" data-section="about">
-                    <span class="nav-icon">●</span> ABOUT
-                </a>
-                <a href="#studies" class="nav-link" data-section="studies">
-                    <span class="nav-icon">●</span> STUDIES
-                </a>
-                <a href="#blog" class="nav-link" data-section="blog">
-                    <span class="nav-icon">●</span> BLOG
-                </a>
-                <a href="#photos" class="nav-link" data-section="photos">
-                    <span class="nav-icon">●</span> PHOTOS
-                </a>
-                <a href="#resume" class="nav-link" data-section="resume">
-                    <span class="nav-icon">●</span> RESUME
-                </a>
-            </nav>
-        </div>
-    </div>
-
-    <!-- Right HUD Panel -->
-    <div class="right-hud">
-        <!-- Music Player -->
-        <div class="music-player">
-            <div class="player-header">AUDIO SYSTEM</div>
-            <div class="track-info" id="track-name">NO TRACK LOADED</div>
-            <div class="player-controls">
-                <button class="player-btn" id="prev-btn">◀◀</button>
-                <button class="player-btn play-pause" id="play-btn">▶</button>
-                <button class="player-btn" id="next-btn">▶▶</button>
+                    <circle class="waypoint" data-section="resume" cx="100" cy="155" r="4" fill="white"/>
+                    <g class="waypoint-lock" data-section="resume">
+                        <line x1="92" y1="147" x2="92" y2="152" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="92" y1="147" x2="97" y2="147" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="108" y1="147" x2="108" y2="152" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="103" y1="147" x2="108" y2="147" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="92" y1="163" x2="92" y2="158" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="92" y1="163" x2="97" y2="163" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="108" y1="163" x2="108" y2="158" stroke="#ff0000" stroke-width="1.5"/>
+                        <line x1="103" y1="163" x2="108" y2="163" stroke="#ff0000" stroke-width="1.5"/>
+                    </g>
+                    
+                    <!-- Arrow indicator -->
+                    <polygon id="arrow" points="0,-8 -6,8 6,8" fill="#00ffff" transform="translate(50, 50) rotate(0)"/>
+                    
+                    <!-- Target Lock Indicator -->
+                    <g id="target-lock-indicator" opacity="0">
+                        <rect x="10" y="175" width="180" height="15" fill="rgba(255, 0, 0, 0.8)" stroke="#ff0000" stroke-width="1"/>
+                        <text x="100" y="186" text-anchor="middle" fill="white" font-family="'Share Tech Mono', monospace" font-size="10" letter-spacing="2">TARGET: LOCKED</text>
+                    </g>
+                </svg>
+            </div>
+            
+            <div class="nav-panel">
+                <div class="nav-header">NAVIGATION</div>
+                <nav>
+                    <a href="#home" class="nav-link active" data-section="home">
+                        <span class="nav-icon">▲</span> HOME
+                    </a>
+                    <a href="#about" class="nav-link" data-section="about">
+                        <span class="nav-icon">●</span> ABOUT
+                    </a>
+                    <a href="#studies" class="nav-link" data-section="studies">
+                        <span class="nav-icon">●</span> STUDIES
+                    </a>
+                    <a href="#blog" class="nav-link" data-section="blog">
+                        <span class="nav-icon">●</span> BLOG
+                    </a>
+                    <a href="#photos" class="nav-link" data-section="photos">
+                        <span class="nav-icon">●</span> PHOTOS
+                    </a>
+                    <a href="#resume" class="nav-link" data-section="resume">
+                        <span class="nav-icon">●</span> RESUME
+                    </a>
+                </nav>
             </div>
         </div>
 
-        <!-- Display Mode Toggle -->
-        <div class="display-mode">
-            <div class="player-header">DISPLAY MODE</div>
-            <button class="retro-toggle-btn" id="retro-toggle">RETRO MODE: OFF</button>
+        <!-- Right HUD Panel -->
+        <div class="right-hud">
+            <!-- Music Player -->
+            <div class="music-player">
+                <div class="player-header">AUDIO SYSTEM</div>
+                <div class="track-info" id="track-name">NO TRACK LOADED</div>
+                <div class="player-controls">
+                    <button class="player-btn" id="prev-btn">◀◀</button>
+                    <button class="player-btn play-pause" id="play-btn">▶</button>
+                    <button class="player-btn" id="next-btn">▶▶</button>
+                </div>
+            </div>
+
+            <!-- Display Mode Toggle -->
+            <div class="display-mode">
+                <div class="player-header">DISPLAY MODE</div>
+                <button class="retro-toggle-btn" id="retro-toggle">RETRO MODE: OFF</button>
+            </div>
         </div>
-    </div>
 
-    <!-- Main Content Area -->
-    <main class="content">
-        <section id="home" class="section active">
-            <div class="content-brackets top-left"></div>
-            <div class="content-brackets top-right"></div>
-            <div class="content-brackets bottom-left"></div>
-            <div class="content-brackets bottom-right"></div>
-            <div class="section-header">
-                <h1>HI, MY NAME IS KEVEN.</h1>
-                <div class="header-line"></div>
-            </div>
-            <div class="section-content">
-                <p>UX Designer</p>
-                <p>
-                    Hey, thanks for checking out my website! 
+        <!-- Main Content Area -->
+        <main class="content">
+            <section id="home" class="section active">
+                <div class="content-brackets top-left"></div>
+                <div class="content-brackets top-right"></div>
+                <div class="content-brackets bottom-left"></div>
+                <div class="content-brackets bottom-right"></div>
+                <div class="section-header">
+                    <h1>HI, MY NAME IS KEVEN.</h1>
+                    <div class="header-line"></div>
+                </div>
+                <div class="section-content">
+                    <p>UX Designer</p>
+                    <p>
+                        Hey, thanks for checking out my website! 
 
-                    I’m a UI/UX Designer based in Seattle with a passion for creating experiences that are both visually striking and functionally precise. </br>
+                        I'm a UI/UX Designer based in Seattle with a passion for creating experiences that are both visually striking and functionally precise. </br>
 
-                    I’m drawn to the challenge of making complex systems feel seamless and intuitive, without compromising on an exciting and disruptive visual aesthetic. </br>
+                        I'm drawn to the challenge of making complex systems feel seamless and intuitive, without compromising on an exciting and disruptive visual aesthetic. </br>
 
-                    In my spare time I love reading, tinkering with vintage tech, and exploring the great outdoors of my home in the beautiful Pacific Northwest. </br>
+                        In my spare time I love reading, tinkering with vintage tech, and exploring the great outdoors of my home in the beautiful Pacific Northwest. </br>
 
-                    This website serves as a repository for my academic and professional portfolio— as well as some other projects I’m currently working on. 
-                </p>
-            </div>
-        </section>
+                        This website serves as a repository for my academic and professional portfolio— as well as some other projects I'm currently working on. 
+                    </p>
+                </div>
+            </section>
 
-        <section id="blog" class="section">
-            <div class="section-header">
-                <h2>BLOG</h2>
-                <div class="header-line"></div>
-            </div>
-            <div class="section-content">
-                
-            </div>
-        </section>
+            <section id="blog" class="section">
+                <div class="section-header">
+                    <h2>BLOG</h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="section-content">
+                    
+                </div>
+            </section>
 
-        <section id="resume" class="section">
-            <div class="section-header">
-                <h2>RESUME</h2>
-                <div class="header-line"></div>
-            </div>
-            <div class="section-content">
-                
-            </div>
-        </section>
+            <section id="resume" class="section">
+                <div class="section-header">
+                    <h2>RESUME</h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="section-content">
+                    
+                </div>
+            </section>
 
-        <section id="about" class="section">
-            <div class="section-header">
-                <h2>ABOUT</h2>
-                <div class="header-line"></div>
-            </div>
-            <div class="section-content">
-                
-            </div>
-        </section>
+            <section id="about" class="section">
+                <div class="section-header">
+                    <h2>ABOUT</h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="section-content">
+                    
+                </div>
+            </section>
 
-        <section id="photos" class="section">
-            <div class="section-header">
-                <h2>PHOTOS</h2>
-                <div class="header-line"></div>
-            </div>
-            <div class="section-content">
-                
-            </div>
-        </section>
+            <section id="photos" class="section">
+                <div class="section-header">
+                    <h2>PHOTOS</h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="section-content">
+                    
+                </div>
+            </section>
 
-        <section id="studies" class="section">
-            <div class="section-header">
-                <h2>STUDIES</h2>
-                <div class="header-line"></div>
-            </div>
-            <div class="section-content">
-                <p>Case studies and project work.</p>
-            </div>
-        </section>
+            <section id="studies" class="section">
+                <div class="section-header">
+                    <h2>STUDIES</h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="section-content">
+                    <p>Case studies and project work.</p>
+                </div>
+            </section>
+        </main>
 
-    </main>
+        <!-- Social Weapons -->
+        <div class="social-weapons">
+            <a href="https://github.com/yourusername" target="_blank" class="weapon-slot" data-label="GITHUB">
+                <span>⚡</span>
+            </a>
+            <a href="https://linkedin.com/in/yourusername" target="_blank" class="weapon-slot" data-label="LINKEDIN">
+                <span>◆</span>
+            </a>
+            <a href="mailto:your@email.com" class="weapon-slot" data-label="EMAIL">
+                <span>✉</span>
+            </a>
+        </div>
 
-    <!-- Social Weapons -->
-    <div class="social-weapons">
-        <a href="https://github.com/yourusername" target="_blank" class="weapon-slot" data-label="GITHUB">
-            <span>⚡</span>
-        </a>
-        <a href="https://linkedin.com/in/yourusername" target="_blank" class="weapon-slot" data-label="LINKEDIN">
-            <span>◆</span>
-        </a>
-        <a href="mailto:your@email.com" class="weapon-slot" data-label="EMAIL">
-            <span>✉</span>
-        </a>
-    </div>
-
-    <!-- Status Bar -->
-    <div class="status-bar">
-        <div class="status-item">SYS: ONLINE</div>
-        <div class="status-item">LOC: SEATTLE, WA</div>
-        <div class="status-item" id="browser-info">BROWSER: --</div>
-        <div class="status-item" id="os-info">OS: --</div>
-        <div class="status-item" id="resolution-info">RES: --</div>
-        <div class="status-item" id="clock">--:--:--</div>
-    </div>
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">SYS: ONLINE</div>
+            <div class="status-item">LOC: SEATTLE, WA</div>
+            <div class="status-item" id="browser-info">BROWSER: --</div>
+            <div class="status-item" id="os-info">OS: --</div>
+            <div class="status-item" id="resolution-info">RES: --</div>
+            <div class="status-item" id="clock">--:--:--</div>
+        </div>
 
     <!-- Retro Mode Overlays -->
     <div class="retro-overlay retro-scanlines"></div>

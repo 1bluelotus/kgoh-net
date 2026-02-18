@@ -347,6 +347,36 @@ nav {
     opacity: 0.9;
 }
 
+/* Masonry Photo Grid */
+.masonry-grid {
+    columns: 2;
+    column-gap: 12px;
+}
+
+.masonry-item {
+    break-inside: avoid;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+.masonry-item:hover {
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.25);
+}
+
+.masonry-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: grayscale(15%);
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.masonry-item:hover img {
+    filter: grayscale(0%);
+    transform: scale(1.02);
+}
+
 /* Status Bar */
 .status-bar {
     position: fixed;
@@ -481,8 +511,8 @@ nav {
 }
 
 .weapon-slot {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     background: rgba(0, 0, 0, 0.8);
     border: var(--border-width) solid var(--primary-color);
     display: flex;

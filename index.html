@@ -140,14 +140,23 @@
         </div>
     </div>
 
-    <!-- Music Player -->
-    <div class="music-player">
-        <div class="player-header">AUDIO SYSTEM</div>
-        <div class="track-info" id="track-name">NO TRACK LOADED</div>
-        <div class="player-controls">
-            <button class="player-btn" id="prev-btn">◀◀</button>
-            <button class="player-btn play-pause" id="play-btn">▶</button>
-            <button class="player-btn" id="next-btn">▶▶</button>
+    <!-- Right HUD Panel -->
+    <div class="right-hud">
+        <!-- Music Player -->
+        <div class="music-player">
+            <div class="player-header">AUDIO SYSTEM</div>
+            <div class="track-info" id="track-name">NO TRACK LOADED</div>
+            <div class="player-controls">
+                <button class="player-btn" id="prev-btn">◀◀</button>
+                <button class="player-btn play-pause" id="play-btn">▶</button>
+                <button class="player-btn" id="next-btn">▶▶</button>
+            </div>
+        </div>
+
+        <!-- Display Mode Toggle -->
+        <div class="display-mode">
+            <div class="player-header">DISPLAY MODE</div>
+            <button class="retro-toggle-btn" id="retro-toggle">RETRO MODE: OFF</button>
         </div>
     </div>
 
@@ -252,6 +261,11 @@
         <div class="status-item" id="resolution-info">RES: --</div>
         <div class="status-item" id="clock">--:--:--</div>
     </div>
+
+    <!-- Retro Mode Overlays -->
+    <div class="retro-overlay retro-scanlines"></div>
+    <div class="retro-overlay retro-chromatic"></div>
+    <div class="retro-overlay retro-vignette"></div>
 
     <script src="script.js"></script>
 </body>

@@ -209,28 +209,27 @@ window.addEventListener('load', () => {
     }, 100);
 });
 
-// Optional: Add scanline effect
-const scanlineEffect = () => {
-    const scanline = document.createElement('div');
-    scanline.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: repeating-linear-gradient(
-            0deg,
-            rgba(0, 0, 0, 0.1),
-            rgba(0, 0, 0, 0.1) 1px,
-            transparent 1px,
-            transparent 2px
-        );
-        pointer-events: none;
-        z-index: 999;
-        opacity: 0.1;
-    `;
-    document.body.appendChild(scanline);
-};
+// Retro Mode Toggle
+const retroToggle = document.getElementById('retro-toggle');
+let retroActive = localStorage.getItem('retroMode') === 'true';
 
-// Uncomment to enable scanline effect
-// scanlineEffect();
+function applyRetroMode(active) {
+    if (active) {
+        document.body.classList.add('retro-active');
+        retroToggle.textContent = 'RETRO MODE: ON';
+        retroToggle.classList.add('active');
+    } else {
+        document.body.classList.remove('retro-active');
+        retroToggle.textContent = 'RETRO MODE: OFF';
+        retroToggle.classList.remove('active');
+    }
+}
+
+// Apply saved state on load
+applyRetroMode(retroActive);
+
+retroToggle.addEventListener('click', () => {
+    retroActive = !retroActive;
+    localStorage.setItem('retroMode', retroActive);
+    applyRetroMode(retroActive);
+});

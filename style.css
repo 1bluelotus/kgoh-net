@@ -346,17 +346,57 @@ nav {
     opacity: 0.8;
 }
 
-/* Music Player */
-.music-player {
+/* Right HUD Panel — stacks music player + display mode */
+.right-hud {
     position: fixed;
     top: 40px;
     right: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 50;
+}
+
+/* Music Player */
+.music-player {
     background: rgba(0, 0, 0, 0.8);
     border: var(--border-width) solid var(--primary-color);
     padding: 15px;
     width: 170px;
     backdrop-filter: blur(10px);
-    z-index: 50;
+}
+
+/* Display Mode Toggle */
+.display-mode {
+    background: rgba(0, 0, 0, 0.8);
+    border: var(--border-width) solid var(--primary-color);
+    padding: 15px;
+    width: 170px;
+    backdrop-filter: blur(10px);
+}
+
+.retro-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    width: 100%;
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    margin-top: 8px;
+}
+
+.retro-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.retro-toggle-btn.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: #00ffff;
+    border-color: #00ffff;
 }
 
 .player-header {
@@ -507,6 +547,48 @@ nav {
     50% { opacity: 0.45; }
 }
 
+/* Retro Mode Overlays */
+.retro-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.retro-scanlines {
+    z-index: 9995;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+}
+
+.retro-chromatic {
+    z-index: 9994;
+    box-shadow:
+        inset 6px 0 14px rgba(255, 0, 0, 0.12),
+        inset -6px 0 14px rgba(0, 255, 255, 0.12),
+        inset 0 4px 10px rgba(255, 0, 0, 0.06),
+        inset 0 -4px 10px rgba(0, 255, 255, 0.06);
+}
+
+.retro-vignette {
+    z-index: 9993;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 50%,
+        rgba(0, 0, 0, 0.6) 100%
+    );
+}
+
+body.retro-active .retro-overlay {
+    opacity: 1;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .content {
@@ -516,7 +598,8 @@ nav {
         padding: 20px;
     }
     
-    .music-player {
+    .music-player,
+    .display-mode {
         width: 170px;
     }
 }
@@ -538,12 +621,17 @@ nav {
         display: none;
     }
     
-    .music-player {
+    .right-hud {
         position: relative;
         top: 0;
         right: 0;
         margin: 20px;
         width: calc(100% - 40px);
+    }
+
+    .music-player,
+    .display-mode {
+        width: 100%;
     }
     
     .social-weapons {
@@ -586,6 +674,7 @@ nav {
 .nav-panel:hover,
 .minimap-container:hover,
 .music-player:hover,
+.display-mode:hover,
 .weapon-slot:hover {
     animation: glitch 0.3s ease-out;
 }

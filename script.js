@@ -28,7 +28,7 @@ const FADE_DURATION  = 300; // ms per dot
 const FADE_STAGGER   = 50;  // ms between dot fades
 
 // Sandevistan gradient: bright violet (oldest) → electric blue → cyan (newest)
-const SANDEVISTAN_COLORS = ['#e040fb', '#c060ff', '#8b5cf6', '#38bdf8', '#00f5ff', '#7df9ff'];
+const SANDEVISTAN_COLORS = ['#7df9ff', '#00f5ff', '#38bdf8', '#8b5cf6', '#c060ff', '#e040fb'];
 
 function hexToRgb(hex) {
     return [

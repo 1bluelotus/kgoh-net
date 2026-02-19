@@ -756,14 +756,6 @@ body.mode-retro .nav-link.active {
 }
 
 /* Target Lock Indicator */
-#target-lock-indicator.blinking {
-    animation: targetBlink 0.9s ease-in-out infinite;
-}
-
-@keyframes targetBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.45; }
-}
 
 /* Retro Mode Overlays */
 .retro-overlay {
@@ -879,14 +871,6 @@ body.mode-neon .nav-link.active .nav-icon {
     text-shadow: 0 0 10px #ffff00;
 }
 
-body.mode-neon #target-lock-indicator rect {
-    fill: rgba(180, 180, 0, 0.85);
-    stroke: #ffff00;
-}
-
-body.mode-neon #target-lock-indicator text {
-    fill: #ffff00;
-}
 
 /* Responsive Design */
 @media (max-width: 1024px) {

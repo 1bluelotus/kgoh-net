@@ -216,9 +216,8 @@ navLinks.forEach(link => {
         const targetIndicator = document.getElementById('target-lock-indicator');
 
         if (lockElement) lockElement.classList.add('active');
-        if (targetIndicator) {
+        if (targetIndicator && sectionId !== currentSection) {
             targetIndicator.setAttribute('opacity', '1');
-            targetIndicator.classList.add('blinking');
         }
 
         // Rotate arrow in place to face the hovered waypoint
@@ -236,7 +235,6 @@ navLinks.forEach(link => {
 
         if (lockElement) lockElement.classList.remove('active');
         if (targetIndicator) {
-            targetIndicator.classList.remove('blinking');
             targetIndicator.setAttribute('opacity', '0');
         }
 
@@ -378,6 +376,12 @@ function applyVisualMode(modeName) {
 
     // Swap minimap grid pattern
     if (minimapGridBg) minimapGridBg.setAttribute('fill', `url(#${mode.gridPattern})`);
+
+    // Update target lock label
+    const targetLockText = document.getElementById('target-lock-text');
+    if (targetLockText) {
+        targetLockText.textContent = modeName === 'neon' ? 'SANDEVISTAN: READY' : 'TARGET: LOCKED';
+    }
 
     // Update display and active button
     vmDisplay.textContent = mode.name;

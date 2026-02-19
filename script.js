@@ -324,16 +324,7 @@ document.getElementById('last-updated').textContent = `UPDATED: ${lastUpdatedStr
 
 // Weather Panel — Open-Meteo (free, no API key)
 const WEATHER_PARAMS = '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&temperature_unit=fahrenheit&wind_speed_unit=mph';
-const WEATHER_LOCATIONS = {
-    seattle:   { lat: 47.6062,  lon: -122.3321, label: 'SEATTLE WA'  },
-    nightCity: { lat: 35.3658,  lon: -120.8499, label: 'NIGHT CITY'  }
-};
-
-function getWeatherLocation() {
-    return document.body.classList.contains('mode-neon')
-        ? WEATHER_LOCATIONS.nightCity
-        : WEATHER_LOCATIONS.seattle;
-}
+const SEATTLE = { lat: 47.6062, lon: -122.3321, label: 'SEATTLE, WA' };
 
 // SVG inner markup for each condition (viewBox 0 0 50 50, stroke="currentColor")
 const WEATHER_ICONS = {
@@ -396,8 +387,7 @@ function codeToCondition(code) {
 }
 
 async function fetchWeather() {
-    const loc = getWeatherLocation();
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}${WEATHER_PARAMS}`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${SEATTLE.lat}&longitude=${SEATTLE.lon}${WEATHER_PARAMS}`;
     try {
         const resp = await fetch(url);
         const data = await resp.json();
@@ -405,9 +395,7 @@ async function fetchWeather() {
 
         document.getElementById('weather-temp').textContent      = `${Math.round(c.temperature_2m)}°`;
         document.getElementById('weather-condition').textContent  = codeToCondition(c.weather_code);
-        document.getElementById('weather-humidity').textContent   = `${c.relative_humidity_2m}%`;
-        document.getElementById('weather-wind').textContent       = `${Math.round(c.wind_speed_10m)} MPH`;
-        document.getElementById('weather-location').textContent   = loc.label;
+        document.getElementById('weather-location').textContent   = SEATTLE.label;
         document.getElementById('weather-icon').innerHTML         = WEATHER_ICONS[codeToIcon(c.weather_code)];
     } catch {
         document.getElementById('weather-condition').textContent = 'DATA UNAVAILABLE';

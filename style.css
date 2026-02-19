@@ -582,12 +582,21 @@ body.mode-retro .nav-link.active {
     letter-spacing: -1px;
 }
 
+.weather-location-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+    margin-bottom: 6px;
+}
+
 .weather-condition {
     font-family: 'Share Tech Mono', monospace;
     font-size: 10px;
     letter-spacing: 2px;
     opacity: 0.65;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
     text-transform: uppercase;
 }
 

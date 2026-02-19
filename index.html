@@ -157,10 +157,15 @@
                 </div>
             </div>
 
-            <!-- Display Mode Toggle -->
+            <!-- Visual Mode Selector -->
             <div class="display-mode">
-                <div class="player-header">DISPLAY MODE</div>
-                <button class="retro-toggle-btn" id="retro-toggle">RETRO MODE: OFF</button>
+                <div class="player-header">VISUAL MODE</div>
+                <div class="vm-display" id="vm-display">STANDARD</div>
+                <div class="vm-buttons">
+                    <button class="vm-btn active" data-mode="standard">1</button>
+                    <button class="vm-btn" data-mode="retro">2</button>
+                    <button class="vm-btn" data-mode="neon">3</button>
+                </div>
             </div>
         </div>
 
@@ -399,9 +404,8 @@
             <div class="status-item" id="clock">--:--:--</div>
         </div>
 
-    <!-- Retro Mode Overlays -->
+    <!-- Retro Mode Overlays (mode 2) -->
     <div class="retro-overlay retro-scanlines"></div>
-    <div class="retro-overlay retro-chromatic"></div>
     <div class="retro-overlay retro-vignette"></div>
 
     <script src="script.js"></script>

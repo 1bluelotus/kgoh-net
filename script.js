@@ -294,30 +294,35 @@ window.addEventListener('load', () => {
     }, 100);
 });
 
-// Retro Mode Toggle
-const retroToggle = document.getElementById('retro-toggle');
-let retroActive = localStorage.getItem('retroMode') === 'true';
+// Visual Mode Selector
+const vmDisplay = document.getElementById('vm-display');
+const vmBtns = document.querySelectorAll('.vm-btn');
 
-function applyRetroMode(active) {
-    if (active) {
-        document.body.classList.add('retro-active');
-        retroToggle.textContent = 'RETRO MODE: ON';
-        retroToggle.classList.add('active');
-    } else {
-        document.body.classList.remove('retro-active');
-        retroToggle.textContent = 'RETRO MODE: OFF';
-        retroToggle.classList.remove('active');
-    }
+const visualModes = {
+    standard: { name: 'STANDARD', bodyClass: '' },
+    retro:    { name: 'RETRO',    bodyClass: 'mode-retro' },
+    neon:     { name: 'NEON',     bodyClass: 'mode-neon' }
+};
+
+function applyVisualMode(modeName) {
+    const mode = visualModes[modeName];
+    if (!mode) return;
+
+    // Swap body class — all variable overrides live in CSS
+    document.body.classList.remove('mode-retro', 'mode-neon');
+    if (mode.bodyClass) document.body.classList.add(mode.bodyClass);
+
+    // Update display and active button
+    vmDisplay.textContent = mode.name;
+    vmBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === modeName));
+
+    localStorage.setItem('visualMode', modeName);
 }
 
-// Apply saved state on load
-applyRetroMode(retroActive);
+// Load saved mode on page load
+applyVisualMode(localStorage.getItem('visualMode') || 'standard');
 
-retroToggle.addEventListener('click', () => {
-    retroActive = !retroActive;
-    localStorage.setItem('retroMode', retroActive);
-    applyRetroMode(retroActive);
-});
+vmBtns.forEach(btn => btn.addEventListener('click', () => applyVisualMode(btn.dataset.mode)));
 
 // Blog expand / collapse
 function expandPost(article) {

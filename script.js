@@ -118,8 +118,12 @@ navLinks.forEach(link => {
         const sectionId = link.dataset.section;
 
         // Update active nav state
-        navLinks.forEach(l => l.classList.remove('active'));
+        navLinks.forEach(l => {
+            l.classList.remove('active');
+            l.querySelector('.nav-icon').textContent = '●';
+        });
         link.classList.add('active');
+        link.querySelector('.nav-icon').textContent = '▲';
 
         // Update waypoint opacity
         document.querySelectorAll('.waypoint').forEach(w => {

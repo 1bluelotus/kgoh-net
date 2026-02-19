@@ -224,7 +224,7 @@ nav {
 }
 
 .nav-link.active {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(30, 58, 138, 0.4);
     border-color: var(--border-color);
 }
 
@@ -234,7 +234,12 @@ nav {
 }
 
 .nav-link.active .nav-icon {
+    color: var(--accent-color);
     animation: pulse 2s ease-in-out infinite;
+}
+
+body.mode-retro .nav-link.active {
+    background: rgba(0, 51, 0, 0.5);
 }
 
 @keyframes pulse {
@@ -845,6 +850,7 @@ body.mode-neon .weapon-slot:hover {
 
 /* Active nav link — cyan glow */
 body.mode-neon .nav-link.active {
+    background: rgba(40, 0, 20, 0.5);
     text-shadow: 0 0 10px #00f5ff, 0 0 20px rgba(0, 245, 255, 0.5);
     box-shadow: inset 0 0 8px rgba(0, 245, 255, 0.15);
 }

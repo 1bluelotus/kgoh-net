@@ -168,6 +168,19 @@ function setArrowTransform(x, y, angle) {
 // Initialize arrow at home, pointing up
 setArrowTransform(waypoints.home.x, waypoints.home.y, 0);
 
+// Cycling home greeting
+const GREETINGS = ["HI, I'M KEVEN.", "MY NAME'S KEVEN!", "YO! IT'S KEVEN."];
+
+function updateGreeting(advance = true) {
+    const el = document.getElementById('home-greeting');
+    if (!el) return;
+    const idx = parseInt(localStorage.getItem('greetingIndex') || '0');
+    el.textContent = GREETINGS[idx];
+    if (advance) localStorage.setItem('greetingIndex', (idx + 1) % GREETINGS.length);
+}
+
+updateGreeting();
+
 navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -208,6 +221,8 @@ navLinks.forEach(link => {
                 section.classList.remove('active');
             }
         });
+
+        if (sectionId === 'home') updateGreeting();
     });
 
     link.addEventListener('mouseenter', () => {
@@ -388,6 +403,7 @@ function applyVisualMode(modeName) {
     vmBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === modeName));
 
     localStorage.setItem('visualMode', modeName);
+
 }
 
 // Load saved mode on page load

@@ -24,28 +24,74 @@ let fadingTrailGroup = null;   // the path currently fading out
 
 const TRAIL_DOTS     = 10;
 const TRAIL_OPACITY  = 0.4;
-function getTrailColor() {
-    return document.body.classList.contains('mode-neon') ? '#ffff00' : '#00ffff';
-}
 const FADE_DURATION  = 300; // ms per dot
 const FADE_STAGGER   = 50;  // ms between dot fades
 
+// Sandevistan gradient: bright violet (oldest) → electric blue → cyan (newest)
+const SANDEVISTAN_COLORS = ['#e040fb', '#c060ff', '#8b5cf6', '#38bdf8', '#00f5ff', '#7df9ff'];
+
+function hexToRgb(hex) {
+    return [
+        parseInt(hex.slice(1, 3), 16),
+        parseInt(hex.slice(3, 5), 16),
+        parseInt(hex.slice(5, 7), 16)
+    ];
+}
+
+function rgbToHex(r, g, b) {
+    return '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
+}
+
+function interpolateGradient(colors, t) {
+    const segments = colors.length - 1;
+    const scaled   = t * segments;
+    const idx      = Math.min(Math.floor(scaled), segments - 1);
+    const segT     = scaled - idx;
+    const [r1, g1, b1] = hexToRgb(colors[idx]);
+    const [r2, g2, b2] = hexToRgb(colors[idx + 1]);
+    return rgbToHex(r1 + (r2 - r1) * segT, g1 + (g2 - g1) * segT, b1 + (b2 - b1) * segT);
+}
+
+function getDotColor(index, total) {
+    const body = document.body;
+    if (body.classList.contains('mode-neon')) {
+        return interpolateGradient(SANDEVISTAN_COLORS, index / (total - 1));
+    }
+    if (body.classList.contains('mode-retro')) return '#33ff33';
+    return '#00ffff';
+}
+
 function drawTrailPath(fromSection, toSection) {
-    const from = waypoints[fromSection];
-    const to   = waypoints[toSection];
-    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const from      = waypoints[fromSection];
+    const to        = waypoints[toSection];
+    const isCyber   = document.body.classList.contains('mode-neon');
+    const group     = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     group.setAttribute('class', 'trail-path');
 
     for (let i = 0; i < TRAIL_DOTS; i++) {
-        const t  = i / (TRAIL_DOTS - 1);
-        const cx = from.x + (to.x - from.x) * t;
-        const cy = from.y + (to.y - from.y) * t;
+        const t     = i / (TRAIL_DOTS - 1);
+        const cx    = from.x + (to.x - from.x) * t;
+        const cy    = from.y + (to.y - from.y) * t;
+        const color = getDotColor(i, TRAIL_DOTS);
+
+        if (isCyber) {
+            // Soft bloom layer behind each dot
+            const bloom = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            bloom.setAttribute('cx', cx);
+            bloom.setAttribute('cy', cy);
+            bloom.setAttribute('r', 6);
+            bloom.setAttribute('fill', color);
+            bloom.setAttribute('opacity', 0.18);
+            group.appendChild(bloom);
+        }
+
         const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         dot.setAttribute('cx', cx);
         dot.setAttribute('cy', cy);
-        dot.setAttribute('r', 2);
-        dot.setAttribute('fill', getTrailColor());
-        dot.setAttribute('opacity', TRAIL_OPACITY);
+        dot.setAttribute('r', isCyber ? 3.5 : 2);
+        dot.setAttribute('fill', color);
+        dot.setAttribute('opacity', isCyber ? 0.9 : TRAIL_OPACITY);
+        if (isCyber) dot.setAttribute('filter', 'url(#dot-glow)');
         group.appendChild(dot);
     }
 

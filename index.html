@@ -32,6 +32,13 @@
                         <pattern id="grid-neon" width="20" height="20" patternUnits="userSpaceOnUse">
                             <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,245,255,0.25)" stroke-width="0.5"/>
                         </pattern>
+                        <filter id="dot-glow" x="-150%" y="-150%" width="400%" height="400%">
+                            <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
                     </defs>
                     <rect id="minimap-grid-bg" width="200" height="200" fill="url(#grid-standard)"/>
                     

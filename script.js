@@ -67,6 +67,13 @@ function drawTrailPath(fromSection, toSection) {
     const isCyber   = document.body.classList.contains('mode-neon');
     const group     = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     group.setAttribute('class', 'trail-path');
+    group._timeouts = [];
+
+    // Spread dot spawns across the arrow's 500ms CSS transition so each
+    // dot pops into existence as the arrow passes through that position.
+    const DOT_STAGGER = 480 / TRAIL_DOTS;
+
+    navTrail.appendChild(group);
 
     for (let i = 0; i < TRAIL_DOTS; i++) {
         const t     = i / (TRAIL_DOTS - 1);
@@ -74,33 +81,37 @@ function drawTrailPath(fromSection, toSection) {
         const cy    = from.y + (to.y - from.y) * t;
         const color = getDotColor(i, TRAIL_DOTS);
 
-        if (isCyber) {
-            // Soft bloom layer behind each dot
-            const bloom = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            bloom.setAttribute('cx', cx);
-            bloom.setAttribute('cy', cy);
-            bloom.setAttribute('r', 6);
-            bloom.setAttribute('fill', color);
-            bloom.setAttribute('opacity', 0.18);
-            group.appendChild(bloom);
-        }
+        const id = setTimeout(() => {
+            if (isCyber) {
+                const bloom = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                bloom.setAttribute('cx', cx);
+                bloom.setAttribute('cy', cy);
+                bloom.setAttribute('r', 6);
+                bloom.setAttribute('fill', color);
+                bloom.setAttribute('opacity', 0.18);
+                group.appendChild(bloom);
+            }
 
-        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        dot.setAttribute('cx', cx);
-        dot.setAttribute('cy', cy);
-        dot.setAttribute('r', isCyber ? 3.5 : 2);
-        dot.setAttribute('fill', color);
-        dot.setAttribute('opacity', isCyber ? 0.9 : TRAIL_OPACITY);
-        if (isCyber) dot.setAttribute('filter', 'url(#dot-glow)');
-        group.appendChild(dot);
+            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            dot.setAttribute('cx', cx);
+            dot.setAttribute('cy', cy);
+            dot.setAttribute('r', isCyber ? 3.5 : 2);
+            dot.setAttribute('fill', color);
+            dot.setAttribute('opacity', isCyber ? 0.9 : TRAIL_OPACITY);
+            if (isCyber) dot.setAttribute('filter', 'url(#dot-glow)');
+            group.appendChild(dot);
+        }, i * DOT_STAGGER);
+
+        group._timeouts.push(id);
     }
 
-    navTrail.appendChild(group);
     return group;
 }
 
 function fadeOutTrail(group) {
     if (!group) return;
+    // Cancel any dots that haven't spawned yet
+    if (group._timeouts) group._timeouts.forEach(id => clearTimeout(id));
     const dots = Array.from(group.querySelectorAll('circle'));
     dots.forEach((dot, i) => {
         setTimeout(() => {

@@ -347,6 +347,125 @@ nav {
     opacity: 0.9;
 }
 
+/* Blog Post */
+.blog-post {
+    max-width: 680px;
+}
+
+.blog-preview {
+    cursor: default;
+}
+
+.blog-post-header {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--primary-color);
+}
+
+.blog-post-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.blog-post-meta {
+    font-size: 11px;
+    letter-spacing: 2px;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.meta-divider {
+    opacity: 0.4;
+}
+
+.blog-excerpt {
+    font-size: 14px;
+    line-height: 1.8;
+    opacity: 0.6;
+    margin-bottom: 18px;
+    font-style: italic;
+}
+
+.blog-expand-btn,
+.blog-collapse-btn {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.blog-expand-btn:hover,
+.blog-collapse-btn:hover {
+    background: var(--primary-color);
+    color: var(--bg-color);
+}
+
+.blog-full-content {
+    overflow: hidden;
+    height: 0;
+    opacity: 0;
+    transition: height 0.5s ease, opacity 0.4s ease;
+}
+
+.blog-post.expanded .blog-full-content {
+    opacity: 1;
+}
+
+.blog-post-body p {
+    font-size: 15px;
+    line-height: 1.9;
+    margin-bottom: 20px;
+    opacity: 0.88;
+}
+
+.blog-post-body p:first-child {
+    padding-top: 24px;
+}
+
+.blog-collapse-btn {
+    display: block;
+    margin-top: 30px;
+    margin-bottom: 8px;
+}
+
+.blog-dialogue {
+    margin: 24px 0;
+    padding: 16px 20px;
+    border-left: 2px solid var(--primary-color);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.blog-dialogue p {
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 10px;
+    opacity: 0.9;
+    font-style: italic;
+}
+
+.blog-dialogue p:last-child {
+    margin-bottom: 0;
+}
+
+.blog-divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    margin: 50px 0;
+    max-width: 680px;
+}
+
 /* Masonry Photo Grid */
 .masonry-grid {
     columns: 2;

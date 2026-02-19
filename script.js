@@ -161,6 +161,12 @@ function detectSystemInfo() {
 // Initialize system info
 detectSystemInfo();
 
+// Last updated date from the document's last-modified timestamp
+const lastMod = new Date(document.lastModified);
+const pad = n => String(n).padStart(2, '0');
+const lastUpdatedStr = `${lastMod.getFullYear()}.${pad(lastMod.getMonth() + 1)}.${pad(lastMod.getDate())}`;
+document.getElementById('last-updated').textContent = `UPDATED: ${lastUpdatedStr}`;
+
 // Music Player Controls
 const playBtn = document.getElementById('play-btn');
 const prevBtn = document.getElementById('prev-btn');
@@ -232,4 +238,41 @@ retroToggle.addEventListener('click', () => {
     retroActive = !retroActive;
     localStorage.setItem('retroMode', retroActive);
     applyRetroMode(retroActive);
+});
+
+// Blog expand / collapse
+function expandPost(article) {
+    const full = article.querySelector('.blog-full-content');
+    full.style.height = full.scrollHeight + 'px';
+    full.style.opacity = '1';
+    article.classList.add('expanded');
+    full.addEventListener('transitionend', () => {
+        if (article.classList.contains('expanded')) {
+            full.style.height = 'auto';
+        }
+    }, { once: true });
+}
+
+function collapsePost(article) {
+    const full = article.querySelector('.blog-full-content');
+    full.style.height = full.scrollHeight + 'px';
+    full.offsetHeight; // force reflow
+    full.style.height = '0';
+    full.style.opacity = '0';
+    article.classList.remove('expanded');
+}
+
+document.querySelectorAll('.blog-expand-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const article = document.getElementById(btn.dataset.target);
+        expandPost(article);
+    });
+});
+
+document.querySelectorAll('.blog-collapse-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const article = document.getElementById(btn.dataset.target);
+        collapsePost(article);
+        article.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
 });

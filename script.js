@@ -23,8 +23,10 @@ let activeTrailGroup = null;   // the currently visible path
 let fadingTrailGroup = null;   // the path currently fading out
 
 const TRAIL_DOTS     = 10;
-const TRAIL_COLOR    = '#00ffff';
 const TRAIL_OPACITY  = 0.4;
+function getTrailColor() {
+    return document.body.classList.contains('mode-neon') ? '#ffff00' : '#00ffff';
+}
 const FADE_DURATION  = 300; // ms per dot
 const FADE_STAGGER   = 50;  // ms between dot fades
 
@@ -42,7 +44,7 @@ function drawTrailPath(fromSection, toSection) {
         dot.setAttribute('cx', cx);
         dot.setAttribute('cy', cy);
         dot.setAttribute('r', 2);
-        dot.setAttribute('fill', TRAIL_COLOR);
+        dot.setAttribute('fill', getTrailColor());
         dot.setAttribute('opacity', TRAIL_OPACITY);
         group.appendChild(dot);
     }

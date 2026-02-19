@@ -228,7 +228,7 @@ nav {
 /* Main Content */
 .content {
     margin-left: 280px;
-    margin-top: 80px;
+    margin-top: 0;
     margin-right: 300px;
     margin-bottom: 80px;
     padding: 40px;
@@ -771,7 +771,7 @@ body.retro-active .retro-overlay {
 @media (max-width: 1024px) {
     .content {
         margin-left: 260px;
-        margin-top: 40px;
+        margin-top: 0;
         margin-right: 260px;
         padding: 20px;
     }

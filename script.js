@@ -16,6 +16,80 @@ const arrow = document.getElementById('arrow');
 let currentSection = 'home';
 let travelAngle = 0;
 
+// Navigation trail
+const navTrail = document.getElementById('nav-trail');
+let navigationHistory = ['home'];
+let activeTrailGroup = null;   // the currently visible path
+let fadingTrailGroup = null;   // the path currently fading out
+
+const TRAIL_DOTS     = 10;
+const TRAIL_COLOR    = '#00ffff';
+const TRAIL_OPACITY  = 0.4;
+const FADE_DURATION  = 300; // ms per dot
+const FADE_STAGGER   = 50;  // ms between dot fades
+
+function drawTrailPath(fromSection, toSection) {
+    const from = waypoints[fromSection];
+    const to   = waypoints[toSection];
+    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    group.setAttribute('class', 'trail-path');
+
+    for (let i = 0; i < TRAIL_DOTS; i++) {
+        const t  = i / (TRAIL_DOTS - 1);
+        const cx = from.x + (to.x - from.x) * t;
+        const cy = from.y + (to.y - from.y) * t;
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', cx);
+        dot.setAttribute('cy', cy);
+        dot.setAttribute('r', 2);
+        dot.setAttribute('fill', TRAIL_COLOR);
+        dot.setAttribute('opacity', TRAIL_OPACITY);
+        group.appendChild(dot);
+    }
+
+    navTrail.appendChild(group);
+    return group;
+}
+
+function fadeOutTrail(group) {
+    if (!group) return;
+    const dots = Array.from(group.querySelectorAll('circle'));
+    dots.forEach((dot, i) => {
+        setTimeout(() => {
+            dot.style.transition = `opacity ${FADE_DURATION}ms ease`;
+            dot.setAttribute('opacity', '0');
+            dot.style.opacity = '0';
+        }, i * FADE_STAGGER);
+    });
+    // Remove the group after all fades complete
+    const totalTime = (dots.length - 1) * FADE_STAGGER + FADE_DURATION;
+    setTimeout(() => {
+        if (group.parentNode) group.parentNode.removeChild(group);
+    }, totalTime + 50);
+}
+
+function updateTrail(toSection) {
+    const fromSection = navigationHistory[navigationHistory.length - 1];
+    if (fromSection === toSection) return;
+
+    // Fade out the previous active trail (it becomes the old trail)
+    if (fadingTrailGroup) {
+        // Already fading — just let it finish
+    }
+    if (activeTrailGroup) {
+        fadingTrailGroup = activeTrailGroup;
+        fadeOutTrail(fadingTrailGroup);
+        fadingTrailGroup = null;
+    }
+
+    // Draw new path and make it the active trail
+    activeTrailGroup = drawTrailPath(fromSection, toSection);
+
+    // Update history (keep last 2)
+    navigationHistory.push(toSection);
+    if (navigationHistory.length > 2) navigationHistory.shift();
+}
+
 // Calculate angle (in degrees) from one waypoint to another.
 // Arrow polygon points up by default, so offset atan2 by 90°.
 function calculateAngle(fromSection, toSection) {
@@ -49,6 +123,11 @@ navLinks.forEach(link => {
         document.querySelectorAll('.waypoint').forEach(w => {
             w.style.opacity = w.dataset.section === sectionId ? '1' : '0.5';
         });
+
+        // Draw navigation trail before updating currentSection
+        if (sectionId !== currentSection) {
+            updateTrail(sectionId);
+        }
 
         // Rotate to face direction of travel, then move simultaneously
         if (sectionId !== currentSection) {

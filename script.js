@@ -299,11 +299,12 @@ window.addEventListener('load', () => {
 // Visual Mode Selector
 const vmDisplay = document.getElementById('vm-display');
 const vmBtns = document.querySelectorAll('.vm-btn');
+const minimapGridBg = document.getElementById('minimap-grid-bg');
 
 const visualModes = {
-    standard: { name: 'STANDARD', bodyClass: '' },
-    retro:    { name: 'RETRO',    bodyClass: 'mode-retro' },
-    neon:     { name: 'NEON',     bodyClass: 'mode-neon' }
+    standard: { name: 'STANDARD', bodyClass: '',           gridPattern: 'grid-standard' },
+    retro:    { name: 'RETRO',    bodyClass: 'mode-retro', gridPattern: 'grid-retro'    },
+    neon:     { name: 'NEON',     bodyClass: 'mode-neon',  gridPattern: 'grid-neon'     }
 };
 
 function applyVisualMode(modeName) {
@@ -313,6 +314,9 @@ function applyVisualMode(modeName) {
     // Swap body class — all variable overrides live in CSS
     document.body.classList.remove('mode-retro', 'mode-neon');
     if (mode.bodyClass) document.body.classList.add(mode.bodyClass);
+
+    // Swap minimap grid pattern
+    if (minimapGridBg) minimapGridBg.setAttribute('fill', `url(#${mode.gridPattern})`);
 
     // Update display and active button
     vmDisplay.textContent = mode.name;

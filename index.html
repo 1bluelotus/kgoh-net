@@ -21,13 +21,19 @@
         <div class="hud-nav">
             <div class="minimap-container">
                 <svg class="minimap" viewBox="0 0 200 200">
-                    <!-- Map background grid -->
+                    <!-- Map background grid (three theme variants) -->
                     <defs>
-                        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+                        <pattern id="grid-standard" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.75"/>
+                        </pattern>
+                        <pattern id="grid-retro" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(51,255,51,0.32)" stroke-width="0.75"/>
+                        </pattern>
+                        <pattern id="grid-neon" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,245,255,0.38)" stroke-width="0.75"/>
                         </pattern>
                     </defs>
-                    <rect width="200" height="200" fill="url(#grid)"/>
+                    <rect id="minimap-grid-bg" width="200" height="200" fill="url(#grid-standard)"/>
                     
                     <!-- Map border -->
                     <rect x="1" y="1" width="198" height="198" fill="none" stroke="white" stroke-width="2"/>

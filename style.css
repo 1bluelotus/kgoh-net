@@ -911,7 +911,86 @@ body.mode-neon .nav-link.active .nav-icon {
     }
 }
 
+/* Mobile overlay — hidden on desktop */
+#mobile-overlay {
+    display: none;
+}
+
 @media (max-width: 768px) {
+    /* Hide the entire site and show the overlay instead */
+    body > *:not(#mobile-overlay) {
+        display: none !important;
+    }
+
+    #mobile-overlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        inset: 0;
+        background: var(--page-bg);
+        z-index: 99999;
+        padding: 30px;
+    }
+
+    .mob-corner {
+        position: fixed;
+        width: 28px;
+        height: 28px;
+    }
+
+    .mob-tl { top: 18px; left: 18px;
+        border-top: 2px solid var(--accent-color);
+        border-left: 2px solid var(--accent-color); }
+    .mob-tr { top: 18px; right: 18px;
+        border-top: 2px solid var(--accent-color);
+        border-right: 2px solid var(--accent-color); }
+    .mob-bl { bottom: 18px; left: 18px;
+        border-bottom: 2px solid var(--accent-color);
+        border-left: 2px solid var(--accent-color); }
+    .mob-br { bottom: 18px; right: 18px;
+        border-bottom: 2px solid var(--accent-color);
+        border-right: 2px solid var(--accent-color); }
+
+    .mob-panel {
+        background: var(--panel-bg);
+        border: var(--border-width) solid var(--border-color);
+        backdrop-filter: blur(10px);
+        padding: 32px 28px;
+        max-width: 380px;
+        width: 100%;
+    }
+
+    .mob-header {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        color: var(--accent-color);
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .mob-body p {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 14px;
+        line-height: 1.8;
+        color: var(--text-color);
+        margin-bottom: 14px;
+        opacity: 0.9;
+    }
+
+    .mob-sig {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 13px;
+        color: var(--accent-color);
+        display: block;
+        margin-top: 6px;
+    }
+}
+
+@media (max-width: 768px) and (min-width: 1px) {
     .corner-decoration {
         width: 80px;
         height: 80px;

@@ -24,7 +24,7 @@
                     <!-- Map background grid (three theme variants) -->
                     <defs>
                         <pattern id="grid-standard" width="20" height="20" patternUnits="userSpaceOnUse">
-                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.7"/>
                         </pattern>
                         <pattern id="grid-retro" width="20" height="20" patternUnits="userSpaceOnUse">
                             <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(51,255,51,0.2)" stroke-width="0.5"/>
@@ -36,7 +36,7 @@
                     <rect id="minimap-grid-bg" width="200" height="200" fill="url(#grid-standard)"/>
                     
                     <!-- Map border -->
-                    <rect x="1" y="1" width="198" height="198" fill="none" stroke="white" stroke-width="2"/>
+                    <rect id="minimap-border" x="1" y="1" width="198" height="198" fill="none" stroke="white" stroke-width="2"/>
                     
                     <!-- Navigation trail (drawn behind waypoints) -->
                     <g id="nav-trail"></g>
@@ -115,7 +115,7 @@
                     </g>
                     
                     <!-- Arrow indicator -->
-                    <polygon id="arrow" points="0,-8 -6,8 6,8" fill="#00ffff" transform="translate(50, 50) rotate(0)"/>
+                    <polygon id="arrow" points="0,-8 -6,8 6,8" transform="translate(50, 50) rotate(0)"/>
                     
                     <!-- Target Lock Indicator -->
                     <g id="target-lock-indicator" opacity="0">

@@ -152,6 +152,14 @@ body {
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
 }
 
+body.mode-retro .minimap {
+    filter: drop-shadow(0 0 10px rgba(51, 255, 51, 0.4));
+}
+
+body.mode-neon .minimap {
+    filter: drop-shadow(0 0 10px rgba(255, 0, 110, 0.4));
+}
+
 .waypoint {
     opacity: 0.5;
     transition: opacity 0.3s ease;
@@ -161,9 +169,14 @@ body {
     opacity: 1;
 }
 
+#minimap-border {
+    stroke: var(--border-color);
+}
+
 #arrow {
+    fill: var(--accent-color);
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    filter: drop-shadow(0 0 4px #00ffff);
+    filter: drop-shadow(0 0 4px var(--accent-color));
 }
 
 /* Navigation Panel */

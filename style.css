@@ -333,8 +333,8 @@ nav {
 
 .profile-photo {
     display: block;
-    width: 140px;
-    height: 140px;
+    width: 175px;
+    height: 175px;
     object-fit: cover;
     object-position: center top;
     filter: grayscale(20%);

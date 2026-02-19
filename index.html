@@ -159,15 +159,23 @@
 
         <!-- Right HUD Panel -->
         <div class="right-hud">
-            <!-- Music Player -->
-            <div class="music-player">
-                <div class="player-header">AUDIO SYSTEM</div>
-                <div class="track-info" id="track-name">NO TRACK LOADED</div>
-                <div class="player-controls">
-                    <button class="player-btn" id="prev-btn">◀◀</button>
-                    <button class="player-btn play-pause" id="play-btn">▶</button>
-                    <button class="player-btn" id="next-btn">▶▶</button>
+            <!-- Weather Panel -->
+            <div class="weather-panel">
+                <div class="player-header">ENVIRONMENTAL DATA</div>
+                <div class="weather-main">
+                    <svg id="weather-icon" class="weather-icon" viewBox="0 0 50 50" width="46" height="46" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="25" y1="10" x2="25" y2="6"/><line x1="25" y1="44" x2="25" y2="40"/>
+                        <line x1="10" y1="25" x2="6" y2="25"/><line x1="44" y1="25" x2="40" y2="25"/>
+                        <line x1="15" y1="15" x2="12" y2="12"/><line x1="38" y1="12" x2="35" y2="15"/>
+                        <line x1="15" y1="35" x2="12" y2="38"/><line x1="35" y1="35" x2="38" y2="38"/>
+                        <circle cx="25" cy="25" r="8"/>
+                    </svg>
+                    <div class="weather-temp" id="weather-temp">--°</div>
                 </div>
+                <div class="weather-condition" id="weather-condition">ACQUIRING...</div>
+                <div class="diag-row"><span class="diag-key">HUMIDITY</span><span class="diag-val" id="weather-humidity">--%</span></div>
+                <div class="diag-row"><span class="diag-key">WIND</span><span class="diag-val" id="weather-wind">-- MPH</span></div>
+                <div class="diag-row"><span class="diag-key">LOCATION</span><span class="diag-val">SEATTLE WA</span></div>
             </div>
 
             <!-- Visual Mode Selector -->

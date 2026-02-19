@@ -322,44 +322,89 @@ const pad = n => String(n).padStart(2, '0');
 const lastUpdatedStr = `${lastMod.getFullYear()}.${pad(lastMod.getMonth() + 1)}.${pad(lastMod.getDate())}`;
 document.getElementById('last-updated').textContent = `UPDATED: ${lastUpdatedStr}`;
 
-// Music Player Controls
-const playBtn = document.getElementById('play-btn');
-const prevBtn = document.getElementById('prev-btn');
-const nextBtn = document.getElementById('next-btn');
-const trackName = document.getElementById('track-name');
+// Weather Panel — Open-Meteo (free, no API key)
+const WEATHER_URL = 'https://api.open-meteo.com/v1/forecast?latitude=47.6062&longitude=-122.3321' +
+    '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code' +
+    '&temperature_unit=fahrenheit&wind_speed_unit=mph';
 
-let isPlaying = false;
-const playlist = [
-    'TRACK_001.MP3',
-    'TRACK_002.MP3', 
-    'TRACK_003.MP3'
-];
-let currentTrack = 0;
+// SVG inner markup for each condition (viewBox 0 0 50 50, stroke="currentColor")
+const WEATHER_ICONS = {
+    clear: `
+        <circle cx="25" cy="25" r="8"/>
+        <line x1="25" y1="10" x2="25" y2="6"/><line x1="25" y1="44" x2="25" y2="40"/>
+        <line x1="10" y1="25" x2="6" y2="25"/><line x1="44" y1="25" x2="40" y2="25"/>
+        <line x1="15" y1="15" x2="12" y2="12"/><line x1="38" y1="12" x2="35" y2="15"/>
+        <line x1="15" y1="35" x2="12" y2="38"/><line x1="35" y1="35" x2="38" y2="38"/>`,
+    partlyCloudy: `
+        <circle cx="16" cy="19" r="6"/>
+        <line x1="16" y1="9"  x2="16" y2="7"/><line x1="22" y1="13" x2="24" y2="11"/>
+        <line x1="10" y1="13" x2="8"  y2="11"/>
+        <path d="M12 33 Q12 26 19 26 Q20 21 27 21 Q34 21 36 26 Q41 26 41 33 Q41 38 35 38 L18 38 Q12 38 12 33"/>`,
+    cloudy: `
+        <path d="M9 30 Q9 22 17 22 Q17 14 26 14 Q35 14 37 22 Q43 22 43 30 Q43 37 36 37 L14 37 Q9 37 9 30"/>`,
+    fog: `
+        <line x1="8"  y1="17" x2="42" y2="17"/>
+        <line x1="5"  y1="25" x2="45" y2="25"/>
+        <line x1="8"  y1="33" x2="42" y2="33"/>`,
+    rain: `
+        <path d="M9 24 Q9 17 17 17 Q17 10 26 10 Q35 10 37 17 Q43 17 43 24 Q43 30 36 30 L14 30 Q9 30 9 24"/>
+        <line x1="16" y1="34" x2="14" y2="42"/>
+        <line x1="25" y1="34" x2="23" y2="42"/>
+        <line x1="34" y1="34" x2="32" y2="42"/>`,
+    snow: `
+        <path d="M9 24 Q9 17 17 17 Q17 10 26 10 Q35 10 37 17 Q43 17 43 24 Q43 30 36 30 L14 30 Q9 30 9 24"/>
+        <line x1="16" y1="35" x2="16" y2="43"/><line x1="12" y1="39" x2="20" y2="39"/>
+        <line x1="25" y1="35" x2="25" y2="43"/><line x1="21" y1="39" x2="29" y2="39"/>
+        <line x1="34" y1="35" x2="34" y2="43"/><line x1="30" y1="39" x2="38" y2="39"/>`,
+    storm: `
+        <path d="M9 22 Q9 15 17 15 Q17 8 26 8 Q35 8 37 15 Q43 15 43 22 Q43 28 36 28 L14 28 Q9 28 9 22"/>
+        <polyline points="27,28 22,37 28,37 23,47"/>`
+};
 
-playBtn.addEventListener('click', () => {
-    isPlaying = !isPlaying;
-    playBtn.textContent = isPlaying ? '❚❚' : '▶';
-    
-    if (isPlaying) {
-        trackName.textContent = playlist[currentTrack];
+function codeToIcon(code) {
+    if (code === 0)                           return 'clear';
+    if (code <= 2)                            return 'partlyCloudy';
+    if (code === 3)                           return 'cloudy';
+    if (code <= 48)                           return 'fog';
+    if (code <= 67 || (code >= 80 && code <= 82)) return 'rain';
+    if (code <= 77 || (code >= 85 && code <= 86)) return 'snow';
+    if (code >= 95)                           return 'storm';
+    return 'cloudy';
+}
+
+function codeToCondition(code) {
+    if (code === 0)  return 'CLEAR SKY';
+    if (code === 1)  return 'MAINLY CLEAR';
+    if (code === 2)  return 'PARTLY CLOUDY';
+    if (code === 3)  return 'OVERCAST';
+    if (code <= 48)  return 'FOGGY';
+    if (code <= 55)  return 'DRIZZLE';
+    if (code <= 65)  return 'RAIN';
+    if (code <= 75)  return 'SNOW';
+    if (code <= 82)  return 'RAIN SHOWERS';
+    if (code <= 86)  return 'SNOW SHOWERS';
+    if (code >= 95)  return 'THUNDERSTORM';
+    return 'UNKNOWN';
+}
+
+async function fetchWeather() {
+    try {
+        const resp = await fetch(WEATHER_URL);
+        const data = await resp.json();
+        const c    = data.current;
+
+        document.getElementById('weather-temp').textContent      = `${Math.round(c.temperature_2m)}°`;
+        document.getElementById('weather-condition').textContent  = codeToCondition(c.weather_code);
+        document.getElementById('weather-humidity').textContent   = `${c.relative_humidity_2m}%`;
+        document.getElementById('weather-wind').textContent       = `${Math.round(c.wind_speed_10m)} MPH`;
+        document.getElementById('weather-icon').innerHTML         = WEATHER_ICONS[codeToIcon(c.weather_code)];
+    } catch {
+        document.getElementById('weather-condition').textContent = 'DATA UNAVAILABLE';
     }
-});
+}
 
-prevBtn.addEventListener('click', () => {
-    currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
-    trackName.textContent = playlist[currentTrack];
-    if (isPlaying) {
-        playBtn.textContent = '❚❚';
-    }
-});
-
-nextBtn.addEventListener('click', () => {
-    currentTrack = (currentTrack + 1) % playlist.length;
-    trackName.textContent = playlist[currentTrack];
-    if (isPlaying) {
-        playBtn.textContent = '❚❚';
-    }
-});
+fetchWeather();
+setInterval(fetchWeather, 10 * 60 * 1000);
 
 // Add some glitch effect on page load
 window.addEventListener('load', () => {

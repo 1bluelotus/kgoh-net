@@ -302,9 +302,9 @@ const vmBtns = document.querySelectorAll('.vm-btn');
 const minimapGridBg = document.getElementById('minimap-grid-bg');
 
 const visualModes = {
-    standard: { name: 'STANDARD', bodyClass: '',           gridPattern: 'grid-standard' },
-    retro:    { name: 'RETRO',    bodyClass: 'mode-retro', gridPattern: 'grid-retro'    },
-    neon:     { name: 'NEON',     bodyClass: 'mode-neon',  gridPattern: 'grid-neon'     }
+    standard: { name: 'STANDARD',    bodyClass: '',           gridPattern: 'grid-standard' },
+    retro:    { name: 'DECKARD',     bodyClass: 'mode-retro', gridPattern: 'grid-retro'    },
+    neon:     { name: 'CYBERPSYCHO', bodyClass: 'mode-neon',  gridPattern: 'grid-neon'     }
 };
 
 function applyVisualMode(modeName) {

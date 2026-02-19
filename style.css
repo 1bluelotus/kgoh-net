@@ -21,18 +21,6 @@ body {
     color: var(--text-color);
     overflow-x: hidden;
     min-height: 100vh;
-    /* STANDARD cursor — blue brackets */
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M6,0 L0,0 L0,6 M14,0 L20,0 L20,6 M0,14 L0,20 L6,20 M20,14 L20,20 L14,20' stroke='%236495ED' stroke-width='1.5' fill='none' stroke-linecap='square'/%3E%3C/svg%3E") 10 10, crosshair;
-}
-
-/* DECKARD cursor — green brackets */
-body.mode-retro {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M6,0 L0,0 L0,6 M14,0 L20,0 L20,6 M0,14 L0,20 L6,20 M20,14 L20,20 L14,20' stroke='%2333ff33' stroke-width='1.5' fill='none' stroke-linecap='square'/%3E%3C/svg%3E") 10 10, crosshair;
-}
-
-/* CYBERPSYCHO cursor — yellow brackets */
-body.mode-neon {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M6,0 L0,0 L0,6 M14,0 L20,0 L20,6 M0,14 L0,20 L6,20 M20,14 L20,20 L14,20' stroke='%23ffff00' stroke-width='1.5' fill='none' stroke-linecap='square'/%3E%3C/svg%3E") 10 10, crosshair;
 }
 
 /* Corner Decorations */

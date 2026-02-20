@@ -407,9 +407,9 @@ const vmBtns = document.querySelectorAll('.vm-btn');
 const minimapGridBg = document.getElementById('minimap-grid-bg');
 
 const visualModes = {
-    standard: { name: 'STANDARD',    bodyClass: '',           gridPattern: 'grid-standard' },
-    retro:    { name: 'DECKARD',     bodyClass: 'mode-retro', gridPattern: 'grid-retro'    },
-    neon:     { name: 'CYBERPSYCHO', bodyClass: 'mode-neon',  gridPattern: 'grid-neon'     }
+    standard: { name: 'STANDARD',    bodyClass: '',           gridPattern: 'grid-standard', defaultTrack: 0 },
+    retro:    { name: 'DECKARD',     bodyClass: 'mode-retro', gridPattern: 'grid-retro',    defaultTrack: 1 },
+    neon:     { name: 'CYBERPSYCHO', bodyClass: 'mode-neon',  gridPattern: 'grid-neon',     defaultTrack: 2 }
 };
 
 function applyVisualMode(modeName) {
@@ -434,6 +434,11 @@ function applyVisualMode(modeName) {
     vmBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === modeName));
 
     localStorage.setItem('visualMode', modeName);
+
+    // Auto-load the theme's default track when switching modes
+    if (window.audioSystemReady) {
+        loadTrack(mode.defaultTrack);
+    }
 
     fetchWeather();
 }
@@ -485,8 +490,8 @@ document.querySelectorAll('.blog-collapse-btn').forEach(btn => {
 // ========================
 const AUDIO_TRACKS = [
     { id: '-yNHlKAzyVA', label: 'TRACK 01' },
-    { id: 'fkC2lauXCKU', label: 'TRACK 02' },
-    { id: 'IFTRLijNajg', label: 'TRACK 03' }
+    { id: 'IFTRLijNajg', label: 'TRACK 02' },
+    { id: 'NgUuQvwwzaU', label: 'TRACK 03' }
 ];
 
 let ytPlayer        = null;
@@ -570,9 +575,10 @@ window.onYouTubeIframeAPIReady = function () {
     document.head.appendChild(tag);
 }());
 
-// Show player area and activate first track immediately
-ytContainer.classList.add('visible');
-setActiveTrack(0);
+// Mark audio system as ready and load the default track for the active theme
+window.audioSystemReady = true;
+const _initMode = localStorage.getItem('visualMode') || 'standard';
+loadTrack(visualModes[_initMode].defaultTrack);
 
 // Track list clicks
 audioTrackEls.forEach((el, i) => el.addEventListener('click', () => loadTrack(i)));

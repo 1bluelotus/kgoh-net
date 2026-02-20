@@ -62,16 +62,21 @@ function getDotColor(index, total) {
 }
 
 function drawTrailPath(fromSection, toSection) {
-    const from      = waypoints[fromSection];
-    const to        = waypoints[toSection];
-    const isCyber   = document.body.classList.contains('mode-neon');
-    const group     = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const from    = waypoints[fromSection];
+    const to      = waypoints[toSection];
+    const isCyber = document.body.classList.contains('mode-neon');
+    const group   = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     group.setAttribute('class', 'trail-path');
     group._timeouts = [];
 
-    // Spread dot spawns across the arrow's 500ms CSS transition so each
-    // dot pops into existence as the arrow passes through that position.
-    const DOT_STAGGER = 480 / TRAIL_DOTS;
+    // Spread spawns across the arrow's CSS transition (500ms normal, 650ms cyber)
+    const TRAVEL_MS   = isCyber ? 624 : 480;
+    const DOT_STAGGER = TRAVEL_MS / TRAIL_DOTS;
+
+    // Travel angle for orienting trail arrows in cyber mode
+    const dx         = to.x - from.x;
+    const dy         = to.y - from.y;
+    const arrowAngle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
 
     navTrail.appendChild(group);
 
@@ -83,23 +88,32 @@ function drawTrailPath(fromSection, toSection) {
 
         const id = setTimeout(() => {
             if (isCyber) {
+                // Bloom glow
                 const bloom = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 bloom.setAttribute('cx', cx);
                 bloom.setAttribute('cy', cy);
-                bloom.setAttribute('r', 6);
+                bloom.setAttribute('r', 5);
                 bloom.setAttribute('fill', color);
-                bloom.setAttribute('opacity', 0.18);
+                bloom.setAttribute('opacity', '0.15');
                 group.appendChild(bloom);
-            }
 
-            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            dot.setAttribute('cx', cx);
-            dot.setAttribute('cy', cy);
-            dot.setAttribute('r', isCyber ? 3.5 : 2);
-            dot.setAttribute('fill', color);
-            dot.setAttribute('opacity', isCyber ? 0.9 : TRAIL_OPACITY);
-            if (isCyber) dot.setAttribute('filter', 'url(#dot-glow)');
-            group.appendChild(dot);
+                // Mini arrow pointing in direction of travel (~60% of main arrow)
+                const miniArrow = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                miniArrow.setAttribute('points', '0,-4.8 -3.6,4.8 3.6,4.8');
+                miniArrow.setAttribute('fill', color);
+                miniArrow.setAttribute('opacity', '0.85');
+                miniArrow.setAttribute('filter', 'url(#dot-glow)');
+                miniArrow.setAttribute('transform', `translate(${cx},${cy}) rotate(${arrowAngle})`);
+                group.appendChild(miniArrow);
+            } else {
+                const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                dot.setAttribute('cx', cx);
+                dot.setAttribute('cy', cy);
+                dot.setAttribute('r', 2);
+                dot.setAttribute('fill', color);
+                dot.setAttribute('opacity', TRAIL_OPACITY);
+                group.appendChild(dot);
+            }
         }, i * DOT_STAGGER);
 
         group._timeouts.push(id);
@@ -110,18 +124,17 @@ function drawTrailPath(fromSection, toSection) {
 
 function fadeOutTrail(group) {
     if (!group) return;
-    // Cancel any dots that haven't spawned yet
     if (group._timeouts) group._timeouts.forEach(id => clearTimeout(id));
-    const dots = Array.from(group.querySelectorAll('circle'));
-    dots.forEach((dot, i) => {
+    // Select both dot circles and mini arrow polygons
+    const elements = Array.from(group.querySelectorAll('circle, polygon'));
+    elements.forEach((el, i) => {
         setTimeout(() => {
-            dot.style.transition = `opacity ${FADE_DURATION}ms ease`;
-            dot.setAttribute('opacity', '0');
-            dot.style.opacity = '0';
+            el.style.transition = `opacity ${FADE_DURATION}ms ease`;
+            el.setAttribute('opacity', '0');
+            el.style.opacity = '0';
         }, i * FADE_STAGGER);
     });
-    // Remove the group after all fades complete
-    const totalTime = (dots.length - 1) * FADE_STAGGER + FADE_DURATION;
+    const totalTime = (elements.length - 1) * FADE_STAGGER + FADE_DURATION;
     setTimeout(() => {
         if (group.parentNode) group.parentNode.removeChild(group);
     }, totalTime + 50);
@@ -168,6 +181,23 @@ function setArrowTransform(x, y, angle) {
 // Initialize arrow at home, pointing up
 setArrowTransform(waypoints.home.x, waypoints.home.y, 0);
 
+// Sandevistan green background flash (Cyberpsycho mode only)
+const minimapFlashBg = document.getElementById('minimap-flash-bg');
+
+function triggerMinimapFlash() {
+    if (!document.body.classList.contains('mode-neon') || !minimapFlashBg) return;
+    // Instant green burst
+    minimapFlashBg.style.transition = 'none';
+    minimapFlashBg.setAttribute('opacity', '0.5');
+    minimapFlashBg.style.opacity = '0.5';
+    // Fade out after arrow finishes travelling (0.65s)
+    setTimeout(() => {
+        minimapFlashBg.style.transition = 'opacity 0.3s ease';
+        minimapFlashBg.setAttribute('opacity', '0');
+        minimapFlashBg.style.opacity = '0';
+    }, 650);
+}
+
 // Cycling home greeting
 const GREETINGS = ["HI, I'M KEVEN.", "MY NAME'S KEVEN!", "YO! IT'S KEVEN."];
 
@@ -203,6 +233,7 @@ navLinks.forEach(link => {
         // Draw navigation trail before updating currentSection
         if (sectionId !== currentSection) {
             updateTrail(sectionId);
+            triggerMinimapFlash();
         }
 
         // Rotate to face direction of travel, then move simultaneously

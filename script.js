@@ -70,7 +70,7 @@ function drawTrailPath(fromSection, toSection) {
     group._timeouts = [];
 
     // Spread spawns across the arrow's CSS transition (500ms normal, 650ms cyber)
-    const TRAVEL_MS   = isCyber ? 624 : 480;
+    const TRAVEL_MS   = isCyber ? 1248 : 480;
     const DOT_STAGGER = TRAVEL_MS / TRAIL_DOTS;
 
     // Travel angle for orienting trail arrows in cyber mode
@@ -195,7 +195,7 @@ function triggerMinimapFlash() {
         minimapFlashBg.style.transition = 'opacity 0.3s ease';
         minimapFlashBg.setAttribute('opacity', '0');
         minimapFlashBg.style.opacity = '0';
-    }, 650);
+    }, 1300);
 }
 
 // Cycling home greeting

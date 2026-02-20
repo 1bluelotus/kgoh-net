@@ -435,8 +435,8 @@ function applyVisualMode(modeName) {
 
     localStorage.setItem('visualMode', modeName);
 
-    // Auto-load the theme's default track when switching modes
-    if (window.audioSystemReady) {
+    // Auto-load the theme's default track only if nothing is currently playing
+    if (window.audioSystemReady && !audioIsPlaying) {
         loadTrack(mode.defaultTrack);
     }
 

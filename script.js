@@ -435,9 +435,9 @@ function applyVisualMode(modeName) {
 
     localStorage.setItem('visualMode', modeName);
 
-    // Auto-load the theme's default track only if nothing is currently playing
+    // Cue the theme's default track only if nothing is currently playing
     if (window.audioSystemReady && !audioIsPlaying) {
-        loadTrack(mode.defaultTrack);
+        cueTrack(mode.defaultTrack);
     }
 
     fetchWeather();
@@ -499,6 +499,7 @@ let ytReady         = false;
 let currentTrackIdx = 0;
 let audioIsPlaying  = false;
 let pendingTrackIdx = null;
+let pendingAutoplay = false;
 
 const ytContainer    = document.getElementById('yt-container');
 const audioPlayBtn   = document.getElementById('audio-play');
@@ -513,18 +514,32 @@ function setActiveTrack(idx) {
     });
 }
 
+// Cue a track (loads it ready-to-play but stays paused)
+function cueTrack(idx) {
+    setActiveTrack(idx);
+    ytContainer.classList.add('visible');
+
+    if (!ytReady || !ytPlayer) {
+        pendingTrackIdx = idx;
+        pendingAutoplay = false;
+        return;
+    }
+
+    ytPlayer.cueVideoById(AUDIO_TRACKS[idx].id);
+}
+
+// Load and immediately play a track
 function loadTrack(idx) {
     setActiveTrack(idx);
     ytContainer.classList.add('visible');
 
     if (!ytReady || !ytPlayer) {
         pendingTrackIdx = idx;
+        pendingAutoplay = true;
         return;
     }
 
     ytPlayer.loadVideoById(AUDIO_TRACKS[idx].id);
-    audioIsPlaying = true;
-    audioPlayBtn.textContent = '⏸';
 }
 
 // Called automatically by the YouTube IFrame API once the script loads
@@ -532,9 +547,7 @@ window.onYouTubeIframeAPIReady = function () {
     ytPlayer = new YT.Player('youtube-player', {
         height: '120',
         width: '200',
-        videoId: AUDIO_TRACKS[0].id,
         playerVars: {
-            autoplay: 1,
             controls: 0,
             modestbranding: 1,
             rel: 0,
@@ -544,13 +557,16 @@ window.onYouTubeIframeAPIReady = function () {
             onReady(e) {
                 ytReady = true;
                 if (pendingTrackIdx !== null) {
-                    e.target.loadVideoById(AUDIO_TRACKS[pendingTrackIdx].id);
+                    if (pendingAutoplay) {
+                        e.target.loadVideoById(AUDIO_TRACKS[pendingTrackIdx].id);
+                    } else {
+                        e.target.cueVideoById(AUDIO_TRACKS[pendingTrackIdx].id);
+                    }
                     pendingTrackIdx = null;
+                    pendingAutoplay = false;
                 } else {
-                    e.target.playVideo();
+                    e.target.cueVideoById(AUDIO_TRACKS[currentTrackIdx].id);
                 }
-                audioIsPlaying  = true;
-                audioPlayBtn.textContent = '⏸';
             },
             onStateChange(e) {
                 if (e.data === YT.PlayerState.PLAYING) {
@@ -575,15 +591,15 @@ window.onYouTubeIframeAPIReady = function () {
     document.head.appendChild(tag);
 }());
 
-// Mark audio system as ready and load the default track for the active theme
+// Mark audio system as ready and cue the default track for the active theme (no autoplay)
 window.audioSystemReady = true;
 const _initMode = localStorage.getItem('visualMode') || 'standard';
-loadTrack(visualModes[_initMode].defaultTrack);
+cueTrack(visualModes[_initMode].defaultTrack);
 
-// Track list clicks
+// Track list clicks → load and play
 audioTrackEls.forEach((el, i) => el.addEventListener('click', () => loadTrack(i)));
 
-// Prev / Play-Pause / Next buttons
+// Prev / Next → load and play
 document.getElementById('audio-prev').addEventListener('click', () => {
     loadTrack((currentTrackIdx - 1 + AUDIO_TRACKS.length) % AUDIO_TRACKS.length);
 });
@@ -592,9 +608,10 @@ document.getElementById('audio-next').addEventListener('click', () => {
     loadTrack((currentTrackIdx + 1) % AUDIO_TRACKS.length);
 });
 
+// Play/Pause → read state directly from the player (never stale)
 audioPlayBtn.addEventListener('click', () => {
     if (!ytPlayer || !ytReady) return;
-    if (audioIsPlaying) {
+    if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
         ytPlayer.pauseVideo();
     } else {
         ytPlayer.playVideo();

@@ -501,22 +501,42 @@ let audioIsPlaying  = false;
 let pendingTrackIdx = null;
 let pendingAutoplay = false;
 
-const ytContainer    = document.getElementById('yt-container');
-const audioPlayBtn   = document.getElementById('audio-play');
-const audioTrackEls  = Array.from(document.querySelectorAll('.audio-track'));
+const ytContainer     = document.getElementById('yt-container');
+const audioPlayBtn    = document.getElementById('audio-play');
+const audioTrackLabel = document.getElementById('audio-track-label');
 
-function setActiveTrack(idx) {
+function scrollTrackLabel(idx, direction) {
+    const newLabel = AUDIO_TRACKS[idx].label;
+    if (!audioTrackLabel) return;
+    if (direction === 'none') {
+        audioTrackLabel.textContent = newLabel;
+        return;
+    }
+
+    const outX = direction === 'next' ? '-100%' : '100%';
+    const inX  = direction === 'next' ? '100%'  : '-100%';
+
+    audioTrackLabel.style.transition = 'transform 0.22s ease';
+    audioTrackLabel.style.transform  = `translateX(${outX})`;
+
+    setTimeout(() => {
+        audioTrackLabel.style.transition = 'none';
+        audioTrackLabel.style.transform  = `translateX(${inX})`;
+        audioTrackLabel.textContent = newLabel;
+        audioTrackLabel.getBoundingClientRect(); // force reflow
+        audioTrackLabel.style.transition = 'transform 0.22s ease';
+        audioTrackLabel.style.transform  = 'translateX(0)';
+    }, 220);
+}
+
+function setActiveTrack(idx, direction = 'none') {
+    scrollTrackLabel(idx, direction);
     currentTrackIdx = idx;
-    audioTrackEls.forEach((el, i) => {
-        const indicator = el.querySelector('.audio-track-indicator');
-        el.classList.toggle('active', i === idx);
-        indicator.textContent = i === idx ? '▶' : '\u00a0';
-    });
 }
 
 // Cue a track (loads it ready-to-play but stays paused)
-function cueTrack(idx) {
-    setActiveTrack(idx);
+function cueTrack(idx, direction = 'none') {
+    setActiveTrack(idx, direction);
     ytContainer.classList.add('visible');
 
     if (!ytReady || !ytPlayer) {
@@ -529,8 +549,8 @@ function cueTrack(idx) {
 }
 
 // Load and immediately play a track
-function loadTrack(idx) {
-    setActiveTrack(idx);
+function loadTrack(idx, direction = 'none') {
+    setActiveTrack(idx, direction);
     ytContainer.classList.add('visible');
 
     if (!ytReady || !ytPlayer) {
@@ -577,7 +597,7 @@ window.onYouTubeIframeAPIReady = function () {
                     audioPlayBtn.textContent = '▶';
                 }
                 if (e.data === YT.PlayerState.ENDED) {
-                    loadTrack((currentTrackIdx + 1) % AUDIO_TRACKS.length);
+                    loadTrack((currentTrackIdx + 1) % AUDIO_TRACKS.length, 'next');
                 }
             }
         }
@@ -596,16 +616,13 @@ window.audioSystemReady = true;
 const _initMode = localStorage.getItem('visualMode') || 'standard';
 cueTrack(visualModes[_initMode].defaultTrack);
 
-// Track list clicks → load and play
-audioTrackEls.forEach((el, i) => el.addEventListener('click', () => loadTrack(i)));
-
-// Prev / Next → load and play
+// Prev / Next → load and play with directional scroll
 document.getElementById('audio-prev').addEventListener('click', () => {
-    loadTrack((currentTrackIdx - 1 + AUDIO_TRACKS.length) % AUDIO_TRACKS.length);
+    loadTrack((currentTrackIdx - 1 + AUDIO_TRACKS.length) % AUDIO_TRACKS.length, 'prev');
 });
 
 document.getElementById('audio-next').addEventListener('click', () => {
-    loadTrack((currentTrackIdx + 1) % AUDIO_TRACKS.length);
+    loadTrack((currentTrackIdx + 1) % AUDIO_TRACKS.length, 'next');
 });
 
 // Play/Pause → read state directly from the player (never stale)

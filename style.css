@@ -973,7 +973,7 @@ body.mode-neon .corner-decoration::after {
 body.mode-neon #arrow {
     fill: #ffff00;
     filter: drop-shadow(0 0 8px #ffff00) drop-shadow(0 0 16px rgba(255, 255, 0, 0.5));
-    transition: transform 1.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.mode-neon .nav-link.active .nav-icon {

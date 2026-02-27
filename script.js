@@ -70,7 +70,7 @@ function drawTrailPath(fromSection, toSection) {
     group._timeouts = [];
 
     // Spread spawns across the arrow's CSS transition (500ms normal, 650ms cyber)
-    const TRAVEL_MS   = isCyber ? 1248 : 480;
+    const TRAVEL_MS   = isCyber ? 624 : 480;
     const DOT_STAGGER = TRAVEL_MS / TRAIL_DOTS;
 
     // Travel angle for orienting trail arrows in cyber mode
@@ -188,14 +188,14 @@ function triggerMinimapFlash() {
     if (!document.body.classList.contains('mode-neon') || !minimapFlashBg) return;
     // Instant green burst
     minimapFlashBg.style.transition = 'none';
-    minimapFlashBg.setAttribute('opacity', '0.5');
-    minimapFlashBg.style.opacity = '0.5';
+    minimapFlashBg.setAttribute('opacity', '1');
+    minimapFlashBg.style.opacity = '1';
     // Fade out after arrow finishes travelling (0.65s)
     setTimeout(() => {
         minimapFlashBg.style.transition = 'opacity 0.3s ease';
         minimapFlashBg.setAttribute('opacity', '0');
         minimapFlashBg.style.opacity = '0';
-    }, 1300);
+    }, 650);
 }
 
 // Cycling home greeting

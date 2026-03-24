@@ -363,10 +363,23 @@ body.mode-retro .nav-link.active {
     filter: grayscale(20%);
 }
 
+.about-photo {
+    width: 280px;
+    height: auto;
+    object-fit: contain;
+}
+
 .section-content p {
     font-size: 18px;
     line-height: 1.8;
     margin-bottom: 15px;
+    opacity: 0.9;
+}
+
+.section-content ul {
+    padding-left: 2em;
+    font-size: 18px;
+    line-height: 1.8;
     opacity: 0.9;
 }
 

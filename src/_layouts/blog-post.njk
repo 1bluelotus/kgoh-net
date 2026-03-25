@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }} — Keven Goh</title>
+</head>
+<body>
+    <article id="blog-post-content">
+        <div class="blog-post-header">
+            <h3 class="blog-post-title">{{ title }}</h3>
+            <div class="blog-post-meta">
+                <span>{{ date | blogDate }}</span>
+                <span class="meta-divider">//</span>
+                <span>WRITTEN BY KEVEN GOH</span>
+                {% if extra_meta %}<span class="meta-divider">//</span>
+                <span>{{ extra_meta }}</span>{% endif %}
+            </div>
+        </div>
+        <div class="blog-post-body">
+            {{ content | safe }}
+        </div>
+    </article>
+    <script>
+        (function () {
+            var slug = "{{ page.fileSlug }}";
+            window.location.replace("/?post=" + slug);
+        })();
+    </script>
+</body>
+</html>

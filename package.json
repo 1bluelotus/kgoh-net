@@ -1,0 +1,25 @@
+{
+  "name": "kgoh-net-fresh",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "build": "eleventy",
+    "dev": "eleventy --serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1bluelotus/kgoh-net.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/1bluelotus/kgoh-net/issues"
+  },
+  "homepage": "https://github.com/1bluelotus/kgoh-net#readme",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.5"
+  }
+}

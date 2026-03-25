@@ -879,6 +879,120 @@ body.mode-retro .nav-link.active {
 
 /* Target Lock Indicator */
 
+/* Blog Overlay */
+.blog-overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.blog-overlay-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.blog-overlay-panel {
+    position: relative;
+    background: var(--panel-bg);
+    border: var(--border-width) solid var(--border-color);
+    backdrop-filter: blur(10px);
+    max-width: 700px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 40px 36px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.blog-overlay-backdrop.visible .blog-overlay-panel {
+    transform: translateY(0);
+}
+
+.blog-overlay-close {
+    position: sticky;
+    top: 0;
+    float: right;
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--accent-color);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    cursor: pointer;
+    z-index: 1;
+    transition: background 0.2s ease;
+}
+
+.blog-overlay-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.blog-overlay-content .blog-post-header {
+    margin-bottom: 28px;
+}
+
+.blog-overlay-content .blog-post-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--heading-color);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.blog-overlay-content .blog-post-meta {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--accent-color);
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.blog-overlay-content .blog-post-meta .meta-divider {
+    margin: 0 8px;
+    opacity: 0.5;
+}
+
+.blog-overlay-content .blog-post-body {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text-color);
+}
+
+.blog-overlay-content .blog-post-body p {
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 18px;
+    opacity: 0.9;
+}
+
+.blog-overlay-content .blog-post-body blockquote.blog-dialogue {
+    margin: 24px 0;
+    padding: 16px 20px;
+    border-left: 2px solid var(--accent-color);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.blog-overlay-content .blog-post-body blockquote.blog-dialogue p {
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.blog-overlay-content .blog-post-body blockquote.blog-dialogue p:last-child {
+    margin-bottom: 0;
+}
+
 /* Retro Mode Overlays */
 .retro-overlay {
     position: fixed;
@@ -930,6 +1044,10 @@ body.mode-retro .status-bar {
     box-shadow: 0 0 10px #33ff33;
 }
 
+body.mode-retro .blog-overlay-panel {
+    box-shadow: 0 0 10px #33ff33;
+}
+
 body.mode-neon {
     --text-color:    #00f5ff;
     --heading-color: #ffff00;
@@ -950,6 +1068,10 @@ body.mode-neon .minimap-container,
 body.mode-neon .weather-panel,
 body.mode-neon .display-mode,
 body.mode-neon .status-bar {
+    box-shadow: 0 0 12px #ff006e, 0 0 28px rgba(255, 0, 110, 0.4);
+}
+
+body.mode-neon .blog-overlay-panel {
     box-shadow: 0 0 12px #ff006e, 0 0 28px rgba(255, 0, 110, 0.4);
 }
 

@@ -479,42 +479,89 @@ applyVisualMode(localStorage.getItem('visualMode') || 'standard');
 
 vmBtns.forEach(btn => btn.addEventListener('click', () => applyVisualMode(btn.dataset.mode)));
 
-// Blog expand / collapse
-function expandPost(article) {
-    const full = article.querySelector('.blog-full-content');
-    full.style.height = full.scrollHeight + 'px';
-    full.style.opacity = '1';
-    article.classList.add('expanded');
-    full.addEventListener('transitionend', () => {
-        if (article.classList.contains('expanded')) {
-            full.style.height = 'auto';
-        }
-    }, { once: true });
+// Blog overlay
+const blogBackdrop = document.getElementById('blog-overlay-backdrop');
+const blogPanel    = document.getElementById('blog-overlay-panel');
+const blogContent  = document.getElementById('blog-overlay-content');
+const blogCloseBtn = document.getElementById('blog-overlay-close');
+let blogOverlayOpen = false;
+
+function openBlogOverlay(slug) {
+    blogContent.innerHTML = '<p style="opacity:0.5">LOADING...</p>';
+    blogBackdrop.hidden = false;
+    blogBackdrop.offsetHeight;
+    blogBackdrop.classList.add('visible');
+    blogOverlayOpen = true;
+    document.body.style.overflow = 'hidden';
+
+    fetch('/blog/' + slug + '/')
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            var article = doc.getElementById('blog-post-content');
+            blogContent.innerHTML = article ? article.innerHTML : '<p>Post not found.</p>';
+        })
+        .catch(function () {
+            blogContent.innerHTML = '<p>Failed to load post.</p>';
+        });
+
+    history.pushState({ post: slug }, '', '/blog/' + slug + '/');
 }
 
-function collapsePost(article) {
-    const full = article.querySelector('.blog-full-content');
-    full.style.height = full.scrollHeight + 'px';
-    full.offsetHeight; // force reflow
-    full.style.height = '0';
-    full.style.opacity = '0';
-    article.classList.remove('expanded');
+function closeBlogOverlay() {
+    if (!blogOverlayOpen) return;
+    blogBackdrop.classList.remove('visible');
+    blogOverlayOpen = false;
+    document.body.style.overflow = '';
+    setTimeout(function () {
+        blogBackdrop.hidden = true;
+        blogContent.innerHTML = '';
+    }, 300);
+    history.pushState({}, '', '/');
 }
 
-document.querySelectorAll('.blog-expand-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const article = document.getElementById(btn.dataset.target);
-        expandPost(article);
+blogCloseBtn.addEventListener('click', closeBlogOverlay);
+
+blogBackdrop.addEventListener('click', function (e) {
+    if (e.target === blogBackdrop) closeBlogOverlay();
+});
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && blogOverlayOpen) closeBlogOverlay();
+});
+
+window.addEventListener('popstate', function (e) {
+    if (e.state && e.state.post) {
+        openBlogOverlay(e.state.post);
+    } else if (blogOverlayOpen) {
+        blogBackdrop.classList.remove('visible');
+        blogOverlayOpen = false;
+        document.body.style.overflow = '';
+        setTimeout(function () {
+            blogBackdrop.hidden = true;
+            blogContent.innerHTML = '';
+        }, 300);
+    }
+});
+
+document.querySelectorAll('.blog-expand-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        openBlogOverlay(btn.dataset.slug);
     });
 });
 
-document.querySelectorAll('.blog-collapse-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const article = document.getElementById(btn.dataset.target);
-        collapsePost(article);
-        article.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-});
+// Handle direct URL navigation via ?post= query param
+(function () {
+    var params = new URLSearchParams(window.location.search);
+    var slug = params.get('post');
+    if (slug) {
+        // Navigate to the blog section first
+        var blogLink = document.querySelector('.nav-link[data-section="blog"]');
+        if (blogLink) blogLink.click();
+        // Small delay to let the section switch, then open overlay
+        setTimeout(function () { openBlogOverlay(slug); }, 100);
+    }
+})();
 
 // ========================
 // Audio System — YouTube

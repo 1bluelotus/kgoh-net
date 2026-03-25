@@ -1,0 +1,22 @@
+---
+permalink: /404.html
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <script>
+        (function () {
+            var path = window.location.pathname;
+            var match = path.match(/^\/blog\/([^/]+)/);
+            if (match) {
+                window.location.replace('/?post=' + match[1]);
+            } else {
+                window.location.replace('/');
+            }
+        })();
+    </script>
+</head>
+<body></body>
+</html>

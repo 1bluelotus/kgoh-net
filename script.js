@@ -544,9 +544,9 @@ window.addEventListener('popstate', function (e) {
     }
 });
 
-document.querySelectorAll('.blog-expand-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-        openBlogOverlay(btn.dataset.slug);
+document.querySelectorAll('.blog-card').forEach(function (card) {
+    card.addEventListener('click', function () {
+        openBlogOverlay(card.dataset.slug);
     });
 });
 

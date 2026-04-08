@@ -262,26 +262,13 @@ permalink: /index.html
                     <h2>BLOG</h2>
                     <div class="header-line"></div>
                 </div>
-                <div class="section-content">
+                <div class="blog-card-grid">
                     {% set posts = collections.blog %}
                     {% for post in posts %}
-                    {% if not loop.first %}<div class="blog-divider"></div>{% endif %}
-
-                    <article class="blog-post">
-                        <div class="blog-preview">
-                            <div class="blog-post-header">
-                                <h3 class="blog-post-title">{{ post.data.title }}</h3>
-                                <div class="blog-post-meta">
-                                    <span>{{ post.data.date | blogDate }}</span>
-                                    <span class="meta-divider">//</span>
-                                    <span>WRITTEN BY KEVEN GOH</span>
-                                    {% if post.data.extra_meta %}<span class="meta-divider">//</span>
-                                    <span>{{ post.data.extra_meta }}</span>{% endif %}
-                                </div>
-                            </div>
-                            <p class="blog-excerpt">{{ post.data.excerpt }}</p>
-                            <button class="blog-expand-btn" data-slug="{{ post.fileSlug }}">[ READ MORE ▼ ]</button>
-                        </div>
+                    <article class="blog-card" data-slug="{{ post.fileSlug }}">
+                        <span class="blog-card-date">{{ post.data.date | blogDate }}</span>
+                        <h3 class="blog-card-title">{{ post.data.title }}</h3>
+                        <button class="blog-card-btn" data-slug="{{ post.fileSlug }}">[ READ MORE ▼ ]</button>
                     </article>
                     {% endfor %}
                 </div>

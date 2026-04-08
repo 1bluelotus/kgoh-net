@@ -198,18 +198,6 @@ function triggerMinimapFlash() {
     }, 650);
 }
 
-// Cycling home greeting
-const GREETINGS = ["HI, I'M KEVEN.", "MY NAME'S KEVEN!", "YO! IT'S KEVEN."];
-
-function updateGreeting(advance = true) {
-    const el = document.getElementById('home-greeting');
-    if (!el) return;
-    const idx = parseInt(localStorage.getItem('greetingIndex') || '0');
-    el.textContent = GREETINGS[idx];
-    if (advance) localStorage.setItem('greetingIndex', (idx + 1) % GREETINGS.length);
-}
-
-updateGreeting();
 
 navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
@@ -253,7 +241,6 @@ navLinks.forEach(link => {
             }
         });
 
-        if (sectionId === 'home') updateGreeting();
     });
 
     link.addEventListener('mouseenter', () => {

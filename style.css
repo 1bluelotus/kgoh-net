@@ -405,7 +405,7 @@ body.mode-retro .nav-link.active {
 
 .blog-card:hover {
     border-color: var(--accent-color);
-    box-shadow: 0 0 16px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 14px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.2);
 }
 
 .blog-card-date {
@@ -492,7 +492,7 @@ body.mode-retro .nav-link.active {
 
 .project-card:hover {
     border-color: var(--accent-color);
-    box-shadow: 0 0 16px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 14px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.2);
 }
 
 .project-card-title {
@@ -858,7 +858,6 @@ body.mode-retro .nav-link.active {
 .weapon-slot:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
 }
 
 .weapon-slot::before {
@@ -1090,6 +1089,15 @@ body.mode-retro .status-bar {
     box-shadow: 0 0 10px #33ff33;
 }
 
+body.mode-retro .nav-panel:hover,
+body.mode-retro .minimap-container:hover,
+body.mode-retro .weather-panel:hover,
+body.mode-retro .display-mode:hover,
+body.mode-retro .audio-panel:hover,
+body.mode-retro .weapon-slot:hover {
+    box-shadow: 0 0 18px #33ff33, 0 0 36px rgba(51, 255, 51, 0.3);
+}
+
 body.mode-retro .blog-card,
 body.mode-retro .project-card {
     box-shadow: none;
@@ -1097,7 +1105,7 @@ body.mode-retro .project-card {
 
 body.mode-retro .blog-card:hover,
 body.mode-retro .project-card:hover {
-    box-shadow: 0 0 12px #33ff33;
+    box-shadow: 0 0 18px #33ff33, 0 0 36px rgba(51, 255, 51, 0.3);
 }
 
 body.mode-retro .blog-overlay-panel {
@@ -1357,14 +1365,25 @@ body.mode-neon .nav-link.active .nav-icon {
     100% { box-shadow: 0 0 0 transparent; }
 }
 
+/* Standard theme: cyan glow on hover */
 .nav-panel:hover,
 .minimap-container:hover,
 .weather-panel:hover,
 .display-mode:hover,
 .audio-panel:hover,
-.weapon-slot:hover,
-.blog-card:hover,
-.project-card:hover {
+.weapon-slot:hover {
+    box-shadow: 0 0 14px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.2);
+}
+
+/* Neon / Cyberpsycho: keep the chromatic aberration glitch */
+body.mode-neon .nav-panel:hover,
+body.mode-neon .minimap-container:hover,
+body.mode-neon .weather-panel:hover,
+body.mode-neon .display-mode:hover,
+body.mode-neon .audio-panel:hover,
+body.mode-neon .weapon-slot:hover,
+body.mode-neon .blog-card:hover,
+body.mode-neon .project-card:hover {
     animation: glitch 0.3s ease-out;
 }
 

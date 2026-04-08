@@ -474,6 +474,76 @@ body.mode-retro .nav-link.active {
     margin-bottom: 0;
 }
 
+/* Project Card Grid */
+.project-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.project-card {
+    background: var(--panel-bg);
+    border: var(--border-width) solid var(--border-color);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.project-card:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.15);
+}
+
+.project-card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--heading-color);
+    padding-bottom: 16px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.project-card-desc {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    line-height: 1.8;
+    opacity: 0.8;
+    flex: 1;
+    margin-bottom: 24px;
+}
+
+.project-card-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.project-card-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 7px 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.project-card:hover .project-card-btn {
+    border-color: var(--accent-color);
+}
+
+.project-card-btn:hover {
+    background: var(--border-color);
+    color: var(--page-bg);
+}
+
 /* Masonry Photo Grid */
 .masonry-grid {
     columns: 2;
@@ -1020,11 +1090,13 @@ body.mode-retro .status-bar {
     box-shadow: 0 0 10px #33ff33;
 }
 
-body.mode-retro .blog-card {
+body.mode-retro .blog-card,
+body.mode-retro .project-card {
     box-shadow: none;
 }
 
-body.mode-retro .blog-card:hover {
+body.mode-retro .blog-card:hover,
+body.mode-retro .project-card:hover {
     box-shadow: 0 0 12px #33ff33;
 }
 
@@ -1055,11 +1127,13 @@ body.mode-neon .status-bar {
     box-shadow: 0 0 12px #ff006e, 0 0 28px rgba(255, 0, 110, 0.4);
 }
 
-body.mode-neon .blog-card {
+body.mode-neon .blog-card,
+body.mode-neon .project-card {
     box-shadow: 0 0 6px rgba(255, 0, 110, 0.2);
 }
 
-body.mode-neon .blog-card:hover {
+body.mode-neon .blog-card:hover,
+body.mode-neon .project-card:hover {
     box-shadow: 0 0 14px #ff006e, 0 0 30px rgba(255, 0, 110, 0.4);
 }
 
@@ -1130,6 +1204,10 @@ body.mode-neon .nav-link.active .nav-icon {
     .blog-card {
         width: 100%;
         max-width: 340px;
+    }
+
+    .project-card-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1285,7 +1363,8 @@ body.mode-neon .nav-link.active .nav-icon {
 .display-mode:hover,
 .audio-panel:hover,
 .weapon-slot:hover,
-.blog-card:hover {
+.blog-card:hover,
+.project-card:hover {
     animation: glitch 0.3s ease-out;
 }
 

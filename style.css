@@ -509,7 +509,7 @@ body.mode-retro .nav-link.active {
 
 .project-card-desc {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.8;
     opacity: 0.8;
     flex: 1;

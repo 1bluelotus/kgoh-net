@@ -495,6 +495,13 @@ body.mode-retro .nav-link.active {
     box-shadow: 0 0 14px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.2);
 }
 
+.project-card-img {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
 .project-card-title {
     font-family: 'Orbitron', sans-serif;
     font-size: 20px;

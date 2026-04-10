@@ -503,6 +503,16 @@ body.mode-retro .nav-link.active {
     margin-bottom: 20px;
 }
 
+.project-card-embed {
+    margin-bottom: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.project-card-embed iframe {
+    display: block;
+}
+
 .project-card-title {
     font-family: 'Orbitron', sans-serif;
     font-size: 20px;

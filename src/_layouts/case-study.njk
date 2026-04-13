@@ -30,20 +30,20 @@
 
             <div class="cs-meta-panel">
                 <div class="cs-meta-item">
-                    <span class="cs-meta-key">COMPANY</span>
-                    <span class="cs-meta-val">{{ company }}</span>
+                    <span class="cs-meta-key">{{ meta_label_1 | default("COMPANY") }}</span>
+                    <span class="cs-meta-val">{{ meta_val_1 | default(company) }}</span>
                 </div>
                 <div class="cs-meta-item">
-                    <span class="cs-meta-key">ROLE</span>
-                    <span class="cs-meta-val">{{ role }}</span>
+                    <span class="cs-meta-key">{{ meta_label_2 | default("ROLE") }}</span>
+                    <span class="cs-meta-val">{{ meta_val_2 | default(role) }}</span>
                 </div>
                 <div class="cs-meta-item">
-                    <span class="cs-meta-key">PLATFORMS</span>
-                    <span class="cs-meta-val">{{ platforms }}</span>
+                    <span class="cs-meta-key">{{ meta_label_3 | default("PLATFORMS") }}</span>
+                    <span class="cs-meta-val">{{ meta_val_3 | default(platforms) }}</span>
                 </div>
                 <div class="cs-meta-item">
-                    <span class="cs-meta-key">LAUNCHED</span>
-                    <span class="cs-meta-val">{{ launched }}</span>
+                    <span class="cs-meta-key">{{ meta_label_4 | default("LAUNCHED") }}</span>
+                    <span class="cs-meta-val">{{ meta_val_4 | default(launched) }}</span>
                 </div>
             </div>
 

@@ -1209,6 +1209,226 @@ body.mode-neon .nav-link.active .nav-icon {
 }
 
 
+/* ===== Case Study Page ===== */
+.case-study-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.cs-topbar {
+    position: fixed;
+    top: 40px;
+    left: 40px;
+    z-index: 100;
+}
+
+.cs-back-link {
+    display: inline-block;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+    text-decoration: none;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    padding: 10px 16px;
+    backdrop-filter: blur(10px);
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.cs-back-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent-color);
+}
+
+.cs-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 80px 40px 60px;
+}
+
+.cs-article {
+    max-width: 720px;
+    width: 100%;
+}
+
+.cs-header {
+    margin-bottom: 40px;
+}
+
+.cs-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 42px;
+    letter-spacing: 4px;
+    color: var(--heading-color);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.cs-header .header-line {
+    margin-bottom: 20px;
+}
+
+.cs-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    line-height: 1.7;
+    opacity: 0.8;
+}
+
+.cs-meta-panel {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border-color);
+    border: var(--border-width) solid var(--border-color);
+    margin-bottom: 48px;
+}
+
+.cs-meta-item {
+    background: var(--panel-bg);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cs-meta-key {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    opacity: 0.5;
+}
+
+.cs-meta-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--accent-color);
+    letter-spacing: 1px;
+}
+
+.cs-body h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--heading-color);
+    text-transform: uppercase;
+    margin-top: 48px;
+    margin-bottom: 8px;
+}
+
+.cs-body h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+}
+
+.cs-body p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    line-height: 1.9;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+.cs-body strong {
+    color: var(--heading-color);
+    font-weight: 700;
+}
+
+.cs-body hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 48px 0;
+    opacity: 0.4;
+}
+
+.cs-body blockquote {
+    margin: 28px 0;
+    padding: 20px 24px;
+    border-left: 3px solid var(--accent-color);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.cs-body blockquote p {
+    font-style: italic;
+    opacity: 0.85;
+    margin-bottom: 0;
+}
+
+.cs-body ul {
+    padding-left: 1.5em;
+    margin-bottom: 20px;
+}
+
+.cs-body ul li {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    line-height: 1.9;
+    opacity: 0.9;
+    margin-bottom: 6px;
+}
+
+.cs-img-placeholder {
+    width: 100%;
+    min-height: 280px;
+    border: 2px dashed var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 32px 0;
+    opacity: 0.35;
+    position: relative;
+}
+
+.cs-img-placeholder::after {
+    content: attr(data-label);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-color);
+}
+
+.cs-ext-link {
+    display: inline-block;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+    text-decoration: none;
+    border: 1px solid var(--accent-color);
+    padding: 10px 20px;
+    margin-top: 8px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.cs-ext-link:hover {
+    background: var(--accent-color);
+    color: var(--page-bg);
+}
+
+.cs-footer {
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    opacity: 0.6;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .content {
@@ -1237,15 +1457,49 @@ body.mode-neon .nav-link.active .nav-icon {
     }
 }
 
+/* Case study responsive */
+@media (max-width: 1024px) {
+    .cs-meta-panel {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 /* Mobile overlay — hidden on desktop */
 #mobile-overlay {
     display: none;
 }
 
 @media (max-width: 768px) {
-    /* Hide the entire site and show the overlay instead */
-    body > *:not(#mobile-overlay) {
+    /* Hide the entire site and show the overlay instead (main portfolio only) */
+    body:not(.case-study-page) > *:not(#mobile-overlay) {
         display: none !important;
+    }
+
+    .case-study-page .cs-main {
+        padding: 70px 20px 40px;
+    }
+
+    .case-study-page .cs-topbar {
+        top: 16px;
+        left: 16px;
+    }
+
+    .case-study-page .cs-back-link {
+        font-size: 10px;
+        padding: 8px 12px;
+    }
+
+    .case-study-page .cs-title {
+        font-size: 26px;
+        letter-spacing: 2px;
+    }
+
+    .case-study-page .cs-meta-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .case-study-page .cs-body h2 {
+        font-size: 22px;
     }
 
     #mobile-overlay {

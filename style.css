@@ -1270,7 +1270,7 @@ body.mode-neon .nav-link.active .nav-icon {
 
 .resume-contact a {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
+    font-size: 15px;
     color: var(--accent-color);
     text-decoration: none;
     letter-spacing: 0.5px;
@@ -1294,7 +1294,7 @@ body.mode-neon .nav-link.active .nav-icon {
 
 .resume-section-label {
     font-family: 'Orbitron', sans-serif;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 3px;
     color: var(--accent-color);
@@ -1303,11 +1303,11 @@ body.mode-neon .nav-link.active .nav-icon {
 
 .resume-skills-grid {
     display: grid;
-    grid-template-columns: 110px 1fr;
+    grid-template-columns: 120px 1fr;
     gap: 6px 14px;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 16px;
+    line-height: 1.7;
 }
 
 .resume-sk-label {
@@ -1332,7 +1332,7 @@ body.mode-neon .nav-link.active .nav-icon {
 
 .resume-entry-title {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 700;
     color: var(--heading-color);
 }
@@ -1348,7 +1348,7 @@ body.mode-neon .nav-link.active .nav-icon {
 
 .resume-entry-date {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
+    font-size: 14px;
     color: var(--accent-color);
     white-space: nowrap;
     letter-spacing: 0.5px;
@@ -1356,7 +1356,7 @@ body.mode-neon .nav-link.active .nav-icon {
 
 .resume-entry-org {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
+    font-size: 15px;
     color: var(--text-color);
     opacity: 0.6;
     margin-top: 2px;
@@ -1370,8 +1370,8 @@ body.mode-neon .nav-link.active .nav-icon {
 
 .resume-bullets li {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    line-height: 1.7;
+    font-size: 16px;
+    line-height: 1.8;
     margin-bottom: 4px;
     opacity: 0.85;
 }
@@ -1384,7 +1384,7 @@ body.mode-neon .nav-link.active .nav-icon {
 
 .resume-entry-links a {
     font-family: 'Orbitron', sans-serif;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 1px;
     color: var(--accent-color);
     text-decoration: none;
@@ -1397,11 +1397,31 @@ body.mode-neon .nav-link.active .nav-icon {
 
 .resume-patent-note {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
+    font-size: 15px;
     line-height: 1.7;
     color: var(--text-color);
     opacity: 0.6;
     margin-top: 4px;
+}
+
+.resume-pdf-btn {
+    display: block;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text-color);
+    text-decoration: none;
+    border: 1px solid var(--border-color);
+    padding: 10px 20px;
+    margin-top: 8px;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.resume-pdf-btn:hover {
+    background: var(--border-color);
+    color: var(--page-bg);
 }
 
 /* ===== Case Study Page ===== */

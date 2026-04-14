@@ -6,6 +6,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "shamcheck-screenshot.png": "shamcheck-screenshot.png" });
     eleventyConfig.addPassthroughCopy({ "yamamoto-editorial.png": "yamamoto-editorial.png" });
     eleventyConfig.addPassthroughCopy({ "graphyte-photo.png": "graphyte-photo.png" });
+    eleventyConfig.addPassthroughCopy({ "keven-goh-resume.pdf": "keven-goh-resume.pdf" });
     eleventyConfig.addPassthroughCopy({ "photos": "photos" });
     eleventyConfig.addPassthroughCopy({ "CNAME": "CNAME" });
 

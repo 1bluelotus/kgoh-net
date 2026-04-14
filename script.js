@@ -241,6 +241,7 @@ navLinks.forEach(link => {
             }
         });
 
+        window.history.pushState(null, null, `#${sectionId}`);
     });
 
     link.addEventListener('mouseenter', () => {
@@ -417,6 +418,12 @@ window.addEventListener('load', () => {
         document.body.style.transition = 'opacity 0.5s ease';
         document.body.style.opacity = '1';
     }, 100);
+
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+        const targetLink = document.querySelector(`.nav-link[data-section="${hash}"]`);
+        if (targetLink) targetLink.click();
+    }
 });
 
 // Visual Mode Selector
@@ -504,7 +511,7 @@ function closeBlogOverlay() {
         blogBackdrop.hidden = true;
         blogContent.innerHTML = '';
     }, 300);
-    history.pushState({}, '', '/');
+    history.pushState(null, null, `#${currentSection}`);
 }
 
 blogCloseBtn.addEventListener('click', closeBlogOverlay);
@@ -528,6 +535,12 @@ window.addEventListener('popstate', function (e) {
             blogBackdrop.hidden = true;
             blogContent.innerHTML = '';
         }, 300);
+    }
+
+    var hash = window.location.hash.slice(1);
+    if (hash) {
+        var targetLink = document.querySelector('.nav-link[data-section="' + hash + '"]');
+        if (targetLink) targetLink.click();
     }
 });
 

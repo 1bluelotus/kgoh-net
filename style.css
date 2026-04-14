@@ -251,7 +251,7 @@ body.mode-retro .nav-link.active {
 .content {
     margin-left: 260px;
     margin-top: 0;
-    margin-right: 250px;
+    margin-right: 260px;
     margin-bottom: 80px;
     padding: 40px;
     position: relative;
@@ -474,7 +474,19 @@ body.mode-retro .nav-link.active {
     margin-bottom: 0;
 }
 
-/* Project Card Grid */
+/* Featured Project Grid */
+.project-featured-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.project-featured-single {
+    margin-bottom: 30px;
+}
+
+/* Project Card Grid (masonry for remaining cards) */
 .project-card-grid {
     columns: 2;
     column-gap: 30px;
@@ -1244,6 +1256,154 @@ body.mode-neon .nav-link.active .nav-icon {
 }
 
 
+/* ===== Resume ===== */
+.resume-wrap {
+    max-width: 680px;
+}
+
+.resume-contact {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+
+.resume-contact a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--accent-color);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s ease;
+}
+
+.resume-contact a:hover {
+    opacity: 0.7;
+}
+
+.resume-divider {
+    height: 1px;
+    background: var(--border-color);
+    opacity: 0.3;
+    margin: 20px 0;
+}
+
+.resume-section {
+    margin-bottom: 4px;
+}
+
+.resume-section-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--accent-color);
+    margin-bottom: 14px;
+}
+
+.resume-skills-grid {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 6px 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.resume-sk-label {
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+.resume-entry {
+    margin-bottom: 18px;
+}
+
+.resume-entry:last-child {
+    margin-bottom: 0;
+}
+
+.resume-entry-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.resume-entry-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--heading-color);
+}
+
+.resume-link {
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.resume-link:hover {
+    opacity: 0.7;
+}
+
+.resume-entry-date {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--accent-color);
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+}
+
+.resume-entry-org {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--text-color);
+    opacity: 0.6;
+    margin-top: 2px;
+    margin-bottom: 4px;
+}
+
+.resume-bullets {
+    padding-left: 18px;
+    margin-top: 6px;
+}
+
+.resume-bullets li {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 4px;
+    opacity: 0.85;
+}
+
+.resume-entry-links {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.resume-entry-links a {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.resume-entry-links a:hover {
+    opacity: 0.7;
+}
+
+.resume-patent-note {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-color);
+    opacity: 0.6;
+    margin-top: 4px;
+}
+
 /* ===== Case Study Page ===== */
 .case-study-page {
     display: flex;
@@ -1487,8 +1647,12 @@ body.mode-neon .nav-link.active .nav-icon {
         max-width: 340px;
     }
 
-    .project-card-grid {
+    .project-featured-grid {
         grid-template-columns: 1fr;
+    }
+
+    .project-card-grid {
+        columns: 1;
     }
 }
 

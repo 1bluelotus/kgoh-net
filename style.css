@@ -474,19 +474,7 @@ body.mode-retro .nav-link.active {
     margin-bottom: 0;
 }
 
-/* Featured Project Grid */
-.project-featured-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-    margin-bottom: 30px;
-}
-
-.project-featured-single {
-    margin-bottom: 30px;
-}
-
-/* Project Card Grid (masonry for remaining cards) */
+/* Project Card Grid */
 .project-card-grid {
     columns: 2;
     column-gap: 30px;
@@ -1665,10 +1653,6 @@ body.mode-neon .nav-link.active .nav-icon {
     .blog-card {
         width: 100%;
         max-width: 340px;
-    }
-
-    .project-featured-grid {
-        grid-template-columns: 1fr;
     }
 
     .project-card-grid {

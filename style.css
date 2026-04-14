@@ -562,6 +562,41 @@ body.mode-retro .nav-link.active {
     color: var(--page-bg);
 }
 
+.coming-soon-btn {
+    position: relative;
+    cursor: default;
+    opacity: 0.45;
+}
+
+.coming-soon-btn:hover {
+    background: transparent;
+    color: var(--text-color);
+}
+
+.coming-soon-tag {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+    background: var(--panel-bg);
+    border: 1px solid var(--accent-color);
+    padding: 5px 10px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.coming-soon-btn:hover .coming-soon-tag {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+
 /* Masonry Photo Grid */
 .masonry-grid {
     columns: 2;

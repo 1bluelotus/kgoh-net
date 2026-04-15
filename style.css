@@ -1624,6 +1624,104 @@ body.mode-neon .nav-link.active .nav-icon {
     color: var(--text-color);
 }
 
+.cs-img-wrap {
+    position: relative;
+    margin: 32px 0;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.cs-img-wrap .cs-img {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    display: block;
+    cursor: zoom-in;
+    transition: opacity 0.2s ease;
+}
+
+.cs-img-wrap:hover .cs-img {
+    opacity: 0.85;
+}
+
+.cs-img-wrap[data-caption]::after {
+    content: attr(data-caption);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.55);
+    padding: 5px 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.cs-img-wrap[data-caption]:hover::after {
+    opacity: 1;
+}
+
+.cs-img {
+    width: 100%;
+    margin: 32px 0;
+    border-radius: 8px;
+    transition: opacity 0.2s ease;
+}
+
+.cs-img:hover {
+    opacity: 0.85;
+}
+
+.img-lightbox-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.img-lightbox-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.img-lightbox-close {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--text-color);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    cursor: pointer;
+    z-index: 9001;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.img-lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent-color);
+}
+
+.img-lightbox-img {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+    cursor: zoom-out;
+}
+
 .cs-ext-link {
     display: inline-block;
     font-family: 'Orbitron', sans-serif;

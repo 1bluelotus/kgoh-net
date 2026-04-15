@@ -44,7 +44,8 @@ To bring these categories to life in a way that felt approachable rather than cl
 
 **Chat-based scan interface**
 
-Early designs used a split-pane layout — input on one side, results on the other. In practice this created too much back-and-forth for users, splitting their attention across the screen. The redesign unified the experience into a single chat-based interface where the submission and results occupy the same space. A persistent results summary remains visible without requiring the user to scroll, reducing cognitive load at the moment when users are most uncertain.
+Early explorations tried various input methods for submitting a suspicious message — structured fields, multi-step flows, form-based layouts. All of them had the same problem: they felt like filling out a form. When a user suspects they're being scammed, they're already anxious. Making them work through a structured input process at that moment creates friction at exactly the wrong time.
+The redesign centered on a single insight: just let them paste it. Drop a screenshot into a chat box, get an immediate scan and comprehensive breakdown. No forms, no steps, no decisions to make before they get an answer. Further context is optional, not required. The result is an interaction that matches the emotional state of the user — fast, direct, and low-effort at a high-stress moment.
 
 <div class="cs-img-wrap" data-caption="Clarification system">
 <img src="/shamcheck-clarification.png" alt="ShamCheck clarification system showing scan results and analysis" class="cs-img" />
@@ -53,10 +54,6 @@ Early designs used a split-pane layout — input on one side, results on the oth
 **Clarification system**
 
 The AI surfaces its assumptions about a submitted message and lets users flag any that are incorrect, prompting a re-analysis. Early iterations re-prompted on every individual click, which felt disruptive and slow. The final design lets users address multiple incorrect assumptions at once before resubmitting — reducing friction and keeping the interaction feeling responsive rather than laborious.
-
-**Post-incident recovery flow**
-
-Designed a dedicated page for users who had already engaged with a scam — a scenario the product needed to handle with particular care. The layout used three columns: a conversational AI interface, a dynamically generated incident report, and a toggleable action checklist that appears once a recovery plan is generated. The goal was to give overwhelmed users a structured, step-by-step path forward at a high-stress moment.
 
 ---
 

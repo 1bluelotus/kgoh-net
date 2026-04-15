@@ -24,9 +24,9 @@ The challenge wasn't writing about Yamamoto. It was designing *for* him.
 
 Yohji Yamamoto's work is defined by deconstruction, asymmetry, and a severe monochrome palette. His garments reject conventional beauty in favor of something more unsettling and more honest. Translating that sensibility into print editorial design — a medium with its own conventions around hierarchy, legibility, and flow — was the central tension of the project.
 
-The instinct was to replicate his aesthetic as directly as possible. That instinct was wrong.
-
-<div class="cs-img-placeholder" data-label="Early failed iterations / first attempts at direct replication"></div>
+<div class="cs-img-wrap" data-caption="Spread 2 — Who is Yohji Yamamoto?">
+<img src="/yamamoto-spread2.png" alt="Yamamoto editorial spread 2 — Who is Yohji Yamamoto?" class="cs-img" />
+</div>
 
 ---
 
@@ -38,7 +38,10 @@ The first was Yamamoto himself. Seminal collections — 1977's Y's, the 2003 Y-3
 
 The second was fashion editorial design. I studied the magazines that cover Yamamoto's work — from *Vogue* at the mainstream end to the more avant-garde *System* — paying close attention to layout, hierarchy, and how each publication adapted its visual language to the designer it was featuring. No two issues of *System* look the same. That adaptability was the lesson.
 
-<div class="cs-img-placeholder" data-label="Research reference materials, magazine spreads"></div>
+<div class="cs-img-pair" data-caption="Research reference materials, magazine spreads">
+<img src="/yamamoto-system.png" alt="System magazine cover" class="cs-img" />
+<img src="/yamamoto-vogue.png" alt="Vogue magazine cover" class="cs-img" />
+</div>
 
 ---
 
@@ -56,11 +59,11 @@ The logo development happened almost entirely by hand. Typefaces were printed on
 
 There's something appropriate about using analog methods to design for a man who built a career on the handmade and the imperfect.
 
-<div class="cs-img-placeholder" data-label="Tracing paper sketches, typeface iteration sheets"></div>
+<div class="cs-img-wrap" data-caption="Tracing paper sketches, typeface iteration sheets">
+<img src="/yamamoto-sketches.png" alt="Tracing paper sketches and typeface iteration sheets for Yamamoto logo" class="cs-img" />
+</div>
 
 Once a direction emerged from the sketches, the logo was brought into Illustrator, refined, and presented to stakeholders for approval before the layout work began.
-
-<div class="cs-img-placeholder" data-label="Final approved logo"></div>
 
 ---
 
@@ -74,7 +77,9 @@ Each iteration of the full layout was developed to mid-fidelity in InDesign and 
 
 **Typographic legibility** — font scales were adjusted across multiple rounds to ensure the brutalist aesthetic didn't come at the cost of readability. Yamamoto's work is challenging, but it's never inaccessible.
 
-<div class="cs-img-placeholder" data-label="Layout spreads showing iteration"></div>
+<div class="cs-img-wrap" data-caption="Spread 3 — Y's">
+<img src="/yamamoto-spread3.png" alt="Yamamoto editorial spread 3 — Y's (2018–2023)" class="cs-img" />
+</div>
 
 ---
 
@@ -82,7 +87,13 @@ Each iteration of the full layout was developed to mid-fidelity in InDesign and 
 
 The final product was an 18-page, print-ready editorial layout accepted for publication in *Design Through the Decades*. The brutalist visual language synthesized Yamamoto's deconstructed aesthetic with the demands of the print medium — severe without being illegible, experimental without being self-indulgent.
 
-<div class="cs-img-placeholder" data-label="Final spreads"></div>
+<div class="cs-pdf-embed">
+<iframe src="/yamamoto.pdf" title="Design Through the Decades: Yohji Yamamoto — full editorial PDF"></iframe>
+</div>
+
+<div style="text-align: center">
+<a href="/yamamoto.pdf" target="_blank" class="cs-ext-link">View Full PDF &rarr;</a>
+</div>
 
 ---
 

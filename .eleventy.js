@@ -6,6 +6,10 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "shamcheck-screenshot.png": "shamcheck-screenshot.png" });
     eleventyConfig.addPassthroughCopy({ "yamamoto-editorial.png": "yamamoto-editorial.png" });
     eleventyConfig.addPassthroughCopy({ "graphyte-photo.png": "graphyte-photo.png" });
+    eleventyConfig.addPassthroughCopy({ "shamcheck-scan-interface.png": "shamcheck-scan-interface.png" });
+    eleventyConfig.addPassthroughCopy({ "shamcheck-trading-cards.png": "shamcheck-trading-cards.png" });
+    eleventyConfig.addPassthroughCopy({ "shamcheck-app-store.png": "shamcheck-app-store.png" });
+    eleventyConfig.addPassthroughCopy({ "shamcheck-clarification.png": "shamcheck-clarification.png" });
     eleventyConfig.addPassthroughCopy({ "keven-goh-resume.pdf": "keven-goh-resume.pdf" });
     eleventyConfig.addPassthroughCopy({ "yamamoto.pdf": "yamamoto.pdf" });
     eleventyConfig.addPassthroughCopy({ "photos": "photos" });

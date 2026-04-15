@@ -56,5 +56,52 @@
     <footer class="cs-footer">
         <span>COPYRIGHT &copy; 2026 KEVEN GOH</span>
     </footer>
+
+    <div id="img-lightbox" class="img-lightbox-backdrop" hidden>
+        <button id="img-lightbox-close" class="img-lightbox-close">[ CLOSE ✕ ]</button>
+        <img id="img-lightbox-img" class="img-lightbox-img" src="" alt="" />
+    </div>
+
+    <script>
+    (function () {
+        var backdrop = document.getElementById('img-lightbox');
+        var img = document.getElementById('img-lightbox-img');
+        var closeBtn = document.getElementById('img-lightbox-close');
+        var open = false;
+
+        document.querySelectorAll('.cs-body .cs-img').forEach(function (el) {
+            el.style.cursor = 'zoom-in';
+            el.addEventListener('click', function () {
+                img.src = el.src;
+                img.alt = el.alt;
+                backdrop.hidden = false;
+                backdrop.offsetHeight;
+                backdrop.classList.add('visible');
+                open = true;
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        function close() {
+            if (!open) return;
+            backdrop.classList.remove('visible');
+            open = false;
+            document.body.style.overflow = '';
+            setTimeout(function () {
+                backdrop.hidden = true;
+                img.src = '';
+            }, 300);
+        }
+
+        closeBtn.addEventListener('click', close);
+        img.addEventListener('click', close);
+        backdrop.addEventListener('click', function (e) {
+            if (e.target === backdrop) close();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && open) close();
+        });
+    })();
+    </script>
 </body>
 </html>

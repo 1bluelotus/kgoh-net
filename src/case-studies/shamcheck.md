@@ -14,7 +14,9 @@ ShamCheck lets users submit a suspicious message — via screenshot or text — 
 
 I served as the primary UX contributor on the web product, designing the core interactive components and user flows that the mobile app was later built from. I also owned the mobile app store presence end-to-end — icon design, store copy, screenshots, and submission across iOS and Android.
 
-<div class="cs-img-placeholder" data-label="Core scan interface"></div>
+<div class="cs-img-wrap" data-caption="Core scan interface">
+<img src="/shamcheck-scan-interface.png" alt="ShamCheck core scan interface" class="cs-img" />
+</div>
 
 ---
 
@@ -31,7 +33,9 @@ Early research into the target demographic surfaced a key insight: older users t
 
 To bring these categories to life in a way that felt approachable rather than clinical, I designed an educational feature built around interactive trading cards — one per sham type. The format borrowed from a tactile, collectible reference object that the target demographic already understood intuitively. The result was an educational layer that invited exploration rather than demanding attention.
 
-<div class="cs-img-placeholder" data-label="Trading cards feature"></div>
+<div class="cs-img-wrap" data-caption="Trading cards feature">
+<img src="/shamcheck-trading-cards.png" alt="ShamCheck trading cards feature showing sham type categories" class="cs-img" />
+</div>
 
 ---
 
@@ -42,7 +46,9 @@ To bring these categories to life in a way that felt approachable rather than cl
 
 Early designs used a split-pane layout — input on one side, results on the other. In practice this created too much back-and-forth for users, splitting their attention across the screen. The redesign unified the experience into a single chat-based interface where the submission and results occupy the same space. A persistent results summary remains visible without requiring the user to scroll, reducing cognitive load at the moment when users are most uncertain.
 
-<div class="cs-img-placeholder" data-label="Clarification system"></div>
+<div class="cs-img-wrap" data-caption="Clarification system">
+<img src="/shamcheck-clarification.png" alt="ShamCheck clarification system showing scan results and analysis" class="cs-img" />
+</div>
 
 **Clarification system**
 
@@ -61,7 +67,9 @@ Competitive research across the app store category revealed two consistent gaps:
 
 I wrote the final store listing copy for both App Store and Google Play around those two findings, then designed the app icon through multiple iterations and produced all production assets — iOS via Apple Icon Composer, Android as clean compound-path SVGs for VectorDrawable compatibility. The six-slide screenshot story arc was exported via a Playwright-based pipeline across four platform targets, and I coordinated the full submission process through App Store Connect and Google Play Console.
 
-<div class="cs-img-placeholder" data-label="App icon + store screenshots"></div>
+<div class="cs-img-wrap" data-caption="App icon + store screenshots">
+<img src="/shamcheck-app-store.png" alt="ShamCheck app icon and App Store screenshots" class="cs-img" />
+</div>
 
 ---
 

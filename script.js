@@ -549,6 +549,19 @@ document.querySelectorAll('.latest-project-card').forEach(function (card) {
         e.preventDefault();
         var studiesLink = document.querySelector('.nav-link[data-section="studies"]');
         if (studiesLink) studiesLink.click();
+
+        var targetId = card.dataset.project;
+        if (!targetId) return;
+
+        setTimeout(function () {
+            var target = document.getElementById(targetId);
+            if (!target) return;
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.classList.add('project-highlight');
+            target.addEventListener('animationend', function () {
+                target.classList.remove('project-highlight');
+            }, { once: true });
+        }, 80);
     });
 });
 

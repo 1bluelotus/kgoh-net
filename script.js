@@ -432,7 +432,7 @@ const vmBtns = document.querySelectorAll('.vm-btn');
 const minimapGridBg = document.getElementById('minimap-grid-bg');
 
 const visualModes = {
-    standard: { name: 'STANDARD',    bodyClass: '',           gridPattern: 'grid-standard', defaultTrack: 0 },
+    apollo:   { name: 'APOLLO',      bodyClass: '',           gridPattern: 'grid-apollo',   defaultTrack: 0 },
     retro:    { name: 'DECKARD',     bodyClass: 'mode-retro', gridPattern: 'grid-retro',    defaultTrack: 1 },
     neon:     { name: 'CYBERPSYCHO', bodyClass: 'mode-neon',  gridPattern: 'grid-neon',     defaultTrack: 2 }
 };
@@ -469,7 +469,7 @@ function applyVisualMode(modeName) {
 }
 
 // Load saved mode on page load
-applyVisualMode(localStorage.getItem('visualMode') || 'standard');
+applyVisualMode(localStorage.getItem('visualMode') || 'apollo');
 
 vmBtns.forEach(btn => btn.addEventListener('click', () => applyVisualMode(btn.dataset.mode)));
 
@@ -691,7 +691,7 @@ window.onYouTubeIframeAPIReady = function () {
 
 // Mark audio system as ready and cue the default track for the active theme (no autoplay)
 window.audioSystemReady = true;
-const _initMode = localStorage.getItem('visualMode') || 'standard';
+const _initMode = localStorage.getItem('visualMode') || 'apollo';
 cueTrack(visualModes[_initMode].defaultTrack);
 
 // Prev / Next → load and play with directional scroll

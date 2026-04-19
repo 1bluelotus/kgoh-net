@@ -1,5 +1,5 @@
 :root {
-    /* STANDARD (default) theme */
+    /* APOLLO (default) theme */
     --text-color:    #ffffff;
     --heading-color: #ffffff;
     --accent-color:  #00ffff;
@@ -2019,7 +2019,7 @@ body.mode-neon .nav-link.active .nav-icon {
     100% { box-shadow: 0 0 0 transparent; }
 }
 
-/* Standard theme: cyan glow on hover */
+/* Apollo theme: cyan glow on hover */
 .nav-panel:hover,
 .minimap-container:hover,
 .weather-panel:hover,

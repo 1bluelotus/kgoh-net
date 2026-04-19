@@ -198,6 +198,10 @@ body.mode-neon .minimap {
     border-bottom: 1px solid var(--border-color);
 }
 
+.header-colon {
+    color: var(--accent-color);
+}
+
 nav {
     display: flex;
     flex-direction: column;
@@ -1275,6 +1279,10 @@ body.mode-neon {
     --border-color:  #ff006e;
     --panel-bg:      rgba(10, 0, 10, 0.85);
     --page-bg:       #0a0a0a;
+}
+
+body.mode-neon .header-colon {
+    color: #ffff00;
 }
 
 /* Global text glow in neon mode */

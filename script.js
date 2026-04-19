@@ -544,6 +544,14 @@ window.addEventListener('popstate', function (e) {
     }
 });
 
+document.querySelectorAll('.latest-project-card').forEach(function (card) {
+    card.addEventListener('click', function (e) {
+        e.preventDefault();
+        var studiesLink = document.querySelector('.nav-link[data-section="studies"]');
+        if (studiesLink) studiesLink.click();
+    });
+});
+
 document.querySelectorAll('.blog-card').forEach(function (card) {
     card.addEventListener('click', function () {
         openBlogOverlay(card.dataset.slug);

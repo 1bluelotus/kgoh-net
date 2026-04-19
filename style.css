@@ -631,6 +631,17 @@ body.mode-retro .nav-link.active {
     color: var(--page-bg);
 }
 
+/* Project highlight animation (theme-aware) */
+.project-card.project-highlight {
+    animation: project-pulse 1.5s ease-out;
+}
+
+@keyframes project-pulse {
+    0%   { box-shadow: 0 0 20px var(--accent-color), 0 0 40px var(--accent-color); border-color: var(--accent-color); }
+    40%  { box-shadow: 0 0 30px var(--accent-color), 0 0 60px var(--accent-color); border-color: var(--accent-color); }
+    100% { box-shadow: none; border-color: var(--border-color); }
+}
+
 .coming-soon-btn {
     position: relative;
     cursor: default;

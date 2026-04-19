@@ -383,6 +383,75 @@ body.mode-retro .nav-link.active {
     opacity: 0.9;
 }
 
+/* Latest Projects (Home section) */
+.latest-projects {
+    margin-top: 40px;
+}
+
+.latest-projects-header {
+    margin-bottom: 20px;
+}
+
+.latest-projects-header h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--accent-color);
+    margin-bottom: 8px;
+}
+
+.latest-projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.latest-project-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--panel-bg);
+    border: var(--border-width) solid var(--border-color);
+    text-decoration: none;
+    color: var(--text-color);
+    overflow: hidden;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+
+.latest-project-card:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 14px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.2);
+}
+
+.latest-project-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.latest-project-info {
+    padding: 16px;
+}
+
+.latest-project-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    margin-bottom: 8px;
+}
+
+.latest-project-desc {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    opacity: 0.8;
+}
+
 /* Blog Card Grid */
 .blog-card-grid {
     display: grid;
@@ -1173,12 +1242,14 @@ body.mode-retro .weapon-slot:hover {
 }
 
 body.mode-retro .blog-card,
-body.mode-retro .project-card {
+body.mode-retro .project-card,
+body.mode-retro .latest-project-card {
     box-shadow: none;
 }
 
 body.mode-retro .blog-card:hover,
-body.mode-retro .project-card:hover {
+body.mode-retro .project-card:hover,
+body.mode-retro .latest-project-card:hover {
     box-shadow: 0 0 18px #33ff33, 0 0 36px rgba(51, 255, 51, 0.3);
 }
 
@@ -1210,12 +1281,14 @@ body.mode-neon .status-bar {
 }
 
 body.mode-neon .blog-card,
-body.mode-neon .project-card {
+body.mode-neon .project-card,
+body.mode-neon .latest-project-card {
     box-shadow: 0 0 6px rgba(255, 0, 110, 0.2);
 }
 
 body.mode-neon .blog-card:hover,
-body.mode-neon .project-card:hover {
+body.mode-neon .project-card:hover,
+body.mode-neon .latest-project-card:hover {
     box-shadow: 0 0 14px #ff006e, 0 0 30px rgba(255, 0, 110, 0.4);
 }
 
@@ -1837,6 +1910,10 @@ body.mode-neon .nav-link.active .nav-icon {
     .project-card-grid {
         columns: 1;
     }
+
+    .latest-projects-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Case study responsive */
@@ -2037,7 +2114,8 @@ body.mode-neon .display-mode:hover,
 body.mode-neon .audio-panel:hover,
 body.mode-neon .weapon-slot:hover,
 body.mode-neon .blog-card:hover,
-body.mode-neon .project-card:hover {
+body.mode-neon .project-card:hover,
+body.mode-neon .latest-project-card:hover {
     animation: glitch 0.3s ease-out;
 }
 

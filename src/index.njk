@@ -42,7 +42,7 @@ permalink: /index.html
                 <svg class="minimap" viewBox="0 0 200 200">
                     <!-- Map background grid (three theme variants) -->
                     <defs>
-                        <pattern id="grid-standard" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <pattern id="grid-apollo" width="20" height="20" patternUnits="userSpaceOnUse">
                             <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.7"/>
                         </pattern>
                         <pattern id="grid-retro" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -60,7 +60,7 @@ permalink: /index.html
                         </filter>
                     </defs>
                     <rect id="minimap-flash-bg" width="200" height="200" fill="#00ff41" opacity="0" style="transition: opacity 0.3s ease;"/>
-                    <rect id="minimap-grid-bg" width="200" height="200" fill="url(#grid-standard)"/>
+                    <rect id="minimap-grid-bg" width="200" height="200" fill="url(#grid-apollo)"/>
                     
                     <!-- Map border -->
                     <rect id="minimap-border" x="1" y="1" width="198" height="198" fill="none" stroke="white" stroke-width="2"/>
@@ -217,9 +217,9 @@ permalink: /index.html
             <!-- Visual Mode Selector -->
             <div class="display-mode">
                 <div class="player-header">HUD THEME</div>
-                <div class="vm-display" id="vm-display">STANDARD</div>
+                <div class="vm-display" id="vm-display">APOLLO</div>
                 <div class="vm-buttons">
-                    <button class="vm-btn active" data-mode="standard">1</button>
+                    <button class="vm-btn active" data-mode="apollo">1</button>
                     <button class="vm-btn" data-mode="retro">2</button>
                     <button class="vm-btn" data-mode="neon">3</button>
                 </div>

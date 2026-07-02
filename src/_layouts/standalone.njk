@@ -11,6 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body class="case-study-page">
+    <script>
+    (function () {
+        var modes = { retro: 'mode-retro', neon: 'mode-neon' };
+        var cls = modes[localStorage.getItem('visualMode')];
+        if (cls) document.body.classList.add(cls);
+    })();
+    </script>
     <div class="corner-decoration top-left"></div>
     <div class="corner-decoration top-right"></div>
     <div class="corner-decoration bottom-left"></div>

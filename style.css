@@ -1287,6 +1287,17 @@ body.mode-retro .blog-overlay-panel {
     box-shadow: 0 0 10px #33ff33;
 }
 
+body.mode-retro .section-content a,
+body.mode-retro .cs-body a,
+body.mode-retro .cs-subtitle a,
+body.mode-retro .now-link-line a,
+body.mode-retro .resume-contact a,
+body.mode-retro .resume-link,
+body.mode-retro .resume-entry-links a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 body.mode-neon {
     --text-color:    #00f5ff;
     --heading-color: #ffff00;

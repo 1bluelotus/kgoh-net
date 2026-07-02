@@ -279,6 +279,7 @@ navLinks.forEach(link => {
 });
 
 
+
 // Detect and display system information
 function detectSystemInfo() {
     // Browser detection

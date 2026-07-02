@@ -387,6 +387,21 @@ body.mode-retro .nav-link.active {
     opacity: 0.9;
 }
 
+.now-link-line {
+    font-size: 15px;
+    opacity: 0.7;
+}
+
+.now-link-line a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.now-link-line a:hover {
+    opacity: 0.7;
+}
+
 /* Latest Projects (Home section) */
 .latest-projects {
     margin-top: 80px;
@@ -1597,6 +1612,16 @@ body.mode-neon .nav-link.active .nav-icon {
     opacity: 0.8;
 }
 
+.cs-subtitle a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.cs-subtitle a:hover {
+    opacity: 0.7;
+}
+
 .cs-meta-panel {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1694,6 +1719,16 @@ body.mode-neon .nav-link.active .nav-icon {
     line-height: 1.9;
     opacity: 0.9;
     margin-bottom: 6px;
+}
+
+.cs-body a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.cs-body a:hover {
+    opacity: 0.7;
 }
 
 .cs-img-placeholder {

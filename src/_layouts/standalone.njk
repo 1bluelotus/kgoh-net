@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} — Keven Goh</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👾</text></svg>">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body class="case-study-page">
+    <div class="corner-decoration top-left"></div>
+    <div class="corner-decoration top-right"></div>
+    <div class="corner-decoration bottom-left"></div>
+    <div class="corner-decoration bottom-right"></div>
+
+    <header class="cs-topbar">
+        <a href="/" class="cs-back-link">[ &larr; {{ back_label | default("BACK TO PORTFOLIO") }} ]</a>
+    </header>
+
+    <main class="cs-main">
+        <article class="cs-article">
+            <div class="cs-header">
+                <h1 class="cs-title">{{ title }}</h1>
+                <div class="header-line"></div>
+                <p class="cs-subtitle">{{ subtitle | safe }}</p>
+            </div>
+
+            <div class="cs-body">
+                {{ content | safe }}
+            </div>
+        </article>
+    </main>
+
+    <footer class="cs-footer">
+        <span>COPYRIGHT &copy; 2026 KEVEN GOH</span>
+    </footer>
+</body>
+</html>

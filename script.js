@@ -199,11 +199,42 @@ function triggerMinimapFlash() {
 }
 
 
+// Mobile Nav Drawer
+const drawerToggle = document.getElementById('drawer-toggle');
+const drawerClose = document.getElementById('drawer-close');
+const drawerBackdrop = document.getElementById('drawer-backdrop');
+const hudNav = document.getElementById('hud-nav');
+
+function openDrawer() {
+    hudNav.classList.add('drawer-open');
+    drawerBackdrop.classList.add('visible');
+    drawerToggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+    hudNav.classList.remove('drawer-open');
+    drawerBackdrop.classList.remove('visible');
+    drawerToggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+}
+
+drawerToggle.addEventListener('click', openDrawer);
+drawerClose.addEventListener('click', closeDrawer);
+drawerBackdrop.addEventListener('click', closeDrawer);
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && hudNav.classList.contains('drawer-open')) closeDrawer();
+});
+
 navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
 
         const sectionId = link.dataset.section;
+
+        // Close the mobile nav drawer after navigating
+        closeDrawer();
 
         // Update active nav state
         navLinks.forEach(l => {

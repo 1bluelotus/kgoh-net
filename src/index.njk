@@ -14,21 +14,12 @@ permalink: /index.html
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Mobile warning overlay -->
-    <div id="mobile-overlay">
-        <div class="mob-corner mob-tl"></div>
-        <div class="mob-corner mob-tr"></div>
-        <div class="mob-corner mob-bl"></div>
-        <div class="mob-corner mob-br"></div>
-        <div class="mob-panel">
-            <div class="mob-header">// DISPLAY WARNING</div>
-            <div class="mob-body">
-                <p>I designed this website to be optimized for a desktop viewing experience.</p>
-                <p>Please visit on a larger screen while I work on the mobile version!</p>
-                <span class="mob-sig">— Keven</span>
-            </div>
-        </div>
-    </div>
+    <!-- Mobile Nav Drawer Trigger -->
+    <button id="drawer-toggle" class="drawer-toggle" aria-label="Open navigation" aria-controls="hud-nav" aria-expanded="false">
+        <span class="drawer-toggle-icon">▸</span>
+        <span class="drawer-toggle-label">NAV</span>
+    </button>
+    <div id="drawer-backdrop" class="drawer-backdrop"></div>
 
     <!-- HUD Corner Decorations -->
         <div class="corner-decoration top-left"></div>
@@ -37,7 +28,8 @@ permalink: /index.html
         <div class="corner-decoration bottom-right"></div>
 
         <!-- Minimap and Navigation -->
-        <div class="hud-nav">
+        <div class="hud-nav" id="hud-nav">
+            <button id="drawer-close" class="drawer-close" aria-label="Close navigation">[ CLOSE ✕ ]</button>
             <div class="minimap-container">
                 <svg class="minimap" viewBox="0 0 200 200">
                     <!-- Map background grid (three theme variants) -->

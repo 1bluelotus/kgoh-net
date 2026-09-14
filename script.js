@@ -207,6 +207,7 @@ const hudNav = document.getElementById('hud-nav');
 
 function openDrawer() {
     hudNav.classList.add('drawer-open');
+    drawerClose.classList.add('drawer-open');
     drawerBackdrop.classList.add('visible');
     drawerToggle.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
@@ -214,6 +215,7 @@ function openDrawer() {
 
 function closeDrawer() {
     hudNav.classList.remove('drawer-open');
+    drawerClose.classList.remove('drawer-open');
     drawerBackdrop.classList.remove('visible');
     drawerToggle.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
@@ -222,6 +224,23 @@ function closeDrawer() {
 drawerToggle.addEventListener('click', openDrawer);
 drawerClose.addEventListener('click', closeDrawer);
 drawerBackdrop.addEventListener('click', closeDrawer);
+
+// Move the HUD Theme card into the drawer (below Navigation) on mobile,
+// and back into the right-hud stack on desktop
+const displayModeCard = document.querySelector('.display-mode');
+const rightHud = document.querySelector('.right-hud');
+const mobileBreakpoint = window.matchMedia('(max-width: 768px)');
+
+function placeDisplayModeCard(isMobile) {
+    if (isMobile) {
+        hudNav.appendChild(displayModeCard);
+    } else {
+        rightHud.appendChild(displayModeCard);
+    }
+}
+
+placeDisplayModeCard(mobileBreakpoint.matches);
+mobileBreakpoint.addEventListener('change', (e) => placeDisplayModeCard(e.matches));
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && hudNav.classList.contains('drawer-open')) closeDrawer();

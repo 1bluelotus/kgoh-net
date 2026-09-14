@@ -1992,7 +1992,7 @@ body.mode-neon .nav-link.active .nav-icon {
 /* Mobile Nav Drawer controls — hidden on desktop */
 .drawer-toggle,
 .drawer-backdrop,
-.drawer-close {
+.drawer-close-tab {
     display: none;
 }
 
@@ -2026,6 +2026,10 @@ body.mode-neon .nav-link.active .nav-icon {
 }
 
 @media (max-width: 768px) and (min-width: 1px) {
+    :root {
+        --drawer-width: min(82vw, 300px);
+    }
+
     .corner-decoration {
         width: 80px;
         height: 80px;
@@ -2081,7 +2085,7 @@ body.mode-neon .nav-link.active .nav-icon {
         top: 0;
         left: 0;
         z-index: 500;
-        width: min(82vw, 300px);
+        width: var(--drawer-width);
         height: 100dvh;
         margin: 0;
         padding: 76px 24px 24px;
@@ -2098,27 +2102,49 @@ body.mode-neon .nav-link.active .nav-icon {
         transform: translateX(0);
     }
 
-    .drawer-close {
+    /* Close tab — pinned to the drawer's right edge, slides out together with it */
+    .drawer-close-tab {
         display: block;
-        align-self: flex-start;
-        background: transparent;
-        border: 1px solid var(--border-color);
+        position: fixed;
+        top: 28px;
+        left: var(--drawer-width);
+        z-index: 500;
+        background: var(--panel-bg);
+        border: var(--border-width) solid var(--border-color);
+        border-left: none;
         color: var(--accent-color);
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 12px;
-        letter-spacing: 2px;
-        padding: 7px 14px;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        writing-mode: vertical-rl;
+        padding: 16px 10px;
         cursor: pointer;
-        margin-bottom: 4px;
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(calc(-1 * var(--drawer-width)));
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+    }
+
+    .drawer-close-tab.drawer-open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+    }
+
+    .drawer-close-tab-icon {
+        font-size: 13px;
     }
 
     .minimap-container {
-        width: 140px;
-        height: 140px;
-        margin: 0 auto;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1;
     }
 
-    .nav-panel {
+    .nav-panel,
+    .display-mode {
         width: 100%;
     }
 
@@ -2131,7 +2157,6 @@ body.mode-neon .nav-link.active .nav-icon {
     }
 
     .weather-panel,
-    .display-mode,
     .audio-panel {
         width: 100%;
     }

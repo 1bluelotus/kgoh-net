@@ -2029,9 +2029,11 @@ body.mode-neon .nav-link.active .nav-icon {
         --drawer-width: min(82vw, 300px);
     }
 
-    .corner-decoration {
-        width: 80px;
-        height: 80px;
+    /* Ambient chrome that doesn't earn its keep on a small screen */
+    .corner-decoration,
+    .right-hud,
+    .status-bar {
+        display: none;
     }
 
     /* One continuous file-cabinet-style tab, shared by the open trigger and the
@@ -2052,22 +2054,22 @@ body.mode-neon .nav-link.active .nav-icon {
         border: none;
         padding: 16px 10px;
         cursor: pointer;
-        clip-path: polygon(0 0, 100% var(--tab-notch), 100% calc(100% - var(--tab-notch)), 0 100%);
+        clip-path: polygon(100% 0, 0 var(--tab-notch), 0 calc(100% - var(--tab-notch)), 100% 100%);
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
     }
 
     /* Angled border lines — the tab's own background IS the border color; this
-       inset fill (flush on the left/attached edge) sits on top of it, like a
+       inset fill (flush on the right/attached edge) sits on top of it, like a
        file-folder tab with a visible angled outline on the other three sides */
     .nav-tab::before {
         content: '';
         position: absolute;
         top: 2px;
-        right: 2px;
+        right: 0;
         bottom: 2px;
-        left: 0;
+        left: 2px;
         background: var(--page-bg);
-        clip-path: polygon(0 0, 100% var(--tab-notch), 100% calc(100% - var(--tab-notch)), 0 100%);
+        clip-path: polygon(100% 0, 0 var(--tab-notch), 0 calc(100% - var(--tab-notch)), 100% 100%);
         z-index: -1;
     }
 
@@ -2077,7 +2079,7 @@ body.mode-neon .nav-link.active .nav-icon {
 
     /* Open trigger — parked flush against the screen edge, sits behind the drawer once it slides out */
     .drawer-toggle {
-        left: 0;
+        right: 0;
         z-index: 400;
     }
 
@@ -2099,21 +2101,23 @@ body.mode-neon .nav-link.active .nav-icon {
         pointer-events: auto;
     }
 
-    /* hud-nav becomes the slide-out console drawer, pulled from the left edge */
+    /* hud-nav becomes the slide-out console drawer, pulled from the right edge */
     .hud-nav {
         position: fixed;
         top: 0;
-        left: 0;
+        left: auto;
+        right: 0;
         z-index: 500;
         width: var(--drawer-width);
         height: 100dvh;
         margin: 0;
-        padding: 76px 24px 24px;
+        padding: 20px;
+        gap: 12px;
         background: var(--panel-bg);
         backdrop-filter: blur(14px);
-        border-right: var(--border-width) solid var(--border-color);
+        border-left: var(--border-width) solid var(--border-color);
         box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
-        transform: translateX(-100%);
+        transform: translateX(100%);
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         overflow-y: auto;
     }
@@ -2122,12 +2126,12 @@ body.mode-neon .nav-link.active .nav-icon {
         transform: translateX(0);
     }
 
-    /* Close tab — pinned to the drawer's right edge, slides out together with it */
+    /* Close tab — pinned to the drawer's left edge, slides out together with it */
     .drawer-close-tab {
-        left: var(--drawer-width);
+        right: var(--drawer-width);
         opacity: 0;
         pointer-events: none;
-        transform: translateX(calc(-1 * var(--drawer-width)));
+        transform: translateX(var(--drawer-width));
     }
 
     .drawer-close-tab.drawer-open {
@@ -2147,17 +2151,22 @@ body.mode-neon .nav-link.active .nav-icon {
         width: 100%;
     }
 
-    .right-hud {
-        position: relative;
-        top: 0;
-        right: 0;
-        margin: 20px;
-        width: calc(100% - 40px);
+    /* Trim internal spacing so minimap + nav + theme fit one screen without scrolling */
+    .nav-panel {
+        padding: 12px 15px;
     }
 
-    .weather-panel,
-    .audio-panel {
-        width: 100%;
+    .nav-header {
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+    }
+
+    .hud-nav nav {
+        gap: 4px;
+    }
+
+    .hud-nav .nav-link {
+        padding: 6px 12px;
     }
 
     .social-weapons {
@@ -2178,21 +2187,12 @@ body.mode-neon .nav-link.active .nav-icon {
 
     .content {
         margin: 0;
-        padding: 90px 20px 100px;
+        padding: 140px 20px 40px;
     }
 
     .section-header h1,
     .section-header h2 {
         font-size: 32px;
-    }
-
-    .status-bar {
-        flex-wrap: wrap;
-        gap: 5px;
-    }
-
-    .status-item {
-        font-size: 10px;
     }
 
     .resume-entry-top {
@@ -2203,6 +2203,16 @@ body.mode-neon .nav-link.active .nav-icon {
 @media (max-width: 480px) {
     .masonry-grid {
         columns: 1;
+    }
+}
+
+/* On short viewports (e.g. iPhone SE), shrink the minimap so the drawer's
+   three components still fit without scrolling — trades the minimap's
+   usual full-width match with the nav panel for a shorter drawer */
+@media (max-width: 768px) and (max-height: 700px) {
+    .minimap-container {
+        width: 65%;
+        margin: 0 auto;
     }
 }
 

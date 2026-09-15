@@ -2082,7 +2082,11 @@ body.mode-neon .nav-link.active .nav-icon {
         transition: filter 0.3s ease;
     }
 
-    /* Inner shape: the actual file-tab trapezoid, clipped */
+    /* Inner shape: the actual file-tab trapezoid, clipped. writing-mode is
+       deliberately NOT here — Safari has real bugs computing clip-path
+       polygons against the wrong (pre-rotation) axis when an element has
+       both clip-path and a vertical writing-mode, which can clip the shape
+       to nothing. The vertical text lives on .nav-tab-content instead. */
     .nav-tab-shape {
         --tab-notch: 12px;
         --tab-shape: polygon(100% 0, 0 var(--tab-notch), 0 calc(100% - var(--tab-notch)), 100% 100%);
@@ -2094,7 +2098,6 @@ body.mode-neon .nav-link.active .nav-icon {
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 3px;
-        writing-mode: vertical-rl;
         -webkit-clip-path: var(--tab-shape);
         clip-path: var(--tab-shape);
     }
@@ -2117,6 +2120,7 @@ body.mode-neon .nav-link.active .nav-icon {
         position: relative;
         z-index: 1;
         display: inline-block;
+        writing-mode: vertical-rl;
         padding: 16px 10px;
     }
 

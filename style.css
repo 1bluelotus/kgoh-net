@@ -1262,7 +1262,7 @@ body.mode-retro .status-bar {
     box-shadow: 0 0 10px #33ff33;
 }
 
-body.mode-retro .nav-tab {
+body.mode-retro .nav-tab-glow {
     filter: drop-shadow(0 0 9px #33ff33) drop-shadow(0 0 18px rgba(51, 255, 51, 0.35));
 }
 
@@ -1333,7 +1333,7 @@ body.mode-neon .status-bar {
     box-shadow: 0 0 12px #ff006e, 0 0 28px rgba(255, 0, 110, 0.4);
 }
 
-body.mode-neon .nav-tab {
+body.mode-neon .nav-tab-glow {
     filter: drop-shadow(0 0 8px #ff006e) drop-shadow(0 0 16px rgba(255, 0, 110, 0.4));
 }
 
@@ -2053,10 +2053,13 @@ body.mode-neon .nav-link.active .nav-icon {
     }
 
     /* One continuous file-cabinet-style tab, shared by the open trigger and the
-       close tab — same shape/styling throughout, just parked at a different edge */
-    /* Outer wrapper: position + glow only. No clip-path here — clip-path
-       clips box-shadow to within its own shape, which is what silently ate
-       the glow before. Keeping the shape on an inner element sidesteps that. */
+       close tab — same shape/styling throughout, just parked at a different edge.
+       Split into three layers because each risky property breaks if it shares
+       an element with another: position:fixed + filter can lose fixed
+       positioning in Safari, and filter + clip-path on one element got its
+       drop-shadow clipped away too (even in this test browser). So: position
+       lives alone on the button, filter lives alone on the middle span, and
+       clip-path lives alone on the innermost shape. */
     .nav-tab {
         display: block;
         position: fixed;
@@ -2066,12 +2069,17 @@ body.mode-neon .nav-link.active .nav-icon {
         border: none;
         padding: 0;
         cursor: pointer;
-        /* Ambient glow so the tab reads as floating above the page — themed per
-           mode below (straylight default here, retro/neon override further down).
-           drop-shadow (not box-shadow) so the glow follows the angled tab shape
-           instead of the invisible rectangular wrapper. */
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+    }
+
+    /* Middle layer: glow only. Ambient glow so the tab reads as floating above
+       the page — themed per mode below (straylight default here, retro/neon
+       override further down). drop-shadow (not box-shadow) so the glow
+       follows the angled tab shape instead of forming a rectangle. */
+    .nav-tab-glow {
+        display: block;
         filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6)) drop-shadow(0 0 16px rgba(0, 255, 255, 0.3));
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, filter 0.3s ease;
+        transition: filter 0.3s ease;
     }
 
     /* Inner shape: the actual file-tab trapezoid, clipped */

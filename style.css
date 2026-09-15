@@ -2069,15 +2069,24 @@ body.mode-neon .nav-link.active .nav-icon {
         border: none;
         padding: 0;
         cursor: pointer;
+        /* Safari keeps its own native <button> sizing/rendering underneath your
+           CSS unless appearance is explicitly stripped — left in place, it can
+           silently constrain the button's height regardless of its content. */
+        appearance: none;
+        -webkit-appearance: none;
+        overflow: visible;
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
     }
 
     /* Middle layer: glow only. Ambient glow so the tab reads as floating above
        the page — themed per mode below (straylight default here, retro/neon
        override further down). drop-shadow (not box-shadow) so the glow
-       follows the angled tab shape instead of forming a rectangle. */
+       follows the angled tab shape instead of forming a rectangle.
+       width: max-content makes the shrink-to-fit sizing explicit instead of
+       relying on it propagating correctly through nested plain blocks. */
     .nav-tab-glow {
         display: block;
+        width: max-content;
         filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6)) drop-shadow(0 0 16px rgba(0, 255, 255, 0.3));
         transition: filter 0.3s ease;
     }
@@ -2091,6 +2100,7 @@ body.mode-neon .nav-link.active .nav-icon {
         --tab-notch: 12px;
         --tab-shape: polygon(100% 0, 0 var(--tab-notch), 0 calc(100% - var(--tab-notch)), 100% 100%);
         display: block;
+        width: max-content;
         position: relative;
         background: var(--border-color);
         color: var(--accent-color);

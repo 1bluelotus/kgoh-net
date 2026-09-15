@@ -1262,6 +1262,14 @@ body.mode-retro .status-bar {
     box-shadow: 0 0 10px #33ff33;
 }
 
+body.mode-retro .nav-tab {
+    filter: drop-shadow(0 0 9px #33ff33) drop-shadow(0 0 18px rgba(51, 255, 51, 0.35));
+}
+
+body.mode-retro .hud-nav.drawer-open {
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), 0 0 16px #33ff33, 0 0 34px rgba(51, 255, 51, 0.3);
+}
+
 body.mode-retro .nav-panel:hover,
 body.mode-retro .minimap-container:hover,
 body.mode-retro .weather-panel:hover,
@@ -1323,6 +1331,14 @@ body.mode-neon .weather-panel,
 body.mode-neon .display-mode,
 body.mode-neon .status-bar {
     box-shadow: 0 0 12px #ff006e, 0 0 28px rgba(255, 0, 110, 0.4);
+}
+
+body.mode-neon .nav-tab {
+    filter: drop-shadow(0 0 8px #ff006e) drop-shadow(0 0 16px rgba(255, 0, 110, 0.4));
+}
+
+body.mode-neon .hud-nav.drawer-open {
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), 0 0 16px #ff006e, 0 0 34px rgba(255, 0, 110, 0.4);
 }
 
 body.mode-neon .blog-card,
@@ -2038,12 +2054,32 @@ body.mode-neon .nav-link.active .nav-icon {
 
     /* One continuous file-cabinet-style tab, shared by the open trigger and the
        close tab — same shape/styling throughout, just parked at a different edge */
+    /* Outer wrapper: position + glow only. No clip-path here — clip-path
+       clips box-shadow to within its own shape, which is what silently ate
+       the glow before. Keeping the shape on an inner element sidesteps that. */
     .nav-tab {
-        --tab-notch: 12px;
         display: block;
         position: fixed;
         top: 28px;
         z-index: 500;
+        background: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        /* Ambient glow so the tab reads as floating above the page — themed per
+           mode below (straylight default here, retro/neon override further down).
+           drop-shadow (not box-shadow) so the glow follows the angled tab shape
+           instead of the invisible rectangular wrapper. */
+        filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6)) drop-shadow(0 0 16px rgba(0, 255, 255, 0.3));
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, filter 0.3s ease;
+    }
+
+    /* Inner shape: the actual file-tab trapezoid, clipped */
+    .nav-tab-shape {
+        --tab-notch: 12px;
+        --tab-shape: polygon(100% 0, 0 var(--tab-notch), 0 calc(100% - var(--tab-notch)), 100% 100%);
+        display: block;
+        position: relative;
         background: var(--border-color);
         color: var(--accent-color);
         font-family: 'Orbitron', sans-serif;
@@ -2051,26 +2087,29 @@ body.mode-neon .nav-link.active .nav-icon {
         font-weight: 700;
         letter-spacing: 3px;
         writing-mode: vertical-rl;
-        border: none;
-        padding: 16px 10px;
-        cursor: pointer;
-        clip-path: polygon(100% 0, 0 var(--tab-notch), 0 calc(100% - var(--tab-notch)), 100% 100%);
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+        -webkit-clip-path: var(--tab-shape);
+        clip-path: var(--tab-shape);
     }
 
-    /* Angled border lines — the tab's own background IS the border color; this
-       inset fill (flush on the right/attached edge) sits on top of it, like a
-       file-folder tab with a visible angled outline on the other three sides */
-    .nav-tab::before {
-        content: '';
+    /* Inset fill (flush on the right/attached edge) — a real element, not a
+       pseudo-element, so there's no negative z-index compositing trick for
+       Safari/iOS to get wrong */
+    .nav-tab-fill {
         position: absolute;
         top: 2px;
         right: 0;
         bottom: 2px;
         left: 2px;
         background: var(--page-bg);
-        clip-path: polygon(100% 0, 0 var(--tab-notch), 0 calc(100% - var(--tab-notch)), 100% 100%);
-        z-index: -1;
+        -webkit-clip-path: var(--tab-shape);
+        clip-path: var(--tab-shape);
+    }
+
+    .nav-tab-content {
+        position: relative;
+        z-index: 1;
+        display: inline-block;
+        padding: 16px 10px;
     }
 
     .nav-tab-icon {
@@ -2118,12 +2157,14 @@ body.mode-neon .nav-link.active .nav-icon {
         border-left: var(--border-width) solid var(--border-color);
         box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
         transform: translateX(100%);
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
         overflow-y: auto;
     }
 
+    /* Same floating glow as the tab, only while the drawer is actually on screen */
     .hud-nav.drawer-open {
         transform: translateX(0);
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 255, 255, 0.5), 0 0 45px rgba(0, 255, 255, 0.22);
     }
 
     /* Close tab — pinned to the drawer's left edge, slides out together with it */

@@ -15,7 +15,6 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "yamamoto-vogue.png": "yamamoto-vogue.png" });
     eleventyConfig.addPassthroughCopy({ "yamamoto-spread2.png": "yamamoto-spread2.png" });
     eleventyConfig.addPassthroughCopy({ "yamamoto-spread3.png": "yamamoto-spread3.png" });
-    eleventyConfig.addPassthroughCopy({ "keven-goh-resume.pdf": "keven-goh-resume.pdf" });
     eleventyConfig.addPassthroughCopy({ "yamamoto.pdf": "yamamoto.pdf" });
     eleventyConfig.addPassthroughCopy({ "photos": "photos" });
     eleventyConfig.addPassthroughCopy({ "digimonke-screenshot.png": "digimonke-screenshot.png" });

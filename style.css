@@ -2113,6 +2113,7 @@ body.mode-neon .nav-link.active .nav-icon {
 @media (max-width: 768px) and (min-width: 1px) {
     :root {
         --drawer-width: min(82vw, 300px);
+        --tab-width: 36px;
     }
 
     /* Ambient chrome that doesn't earn its keep on a small screen */
@@ -2143,6 +2144,7 @@ body.mode-neon .nav-link.active .nav-icon {
            silently constrain the button's height regardless of its content. */
         appearance: none;
         -webkit-appearance: none;
+        width: var(--tab-width);
         overflow: visible;
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
     }
@@ -2155,7 +2157,7 @@ body.mode-neon .nav-link.active .nav-icon {
        relying on it propagating correctly through nested plain blocks. */
     .nav-tab-glow {
         display: block;
-        width: max-content;
+        width: var(--tab-width);
         filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6)) drop-shadow(0 0 16px rgba(0, 255, 255, 0.3));
         transition: filter 0.3s ease;
     }
@@ -2169,7 +2171,7 @@ body.mode-neon .nav-link.active .nav-icon {
         --tab-notch: 12px;
         --tab-shape: polygon(100% 0, 0 var(--tab-notch), 0 calc(100% - var(--tab-notch)), 100% 100%);
         display: block;
-        width: max-content;
+        width: var(--tab-width);
         position: relative;
         background: var(--border-color);
         color: var(--accent-color);
@@ -2195,11 +2197,18 @@ body.mode-neon .nav-link.active .nav-icon {
         clip-path: var(--tab-shape);
     }
 
+    /* Fixed width (one 16px line + 10px padding each side) instead of
+       shrink-to-fit: iOS Safari mis-measures the intrinsic width of vertical
+       text, so the button came out narrower than the tab it holds and, being
+       pinned to right: 0, pushed the tab's right half off screen. */
     .nav-tab-content {
         position: relative;
         z-index: 1;
-        display: inline-block;
+        display: block;
+        box-sizing: border-box;
+        width: var(--tab-width);
         writing-mode: vertical-rl;
+        line-height: 16px;
         padding: 16px 10px;
     }
 
@@ -2899,7 +2908,10 @@ html.boot .hud-node { animation: boot-blink 0.3s steps(3) 1s both; }
     100% { opacity: 1; }
 }
 
-/* HUD panels power on: a thin bright line opens into the panel, then flickers */
+/* HUD panels power on: a thin bright line opens into the panel, then flickers.
+   Only the open NAV tab joins in, never the close tab: the animation's
+   opacity/transform would override the close tab's hidden, off-screen state
+   and show it as a second tab mid-screen. */
 html.boot .minimap-container,
 html.boot .nav-panel,
 html.boot .weather-panel,
@@ -2907,7 +2919,7 @@ html.boot .audio-panel,
 html.boot .display-mode,
 html.boot .hud-dock,
 html.boot .social-weapons,
-html.boot .nav-tab {
+html.boot .drawer-toggle {
     animation: boot-panel 0.5s ease-out both;
 }
 
@@ -2916,7 +2928,7 @@ html.boot .weather-panel     { animation-delay: 0.8s; }
 html.boot .nav-panel         { animation-delay: 0.88s; }
 html.boot .audio-panel,
 html.boot .hud-dock,
-html.boot .nav-tab           { animation-delay: 0.93s; }
+html.boot .drawer-toggle     { animation-delay: 0.93s; }
 html.boot .display-mode      { animation-delay: 1.02s; }
 html.boot .social-weapons    { animation-delay: 1.08s; }
 

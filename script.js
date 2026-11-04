@@ -173,9 +173,12 @@ function calculateAngle(fromSection, toSection) {
 }
 
 // Apply both position and rotation in a single consistent transform string
-// so the CSS transition can interpolate smoothly between states.
+// so the CSS transition can interpolate smoothly between states. Set as a CSS
+// property (px = SVG user units here), not the transform attribute: Safari
+// won't run a CSS transition on an attribute change, so on iPhone the arrow
+// jumped straight to its waypoint instead of travelling there.
 function setArrowTransform(x, y, angle) {
-    arrow.setAttribute('transform', `translate(${x}, ${y}) rotate(${angle})`);
+    arrow.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
 }
 
 // Initialize arrow at home, pointing up
@@ -205,7 +208,26 @@ const drawerClose = document.getElementById('drawer-close');
 const drawerBackdrop = document.getElementById('drawer-backdrop');
 const hudNav = document.getElementById('hud-nav');
 
+// After a nav pick on mobile, the drawer stays open until the minimap arrow
+// (at the top of the drawer) has finished travelling to the new waypoint,
+// then holds for a short beat so the arrival registers before it slides away.
+const ARRIVAL_BEAT_MS = 200;
+let drawerCloseTimer = null;
+
+// The arrow's travel time comes from CSS and differs per HUD theme (0.5s / 0.65s)
+function arrowTravelMs() {
+    const d = getComputedStyle(arrow).transitionDuration.split(',')[0].trim();
+    return (parseFloat(d) || 0) * (d.endsWith('ms') ? 1 : 1000);
+}
+
+function closeDrawerAfterArrival(arrowMoved) {
+    clearTimeout(drawerCloseTimer);
+    if (!hudNav.classList.contains('drawer-open')) return;
+    drawerCloseTimer = setTimeout(closeDrawer, arrowMoved ? arrowTravelMs() + ARRIVAL_BEAT_MS : 0);
+}
+
 function openDrawer() {
+    clearTimeout(drawerCloseTimer);
     hudNav.classList.add('drawer-open');
     drawerClose.classList.add('drawer-open');
     drawerBackdrop.classList.add('visible');
@@ -214,6 +236,7 @@ function openDrawer() {
 }
 
 function closeDrawer() {
+    clearTimeout(drawerCloseTimer);
     hudNav.classList.remove('drawer-open');
     drawerClose.classList.remove('drawer-open');
     drawerBackdrop.classList.remove('visible');
@@ -246,14 +269,16 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && hudNav.classList.contains('drawer-open')) closeDrawer();
 });
 
+const canHover = matchMedia('(hover: hover) and (pointer: fine)');
+
 navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
 
         const sectionId = link.dataset.section;
 
-        // Close the mobile nav drawer after navigating
-        closeDrawer();
+        // Mobile: close the nav drawer once the minimap arrow arrives
+        closeDrawerAfterArrival(sectionId !== currentSection);
 
         // Update active nav state
         navLinks.forEach(l => {
@@ -293,6 +318,12 @@ navLinks.forEach(link => {
 
         window.history.pushState(null, null, `#${sectionId}`);
     });
+
+    // Hover previews (target lock + arrow turning to face the waypoint) are for
+    // mouse users only. On touch, iOS fires these on the tap itself; the lock
+    // fading in reads to Safari as hover-revealed content, so it can swallow
+    // that first tap, and the stale lock lingers after the drawer closes.
+    if (!canHover.matches) return;
 
     link.addEventListener('mouseenter', () => {
         const sectionId = link.dataset.section;

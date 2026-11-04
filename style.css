@@ -7,6 +7,13 @@
     --panel-bg:      rgba(0, 0, 0, 0.8);
     --page-bg:       #000000;
     --border-width:  2px;
+
+    /* Stage: the frame, side panels and content are laid out as one unit
+       no wider than --stage-max. On wider screens (ultrawides) the whole
+       stage centers and --stage-gutter is the black margin on each side;
+       below the cap the gutter is 0 and nothing moves. */
+    --stage-max:     2000px;
+    --stage-gutter:  max(0px, (100vw - var(--stage-max)) / 2);
 }
 
 * {
@@ -32,9 +39,9 @@ body {
     --hud-accent: var(--accent-color);
     --hud-glow:   drop-shadow(0 0 4px rgba(0, 255, 255, 0.45));
     position: fixed;
-    inset: 0;
     pointer-events: none;
     z-index: 45;
+    inset: 0 var(--stage-gutter);
 }
 
 .hud-frame-inner {
@@ -117,7 +124,7 @@ body.mode-neon {
 .hud-nav {
     position: fixed;
     top: 40px;
-    left: 40px;
+    left: calc(40px + var(--stage-gutter));
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -237,9 +244,9 @@ body.mode-retro .nav-link.active {
 
 /* Main Content */
 .content {
-    margin-left: 260px;
+    margin-left: calc(260px + var(--stage-gutter));
     margin-top: 0;
-    margin-right: 260px;
+    margin-right: calc(260px + var(--stage-gutter));
     margin-bottom: 80px;
     padding: 40px;
     position: relative;
@@ -850,7 +857,7 @@ body.mode-retro .nav-link.active {
 .right-hud {
     position: fixed;
     top: 40px;
-    right: 40px;
+    right: calc(40px + var(--stage-gutter));
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -1081,7 +1088,7 @@ body.mode-retro .nav-link.active {
 .social-weapons {
     position: fixed;
     bottom: 40px;
-    left: 40px;
+    left: calc(40px + var(--stage-gutter));
     display: flex;
     gap: 15px;
     z-index: 50;
@@ -1640,7 +1647,7 @@ body.mode-neon .nav-link.active .nav-icon {
 .cs-topbar {
     position: fixed;
     top: 40px;
-    left: 40px;
+    left: calc(40px + var(--stage-gutter));
     z-index: 100;
 }
 
@@ -2647,13 +2654,13 @@ body.mode-neon .nav-link.active .nav-icon {
         gap: 12px;
         position: fixed;
         top: 40px;
-        right: 40px;
+        right: calc(40px + var(--stage-gutter));
         z-index: 60;
     }
 
     /* The right column becomes a pop-out beside the dock */
     .right-hud {
-        right: 102px;
+        right: calc(102px + var(--stage-gutter));
     }
 
     .right-hud > .weather-panel,
@@ -2669,7 +2676,7 @@ body.mode-neon .nav-link.active .nav-icon {
     }
 
     .content {
-        margin-right: 110px;
+        margin-right: calc(110px + var(--stage-gutter));
     }
 }
 

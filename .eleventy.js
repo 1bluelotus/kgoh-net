@@ -2,6 +2,8 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "style.css": "style.css" });
     eleventyConfig.addPassthroughCopy({ "script.js": "script.js" });
     eleventyConfig.addPassthroughCopy({ "reticle.js": "reticle.js" });
+    eleventyConfig.addPassthroughCopy({ "perimeter.js": "perimeter.js" });
+    eleventyConfig.addPassthroughCopy({ "perimeter.css": "perimeter.css" });
     eleventyConfig.addPassthroughCopy({ "profile.png": "profile.png" });
     eleventyConfig.addPassthroughCopy({ "about-photo.png": "about-photo.png" });
     eleventyConfig.addPassthroughCopy({ "yamamoto-editorial.png": "yamamoto-editorial.png" });
@@ -20,6 +22,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "lastlayer-banner.webp": "lastlayer-banner.webp" });
     eleventyConfig.addPassthroughCopy({ "kgoh-banner.webp": "kgoh-banner.webp" });
     eleventyConfig.addPassthroughCopy({ "shamcheck-banner.webp": "shamcheck-banner.webp" });
+    eleventyConfig.addPassthroughCopy({ "perimeter-banner.webp": "perimeter-banner.webp" });
     eleventyConfig.addPassthroughCopy({ "CNAME": "CNAME" });
 
     eleventyConfig.addCollection("blog", function (collectionApi) {

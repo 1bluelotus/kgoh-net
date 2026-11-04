@@ -72,8 +72,24 @@
     document.addEventListener('mouseover', e => {
         const el = e.target.closest(LOCKABLE);
         lockTarget = el && !isHuge(el) ? el : null;
-        reticle.classList.toggle('is-locked', !!lockTarget);
+        updateLockedClass();
     });
+
+    // Pages can steer the reticle (used by the PERIMETER minigame):
+    //   Reticle.lock({left, top, width, height})  clamp onto a screen rectangle; null to release
+    //   Reticle.color('#ff3b5c')                  recolor; null to go back to the theme color
+    let lockRect = null;
+    window.Reticle = {
+        lock(rect) { lockRect = rect; updateLockedClass(); },
+        color(c) {
+            if (c) reticle.style.setProperty('--accent-color', c);
+            else reticle.style.removeProperty('--accent-color');
+        },
+    };
+
+    function updateLockedClass() {
+        reticle.classList.toggle('is-locked', !!(lockRect || lockTarget));
+    }
 
     // Don't clamp onto something that fills most of the screen — it would just
     // frame the whole window. Fall back to following the mouse instead.
@@ -84,14 +100,12 @@
 
     function frame() {
         let tx = mouseX, ty = mouseY, thw = GAP, thh = GAP;
-        if (lockTarget && lockTarget.isConnected) {
-            const r = lockTarget.getBoundingClientRect();
-            if (r.width && r.height) {
-                tx = r.left + r.width / 2;
-                ty = r.top + r.height / 2;
-                thw = r.width / 2 + LOCK_PAD;
-                thh = r.height / 2 + LOCK_PAD;
-            }
+        const r = lockRect || (lockTarget && lockTarget.isConnected && lockTarget.getBoundingClientRect());
+        if (r && r.width && r.height) {
+            tx = r.left + r.width / 2;
+            ty = r.top + r.height / 2;
+            thw = r.width / 2 + LOCK_PAD;
+            thh = r.height / 2 + LOCK_PAD;
         }
 
         const f = reduceMotion ? 1 : FOLLOW;

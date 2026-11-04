@@ -19,6 +19,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "photos": "photos" });
     eleventyConfig.addPassthroughCopy({ "digimonke-screenshot.png": "digimonke-screenshot.png" });
     eleventyConfig.addPassthroughCopy({ "lastlayer-banner.webp": "lastlayer-banner.webp" });
+    eleventyConfig.addPassthroughCopy({ "kgoh-banner.webp": "kgoh-banner.webp" });
     eleventyConfig.addPassthroughCopy({ "CNAME": "CNAME" });
 
     eleventyConfig.addCollection("blog", function (collectionApi) {

@@ -295,14 +295,23 @@ body.mode-retro .nav-link.active {
 }
 
 /* Home page layout */
+/* Photo floats left so the text wraps around and then under it.
+   flow-root keeps the float contained inside the section. */
 .home-body {
-    display: flex;
-    align-items: flex-start;
-    gap: 28px;
+    display: flow-root;
+    container-type: inline-size;
+    max-width: 720px;   /* keeps lines at a readable ~70 characters on wide screens */
+}
+
+/* One paragraph gap everywhere, equal to one line of text (18px x 1.8),
+   so the text keeps an even rhythm beside and below the photo. */
+.home-body .section-content p {
+    margin-bottom: 1.8em;
 }
 
 .profile-photo-wrap {
-    flex-shrink: 0;
+    float: left;
+    margin: 6px 28px 16px 0;
     border: var(--border-width) solid var(--border-color);
     padding: 4px;
     box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
@@ -321,6 +330,24 @@ body.mode-retro .nav-link.active {
     width: 280px;
     height: auto;
     object-fit: contain;
+}
+
+/* When the column is too narrow for a readable strip of text beside the
+   photo, stack the photo above the text instead of wrapping. */
+@container (max-width: 480px) {
+    .profile-photo-wrap {
+        float: none;
+        width: fit-content;
+        margin: 0 0 20px;
+    }
+}
+
+@container (max-width: 620px) {
+    .profile-photo-wrap:has(.about-photo) {
+        float: none;
+        width: fit-content;
+        margin: 0 0 20px;
+    }
 }
 
 .section-content p {
@@ -2154,12 +2181,11 @@ body.mode-neon .nav-link.active .nav-icon {
         justify-content: center;
     }
 
-    .home-body {
-        flex-direction: column;
-    }
-
-    .profile-photo-wrap {
-        align-self: center;
+    .profile-photo-wrap,
+    .profile-photo-wrap:has(.about-photo) {
+        float: none;
+        width: fit-content;
+        margin: 0 auto 24px;
     }
 
     .content {

@@ -735,3 +735,37 @@ audioPlayBtn.addEventListener('click', () => {
         ytPlayer.playVideo();
     }
 });
+
+// Photo wrap tidy-up (home intro + About). Text wraps around the floated
+// photo, but if a paragraph would start with only one or two lines beside the
+// photo and then jump out to full width, it reads like a stray indent. In that
+// case push the whole paragraph below the photo instead.
+function tidyPhotoWrap(body) {
+    const photo = body.querySelector('.profile-photo-wrap');
+    const blocks = body.querySelectorAll('.section-content > p, .section-content > ul');
+    blocks.forEach(b => { b.style.clear = ''; });
+    if (!photo || getComputedStyle(photo).float === 'none') return;
+
+    blocks.forEach(b => {
+        const photoBottom = photo.getBoundingClientRect().bottom + parseFloat(getComputedStyle(photo).marginBottom);
+        const rect = b.getBoundingClientRect();
+        const besideHeight = photoBottom - rect.top;
+        const lineHeight = parseFloat(getComputedStyle(b).lineHeight);
+        const linesBeside = besideHeight / lineHeight;
+        const runsPastPhoto = rect.bottom > photoBottom + 1;
+        if (linesBeside > 0 && linesBeside < 2.5 && runsPastPhoto) {
+            b.style.clear = 'left';
+        }
+    });
+}
+
+document.querySelectorAll('.home-body').forEach(body => {
+    let lastWidth = -1;
+    new ResizeObserver(entries => {
+        const width = Math.round(entries[0].contentRect.width);
+        if (width === lastWidth) return;
+        lastWidth = width;
+        tidyPhotoWrap(body);
+    }).observe(body);
+    if (document.fonts) document.fonts.ready.then(() => tidyPhotoWrap(body));
+});

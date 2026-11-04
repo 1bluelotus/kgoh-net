@@ -79,6 +79,40 @@ body.mode-neon .hud-frame {
     --hud-glow:   drop-shadow(0 0 4px #ff006e);
 }
 
+/* HUD header greebles — the rule under each panel title gets an accent
+   segment at the left and a row of fine ticks at the right. */
+.nav-header,
+.player-header {
+    position: relative;
+}
+
+.nav-header::after,
+.player-header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 22px;
+    height: 3px;
+    background: var(--hud-node, var(--accent-color));
+}
+
+.nav-header::before,
+.player-header::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 2px;
+    width: 13px;
+    height: 4px;
+    background: repeating-linear-gradient(90deg, var(--border-color) 0 1px, transparent 1px 4px);
+    opacity: 0.6;
+}
+
+body.mode-neon {
+    --hud-node: #ffff00;
+}
+
 /* HUD Navigation */
 .hud-nav {
     position: fixed;
@@ -2267,4 +2301,190 @@ body.mode-neon .latest-project-card:hover {
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.8);
+}
+
+/* ------------------------------------------------------------------
+   Chamfered corners — the panel corner nearest each viewport bracket is
+   cut at 45° to match the frame. The element itself stays unclipped and
+   carries the glow as a drop-shadow (box-shadow can't follow the cut);
+   a .chamfer-body layer behind the content draws the border and fill,
+   clipped to the chamfer shape.
+   ------------------------------------------------------------------ */
+body {
+    --chamfer-glow: none;
+    --chamfer-glow-hover: drop-shadow(0 0 14px rgba(0, 255, 255, 0.5)) drop-shadow(0 0 30px rgba(0, 255, 255, 0.2));
+}
+
+body.mode-retro {
+    --chamfer-glow: drop-shadow(0 0 10px #33ff33);
+    --chamfer-glow-hover: drop-shadow(0 0 18px #33ff33) drop-shadow(0 0 36px rgba(51, 255, 51, 0.3));
+}
+
+body.mode-neon {
+    --chamfer-glow: drop-shadow(0 0 12px #ff006e) drop-shadow(0 0 28px rgba(255, 0, 110, 0.4));
+    --chamfer-glow-hover: drop-shadow(0 0 12px #ff006e) drop-shadow(0 0 28px rgba(255, 0, 110, 0.4));
+}
+
+body.mode-neon .weapon-slot.chamfer {
+    --chamfer-glow-hover: drop-shadow(0 0 14px #ffff00) drop-shadow(0 0 32px rgba(255, 255, 0, 0.45));
+}
+
+.chamfer {
+    --cut: 14px;
+    --cut-inner: calc(var(--cut) - 1.2px);
+    position: relative;
+    isolation: isolate;
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none !important;
+    backdrop-filter: none;
+    filter: var(--chamfer-glow);
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.chamfer:hover {
+    background: transparent;
+    filter: var(--chamfer-glow-hover);
+}
+
+.weapon-slot.chamfer:hover {
+    --chamfer-fill: rgba(255, 255, 255, 0.1);
+}
+
+.chamfer-body {
+    position: absolute;
+    inset: calc(-1 * var(--border-width));
+    z-index: -1;
+    background: var(--border-color);
+    pointer-events: none;
+}
+
+/* The fill sits on top of the solid border layer, so a see-through panel
+   colour would let the border colour bleed through. Lay it over the page
+   colour instead, which is what a normal panel shows through anyway. */
+.chamfer-body::before {
+    content: '';
+    position: absolute;
+    inset: var(--border-width);
+    background:
+        linear-gradient(var(--chamfer-fill, var(--panel-bg)), var(--chamfer-fill, var(--panel-bg))),
+        var(--page-bg);
+}
+
+.chamfer-tl .chamfer-body         { clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut)); }
+.chamfer-tl .chamfer-body::before { clip-path: polygon(var(--cut-inner) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut-inner)); }
+
+.chamfer-tr .chamfer-body         { clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%); }
+.chamfer-tr .chamfer-body::before { clip-path: polygon(0 0, calc(100% - var(--cut-inner)) 0, 100% var(--cut-inner), 100% 100%, 0 100%); }
+
+.chamfer-bl .chamfer-body         { clip-path: polygon(0 0, 100% 0, 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut))); }
+.chamfer-bl .chamfer-body::before { clip-path: polygon(0 0, 100% 0, 100% 100%, var(--cut-inner) 100%, 0 calc(100% - var(--cut-inner))); }
+
+.chamfer-br .chamfer-body         { clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%); }
+.chamfer-br .chamfer-body::before { clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut-inner)), calc(100% - var(--cut-inner)) 100%, 0 100%); }
+
+/* Minimap draws its own border in SVG, so its corner is cut there; the
+   container's square glow moves onto the SVG border line instead. */
+.minimap-container.chamfer-svg {
+    box-shadow: none !important;
+}
+
+body.mode-retro .chamfer-svg #minimap-border {
+    filter: drop-shadow(0 0 5px #33ff33);
+}
+
+body.mode-neon .chamfer-svg #minimap-border {
+    filter: drop-shadow(0 0 6px #ff006e) drop-shadow(0 0 14px rgba(255, 0, 110, 0.4));
+}
+
+.chamfer-svg:hover #minimap-border {
+    filter: drop-shadow(0 0 7px rgba(0, 255, 255, 0.5)) drop-shadow(0 0 15px rgba(0, 255, 255, 0.2));
+}
+
+body.mode-retro .chamfer-svg:hover #minimap-border {
+    filter: drop-shadow(0 0 9px #33ff33) drop-shadow(0 0 18px rgba(51, 255, 51, 0.3));
+}
+
+body.mode-neon .chamfer-svg:hover #minimap-border {
+    filter: drop-shadow(0 0 6px #ff006e) drop-shadow(0 0 14px rgba(255, 0, 110, 0.4));
+}
+
+/* ------------------------------------------------------------------
+   Instrument-panel styling, kept light like a holographic overlay:
+   every panel gets a faint second outline 4px inside its border, and
+   the current page in Navigation is lit with a solid accent highlight.
+   ------------------------------------------------------------------ */
+.nav-panel,
+.audio-panel,
+.weapon-slot:not(.chamfer) {
+    outline: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+    outline-offset: -5px;
+}
+
+/* Cut-corner panels: the inner outline is its own clipped layer so it
+   follows the 45° cut. Cut sizes keep each line parallel to the border. */
+.chamfer {
+    --cut-line: calc(var(--cut) - 2.34px);
+    --cut-line-inner: calc(var(--cut) - 2.93px);
+}
+
+.chamfer-inner {
+    position: absolute;
+    inset: 4px;
+    background: color-mix(in srgb, var(--border-color) 35%, transparent);
+}
+
+.chamfer-inner::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    background:
+        linear-gradient(var(--chamfer-fill, var(--panel-bg)), var(--chamfer-fill, var(--panel-bg))),
+        var(--page-bg);
+}
+
+.chamfer-tl .chamfer-inner { clip-path: polygon(var(--cut-line) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut-line)); }
+.chamfer-tl .chamfer-inner::before { clip-path: polygon(var(--cut-line-inner) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut-line-inner)); }
+
+.chamfer-tr .chamfer-inner { clip-path: polygon(0 0, calc(100% - var(--cut-line)) 0, 100% var(--cut-line), 100% 100%, 0 100%); }
+.chamfer-tr .chamfer-inner::before { clip-path: polygon(0 0, calc(100% - var(--cut-line-inner)) 0, 100% var(--cut-line-inner), 100% 100%, 0 100%); }
+
+.chamfer-bl .chamfer-inner { clip-path: polygon(0 0, 100% 0, 100% 100%, var(--cut-line) 100%, 0 calc(100% - var(--cut-line))); }
+.chamfer-bl .chamfer-inner::before { clip-path: polygon(0 0, 100% 0, 100% 100%, var(--cut-line-inner) 100%, 0 calc(100% - var(--cut-line-inner))); }
+
+.chamfer-br .chamfer-inner { clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut-line)), calc(100% - var(--cut-line)) 100%, 0 100%); }
+.chamfer-br .chamfer-inner::before { clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut-line-inner)), calc(100% - var(--cut-line-inner)) 100%, 0 100%); }
+
+#minimap-inner {
+    stroke: var(--border-color);
+    opacity: 0.35;
+}
+
+/* Current page: solid accent highlight with dark text */
+.nav-link.active,
+body.mode-retro .nav-link.active,
+body.mode-neon .nav-link.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--page-bg);
+    text-shadow: none;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color) 45%, transparent);
+}
+
+.nav-link.active .nav-icon,
+body.mode-neon .nav-link.active .nav-icon {
+    color: var(--page-bg);
+    text-shadow: none;
+}
+
+
+/* Active HUD theme button: same solid lit highlight as the current nav link */
+.vm-btn.active,
+.vm-btn.active:hover {
+    opacity: 1;
+    background: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    color: var(--page-bg);
+    text-shadow: none;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color) 45%, transparent);
 }

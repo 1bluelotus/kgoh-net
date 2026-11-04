@@ -43,10 +43,14 @@ permalink: /index.html
 
         <!-- Minimap and Navigation -->
         <div class="hud-nav" id="hud-nav">
-            <div class="minimap-container">
+            <div class="minimap-container chamfer-svg">
                 <svg class="minimap" viewBox="0 0 200 200">
                     <!-- Map background grid (three theme variants) -->
                     <defs>
+                        <!-- Top-left corner cut to match the viewport bracket -->
+                        <clipPath id="minimap-clip">
+                            <polygon points="15.5,0 200,0 200,200 0,200 0,15.5"/>
+                        </clipPath>
                         <pattern id="grid-straylight" width="20" height="20" patternUnits="userSpaceOnUse">
                             <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="0.7"/>
                         </pattern>
@@ -64,11 +68,12 @@ permalink: /index.html
                             </feMerge>
                         </filter>
                     </defs>
-                    <rect id="minimap-flash-bg" width="200" height="200" fill="#00ff41" opacity="0" style="transition: opacity 0.3s ease;"/>
-                    <rect id="minimap-grid-bg" width="200" height="200" fill="url(#grid-straylight)"/>
+                    <rect id="minimap-flash-bg" clip-path="url(#minimap-clip)" width="200" height="200" fill="#00ff41" opacity="0" style="transition: opacity 0.3s ease;"/>
+                    <rect id="minimap-grid-bg" clip-path="url(#minimap-clip)" width="200" height="200" fill="url(#grid-straylight)"/>
                     
                     <!-- Map border -->
-                    <rect id="minimap-border" x="1" y="1" width="198" height="198" fill="none" stroke="white" stroke-width="2"/>
+                    <polygon id="minimap-border" points="15.9,1 199,1 199,199 1,199 1,15.9" fill="none" stroke="white" stroke-width="2"/>
+                    <polygon id="minimap-inner" points="17.6,5 195,5 195,195 5,195 5,17.6" fill="none" stroke="white" stroke-width="1.1"/>
                     
                     <!-- Navigation trail (drawn behind waypoints) -->
                     <g id="nav-trail"></g>
@@ -186,7 +191,8 @@ permalink: /index.html
         <!-- Right HUD Panel -->
         <div class="right-hud">
             <!-- Weather Panel -->
-            <div class="weather-panel">
+            <div class="weather-panel chamfer chamfer-tr">
+                <span class="chamfer-body" aria-hidden="true"><span class="chamfer-inner"></span></span>
                 <div class="player-header">WEATHER<span class="header-colon">:</span></div>
                 <div class="weather-location-label" id="weather-location">SEATTLE, WA</div>
                 <div class="weather-main">
@@ -221,7 +227,8 @@ permalink: /index.html
             </div>
 
             <!-- Visual Mode Selector -->
-            <div class="display-mode">
+            <div class="display-mode chamfer chamfer-br">
+                <span class="chamfer-body" aria-hidden="true"><span class="chamfer-inner"></span></span>
                 <div class="player-header">HUD THEME<span class="header-colon">:</span></div>
                 <div class="vm-display" id="vm-display">APOLLO</div>
                 <div class="vm-buttons">
@@ -567,7 +574,8 @@ permalink: /index.html
 
         <!-- Social Weapons -->
         <div class="social-weapons">
-            <a href="https://github.com/1bluelotus" target="_blank" class="weapon-slot" data-label="GITHUB">
+            <a href="https://github.com/1bluelotus" target="_blank" class="weapon-slot chamfer chamfer-bl" data-label="GITHUB">
+                <span class="chamfer-body" aria-hidden="true"><span class="chamfer-inner"></span></span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
                     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
                 </svg>

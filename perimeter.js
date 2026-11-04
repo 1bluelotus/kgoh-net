@@ -690,13 +690,12 @@
         ctx.restore();
     }
 
+    // the defense line across the floor (the cannon stands on it, see drawCannon)
     function drawCore() {
         const power = easeOut(seg(m, 0.78, 1));
         if (!power) return;
         const y = groundY(NEAR);
-        const healthy = integrity / MAX_INTEGRITY;
         const lineRgb = integrity <= 2 && wave > 0 ? [255, 59, 92] : accent;
-        const base = ctx.globalAlpha;
 
         // the defense line, drawn outward from the core
         const half = (W / 2) * power;
@@ -710,32 +709,6 @@
         ctx.moveTo(W / 2 - half, y);
         ctx.lineTo(W / 2 + half, y);
         ctx.stroke();
-
-        // the core: two counter-rotating hexagons lying flat on the grid
-        const r = enemyR * 1.5 * power;
-        const pulse = 1 + Math.sin(time * 3) * 0.06;
-        ctx.globalAlpha = base * (power < 1 && !reduceMotion && Math.random() < 0.3 ? 0.35 : 1);
-        ctx.shadowColor = rgba(lineRgb, 1);
-        ctx.shadowBlur = 18;
-        ctx.strokeStyle = rgba(lineRgb, 1);
-        ctx.fillStyle = rgba(lineRgb, 0.12 + 0.18 * healthy);
-        ctx.lineWidth = 2;
-        flatPolygon(W / 2, y, r * pulse, time * 0.4);
-        ctx.fill();
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-        flatPolygon(W / 2, y, r * 0.5, -time * 0.8);
-        ctx.stroke();
-        ctx.globalAlpha = base;
-    }
-
-    // hexagon squashed vertically so it reads as lying on the ground plane
-    function flatPolygon(x, y, r, rot) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.scale(1, 0.32);
-        polygon(0, 0, r, 6, rot);
-        ctx.restore();   // path keeps its shape; the stroke stays an even width
     }
 
     function placeEnemy(e) {

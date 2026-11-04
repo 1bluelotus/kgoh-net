@@ -2488,3 +2488,169 @@ body.mode-neon .nav-link.active .nav-icon {
     text-shadow: none;
     box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color) 45%, transparent);
 }
+
+/* ==================================================================
+   Responsive HUD — desktop-sized screens get three tiers by available
+   space instead of plain scaling (which would shrink text and buttons
+   past what's readable and clickable). Navigation always stays full
+   size; atmosphere modules give way first.
+     1. Full:     tall enough for everything (760px+ high).
+     2. Compact:  600–759px high. Tighter spacing, smaller video window,
+                  condition line and theme name hidden.
+     3. Dock:     under 600px high, or under 1100px wide. Weather, audio
+                  and theme fold into a column of buttons at top right
+                  and open one at a time. Under 600px high the minimap
+                  also hides so Navigation and the social links fit.
+   Phones (768px and under) keep the drawer layout defined above.
+   ================================================================== */
+.hud-dock {
+    display: none;
+}
+
+@media (min-width: 769px) and (max-height: 759px) {
+    .hud-nav {
+        gap: 14px;
+    }
+
+    .nav-header {
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+    }
+
+    .hud-nav nav {
+        gap: 4px;
+    }
+
+    .hud-nav .nav-link {
+        padding: 6px 12px;
+    }
+
+    .right-hud {
+        gap: 12px;
+    }
+
+    .weather-condition,
+    .vm-display {
+        display: none;
+    }
+
+    .weather-main {
+        margin: 6px 0 0;
+    }
+
+    .weather-icon {
+        width: 34px;
+        height: 34px;
+    }
+
+    .weather-temp {
+        font-size: 28px;
+    }
+
+    .yt-container.visible,
+    .yt-container iframe {
+        height: 68px !important;
+    }
+}
+
+@media (min-width: 769px) and (max-height: 599px),
+       (min-width: 769px) and (max-width: 1099px) {
+    .hud-dock {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        position: fixed;
+        top: 40px;
+        right: 40px;
+        z-index: 60;
+    }
+
+    /* The right column becomes a pop-out beside the dock */
+    .right-hud {
+        right: 102px;
+    }
+
+    .right-hud > .weather-panel,
+    .right-hud > .audio-panel,
+    .right-hud > .display-mode {
+        display: none;
+    }
+
+    .right-hud[data-open="weather"] > .weather-panel,
+    .right-hud[data-open="audio"] > .audio-panel,
+    .right-hud[data-open="theme"] > .display-mode {
+        display: block;
+    }
+
+    .content {
+        margin-right: 110px;
+    }
+}
+
+@media (min-width: 769px) and (max-height: 599px) {
+    .minimap-container {
+        display: none;
+    }
+}
+
+/* Safety net for very short windows: the columns scroll rather than
+   letting anything fall off screen or under the social links. */
+@media (min-width: 769px) and (max-height: 479px) {
+    .hud-nav {
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+    }
+
+    .right-hud {
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+    }
+}
+
+/* Dock buttons: same instrument-panel styling as the other modules;
+   the open module's button gets the solid lit highlight. */
+.dock-btn {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--panel-bg);
+    border: var(--border-width) solid var(--border-color);
+    outline: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+    outline-offset: -5px;
+    color: var(--text-color);
+    cursor: pointer;
+    filter: var(--chamfer-glow);
+    transition: filter 0.3s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.dock-btn:hover {
+    filter: var(--chamfer-glow-hover);
+}
+
+.dock-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+.dock-btn[aria-expanded="true"] {
+    --chamfer-fill: var(--accent-color);
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--page-bg);
+}
+
+.dock-btn.chamfer,
+.dock-btn.chamfer[aria-expanded="true"] {
+    background: transparent;
+    border-color: transparent;
+    outline: none;
+}
+

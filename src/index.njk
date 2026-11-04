@@ -188,10 +188,25 @@ permalink: /index.html
             </div>
         </div>
 
+        <!-- HUD Dock: on short or narrow desktop screens the right-hand
+             modules fold into these buttons and open one at a time -->
+        <div class="hud-dock" role="toolbar" aria-label="HUD modules">
+            <button class="dock-btn chamfer chamfer-tr" data-panel="weather" aria-controls="weather-panel" aria-expanded="false" aria-label="Weather">
+                <span class="chamfer-body" aria-hidden="true"><span class="chamfer-inner"></span></span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>
+            </button>
+            <button class="dock-btn" data-panel="audio" aria-controls="audio-panel" aria-expanded="false" aria-label="Audio system">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5M18 7a7 7 0 0 1 0 10"/></svg>
+            </button>
+            <button class="dock-btn" data-panel="theme" aria-controls="display-mode" aria-expanded="false" aria-label="HUD theme">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor" stroke="none"/></svg>
+            </button>
+        </div>
+
         <!-- Right HUD Panel -->
         <div class="right-hud">
             <!-- Weather Panel -->
-            <div class="weather-panel chamfer chamfer-tr">
+            <div class="weather-panel chamfer chamfer-tr" id="weather-panel">
                 <span class="chamfer-body" aria-hidden="true"><span class="chamfer-inner"></span></span>
                 <div class="player-header">WEATHER<span class="header-colon">:</span></div>
                 <div class="weather-location-label" id="weather-location">SEATTLE, WA</div>
@@ -209,7 +224,7 @@ permalink: /index.html
             </div>
 
             <!-- Audio System Panel -->
-            <div class="audio-panel">
+            <div class="audio-panel" id="audio-panel">
                 <div class="player-header">AUDIO SYSTEM<span class="header-colon">:</span></div>
                 <div class="yt-container" id="yt-container">
                     <div id="youtube-player"></div>
@@ -227,7 +242,7 @@ permalink: /index.html
             </div>
 
             <!-- Visual Mode Selector -->
-            <div class="display-mode chamfer chamfer-br">
+            <div class="display-mode chamfer chamfer-br" id="display-mode">
                 <span class="chamfer-body" aria-hidden="true"><span class="chamfer-inner"></span></span>
                 <div class="player-header">HUD THEME<span class="header-colon">:</span></div>
                 <div class="vm-display" id="vm-display">APOLLO</div>

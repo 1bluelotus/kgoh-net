@@ -769,3 +769,38 @@ document.querySelectorAll('.home-body').forEach(body => {
     }).observe(body);
     if (document.fonts) document.fonts.ready.then(() => tidyPhotoWrap(body));
 });
+
+// HUD dock (short or narrow desktop screens): each button opens its module
+// beside the dock, one at a time. Clicking elsewhere or pressing Escape
+// closes it, and leaving dock mode resets it.
+const dockButtons = document.querySelectorAll('.dock-btn');
+
+function setDockPanel(name) {
+    if (name) {
+        rightHud.dataset.open = name;
+    } else {
+        delete rightHud.dataset.open;
+    }
+    dockButtons.forEach(btn => {
+        btn.setAttribute('aria-expanded', String(btn.dataset.panel === name));
+    });
+}
+
+dockButtons.forEach(btn => {
+    btn.addEventListener('click', e => {
+        e.stopPropagation();
+        setDockPanel(rightHud.dataset.open === btn.dataset.panel ? null : btn.dataset.panel);
+    });
+});
+
+document.addEventListener('click', e => {
+    if (rightHud.dataset.open && !rightHud.contains(e.target)) setDockPanel(null);
+});
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && rightHud.dataset.open) setDockPanel(null);
+});
+
+window.matchMedia('(min-width: 769px) and (max-height: 599px), (min-width: 769px) and (max-width: 1099px)')
+    .addEventListener('change', () => setDockPanel(null));
+

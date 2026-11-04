@@ -1,19 +1,17 @@
-<!-- HUD frame: circuit-trace corners with square nodes on each end -->
+<!-- HUD frame: circuit-trace corners with square nodes on each end.
+     The shape is written out per corner (not <use>) so the homepage boot
+     sequence can animate the traces drawing in. -->
+{% set hudCorner %}
+            <path class="hud-trace" pathLength="1" d="M10,66 V28 L28,10 H66" />
+            <path class="hud-trace hud-trace-faint" pathLength="1" d="M18,46 V31 L31,18 H46" />
+            <rect class="hud-node" x="66" y="7" width="6" height="6" />
+            <rect class="hud-node" x="7" y="66" width="6" height="6" />
+{% endset %}
 <div class="hud-frame" aria-hidden="true">
-    <svg width="0" height="0" style="position:absolute">
-        <defs>
-            <g id="hud-corner-shape">
-                <path class="hud-trace" d="M10,66 V28 L28,10 H66" />
-                <path class="hud-trace hud-trace-faint" d="M18,46 V31 L31,18 H46" />
-                <rect class="hud-node" x="66" y="7" width="6" height="6" />
-                <rect class="hud-node" x="7" y="66" width="6" height="6" />
-            </g>
-        </defs>
-    </svg>
     <div class="hud-frame-inner">
-        <svg class="hud-corner hud-corner-tl" viewBox="0 0 90 90"><use href="#hud-corner-shape" /></svg>
-        <svg class="hud-corner hud-corner-tr" viewBox="0 0 90 90"><use href="#hud-corner-shape" /></svg>
-        <svg class="hud-corner hud-corner-bl" viewBox="0 0 90 90"><use href="#hud-corner-shape" /></svg>
-        <svg class="hud-corner hud-corner-br" viewBox="0 0 90 90"><use href="#hud-corner-shape" /></svg>
+        <svg class="hud-corner hud-corner-tl" viewBox="0 0 90 90">{{ hudCorner | safe }}        </svg>
+        <svg class="hud-corner hud-corner-tr" viewBox="0 0 90 90">{{ hudCorner | safe }}        </svg>
+        <svg class="hud-corner hud-corner-bl" viewBox="0 0 90 90">{{ hudCorner | safe }}        </svg>
+        <svg class="hud-corner hud-corner-br" viewBox="0 0 90 90">{{ hudCorner | safe }}        </svg>
     </div>
 </div>

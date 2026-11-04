@@ -415,11 +415,14 @@ setInterval(fetchWeather, 10 * 60 * 1000);
 
 // Add some glitch effect on page load
 window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    setTimeout(() => {
-        document.body.style.transition = 'opacity 0.5s ease';
-        document.body.style.opacity = '1';
-    }, 100);
+    // skip the fade when the page just ran its boot sequence (inline script in index.njk)
+    if (!document.documentElement.dataset.booted) {
+        document.body.style.opacity = '0';
+        setTimeout(() => {
+            document.body.style.transition = 'opacity 0.5s ease';
+            document.body.style.opacity = '1';
+        }, 100);
+    }
 
     const hash = window.location.hash.slice(1);
     if (hash) {

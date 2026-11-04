@@ -13,8 +13,35 @@ permalink: /index.html
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script>
+    // First visit this session: boot the HUD TRON-style (see "Boot sequence" in style.css).
+    // Any key or click skips it; reduced-motion visitors never see it.
+    (function () {
+        var html = document.documentElement;
+        try {
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches || sessionStorage.getItem('kgohBooted')) return;
+            sessionStorage.setItem('kgohBooted', '1');
+        } catch (e) { return; }
+        html.classList.add('boot');
+        html.dataset.booted = '1';
+        function done() {
+            html.classList.remove('boot');
+            removeEventListener('keydown', done);
+            removeEventListener('pointerdown', done);
+        }
+        setTimeout(done, 2000);
+        addEventListener('keydown', done);
+        addEventListener('pointerdown', done);
+    })();
+    </script>
 </head>
 <body>
+    <div class="boot-overlay" aria-hidden="true">
+        <div class="boot-flare"></div>
+        <div class="boot-line boot-line-up"></div>
+        <div class="boot-line boot-line-down"></div>
+    </div>
+
     <!-- Mobile Nav Drawer — one continuous file-tab that travels from the screen edge to the drawer's edge -->
     <button id="drawer-toggle" class="nav-tab drawer-toggle" aria-label="Open navigation" aria-controls="hud-nav" aria-expanded="false">
         <span class="nav-tab-glow">

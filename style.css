@@ -2813,3 +2813,129 @@ body.mode-neon .nav-link.active .nav-icon {
     background: var(--accent-color);
     will-change: transform;
 }
+
+/* ---------- Boot sequence ----------
+   First homepage visit of a session (html.boot, set by an inline script in
+   index.njk): a line ignites at the center and splits to scan the screen,
+   the frame corners trace in, each HUD panel powers on like a CRT, and the
+   content column scans in last. Panels animate opacity/transform only, since
+   the chamfered ones already carry filter + inner clip-paths. */
+.boot-overlay { display: none; }
+
+html.boot .boot-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 9995;
+    pointer-events: none;
+}
+
+.boot-flare {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 360px;
+    height: 360px;
+    margin: -180px 0 0 -180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0%, var(--accent-color) 18%, transparent 65%);
+    opacity: 0;
+    animation: boot-flare 0.55s ease-out forwards;
+}
+
+.boot-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 2px;
+    margin-top: -1px;
+    background: #fff;
+    box-shadow: 0 0 8px var(--accent-color), 0 0 22px var(--accent-color);
+    transform: scaleX(0);
+}
+
+.boot-line-up   { animation: boot-line-up 0.85s ease-in-out forwards; }
+.boot-line-down { animation: boot-line-down 0.85s ease-in-out forwards; }
+
+@keyframes boot-flare {
+    0%   { opacity: 0; transform: scale(0.2); }
+    25%  { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.4); }
+}
+
+/* streak out from the center, then split and sweep to the top / bottom edge */
+@keyframes boot-line-up {
+    0%   { transform: scaleX(0); opacity: 1; }
+    40%  { transform: scaleX(1) translateY(0); opacity: 1; }
+    100% { transform: scaleX(1) translateY(-50vh); opacity: 0.15; }
+}
+
+@keyframes boot-line-down {
+    0%   { transform: scaleX(0); opacity: 1; }
+    40%  { transform: scaleX(1) translateY(0); opacity: 1; }
+    100% { transform: scaleX(1) translateY(50vh); opacity: 0.15; }
+}
+
+/* frame corners: traces draw themselves, then the nodes pop on */
+html.boot .hud-trace {
+    stroke-dasharray: 1;
+    animation: boot-trace 0.5s ease-out 0.6s both;
+}
+
+html.boot .hud-trace-faint { animation-delay: 0.75s; }
+
+html.boot .hud-node { animation: boot-blink 0.3s steps(3) 1s both; }
+
+@keyframes boot-trace {
+    from { stroke-dashoffset: 1; }
+    to   { stroke-dashoffset: 0; }
+}
+
+@keyframes boot-blink {
+    0%   { opacity: 0; }
+    50%  { opacity: 1; }
+    75%  { opacity: 0.2; }
+    100% { opacity: 1; }
+}
+
+/* HUD panels power on: a thin bright line opens into the panel, then flickers */
+html.boot .minimap-container,
+html.boot .nav-panel,
+html.boot .weather-panel,
+html.boot .audio-panel,
+html.boot .display-mode,
+html.boot .hud-dock,
+html.boot .social-weapons,
+html.boot .nav-tab {
+    animation: boot-panel 0.5s ease-out both;
+}
+
+html.boot .minimap-container { animation-delay: 0.75s; }
+html.boot .weather-panel     { animation-delay: 0.8s; }
+html.boot .nav-panel         { animation-delay: 0.88s; }
+html.boot .audio-panel,
+html.boot .hud-dock,
+html.boot .nav-tab           { animation-delay: 0.93s; }
+html.boot .display-mode      { animation-delay: 1.02s; }
+html.boot .social-weapons    { animation-delay: 1.08s; }
+
+@keyframes boot-panel {
+    0%   { opacity: 0; transform: scaleY(0.02); }
+    15%  { opacity: 1; transform: scaleY(0.02); }
+    55%  { opacity: 1; transform: scaleY(1); }
+    65%  { opacity: 0.35; }
+    75%  { opacity: 1; }
+    85%  { opacity: 0.6; }
+    100% { opacity: 1; transform: none; }
+}
+
+/* content column scans in from the top last */
+html.boot .content {
+    animation: boot-scan 0.6s ease-out 1.15s both;
+}
+
+@keyframes boot-scan {
+    from { clip-path: inset(0 0 100% 0); opacity: 0.4; }
+    to   { clip-path: inset(0 0 0 0); opacity: 1; }
+}

@@ -18,6 +18,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "yamamoto.pdf": "yamamoto.pdf" });
     eleventyConfig.addPassthroughCopy({ "photos": "photos" });
     eleventyConfig.addPassthroughCopy({ "digimonke-screenshot.png": "digimonke-screenshot.png" });
+    eleventyConfig.addPassthroughCopy({ "lastlayer-banner.webp": "lastlayer-banner.webp" });
     eleventyConfig.addPassthroughCopy({ "CNAME": "CNAME" });
 
     eleventyConfig.addCollection("blog", function (collectionApi) {

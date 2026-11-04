@@ -392,13 +392,15 @@ body.mode-retro .nav-link.active {
     opacity: 0.7;
 }
 
-.now-link-line a {
+.now-link-line a,
+.project-card-desc a {
     color: var(--accent-color);
     text-decoration: none;
     transition: opacity 0.2s ease;
 }
 
-.now-link-line a:hover {
+.now-link-line a:hover,
+.project-card-desc a:hover {
     opacity: 0.7;
 }
 
@@ -1299,6 +1301,7 @@ body.mode-retro .section-content a,
 body.mode-retro .cs-body a,
 body.mode-retro .cs-subtitle a,
 body.mode-retro .now-link-line a,
+body.mode-retro .project-card-desc a,
 body.mode-retro .resume-contact a,
 body.mode-retro .resume-link,
 body.mode-retro .resume-entry-links a {

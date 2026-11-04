@@ -61,6 +61,9 @@
     let best = +localStorage.getItem(BEST_KEY) || 0;
     let m = 0;                 // materialize progress: 0 = nothing, 1 = battlefield fully built
     let flash = 0, shake = 0;
+    let aim = -Math.PI / 2;    // cannon angle (screen space, pointing up)
+    let kick = 0, muzzleFlash = 0;
+    let shells = [];
     let mouseX = -999, mouseY = -999;
     let time = 0, lastFrame = 0;
     let accent = [0, 255, 255];
@@ -159,6 +162,8 @@
         enemies = [];
         particles = [];
         tracers = [];
+        shells = [];
+        kick = 0;
         lastType = 0;
         updateHud();
     }
@@ -248,8 +253,14 @@
     }
 
     function fire(x, y) {
-        // the core shoots a tracer to wherever you clicked
-        tracers.push({ x, y, color: TYPES[ammo].color, life: 1 });
+        // the cannon snaps onto the shot, kicks back, and beams to wherever you clicked
+        const c = cannon();
+        aim = clampAim(Math.atan2(y - c.py, x - c.px));
+        kick = 1;
+        muzzleFlash = 1;
+        const tip = cannon();
+        tracers.push({ x0: tip.mx, y0: tip.my, x, y, color: TYPES[ammo].color, life: 1 });
+        ejectShell(tip);
         const target = enemyAt(x, y);
         if (!target) return;
         if (target.type === ammo) {
@@ -276,6 +287,39 @@
         burst(W / 2, groundY(NEAR), TYPES[e.type].rgb, 26, enemyR * 3);
         updateHud();
         if (integrity <= 0) endGame();
+    }
+
+    // ---------- Cannon ----------
+    // sits on the core; returns its pivot and muzzle in screen space
+    function cannon() {
+        const s = enemyR;
+        const px = W / 2, py = groundY(NEAR) - s * 0.3;
+        const len = s * 1.7 * (1 - kick * 0.3);   // the barrel slides back on recoil
+        return { s, px, py, len, mx: px + Math.cos(aim) * len, my: py + Math.sin(aim) * len };
+    }
+
+    // keep the barrel above the floor: anything below the pivot pins it to that side
+    function clampAim(a) {
+        if (a > 0) a = a < Math.PI / 2 ? 0 : -Math.PI;
+        return clamp(a, -Math.PI + 0.12, -0.12);
+    }
+
+    // a spent casing in the current ammo color, kicked out of the barrel's right side
+    function ejectShell(c) {
+        const dx = Math.cos(aim), dy = Math.sin(aim);
+        const side = rand(150, 230), up = rand(140, 220);
+        shells.push({
+            x: c.px + dx * c.len * 0.35,
+            y: c.py + dy * c.len * 0.35,
+            vx: -dy * side - dx * 40,
+            vy: dx * side - dy * 40 - up,
+            rot: aim, vr: rand(-18, 18),
+            floor: groundY(NEAR) + rand(6, 40) * (H / 850),   // lands on the grid just in front of the core
+            w: c.s * 0.11, h: c.s * 0.26,
+            color: TYPES[ammo].color,
+            life: 1,
+        });
+        if (shells.length > 40) shells.shift();
     }
 
     // nearest hostile whose outline contains the point
@@ -400,6 +444,29 @@
         for (const t of tracers) t.life -= dt * 8;
         tracers = tracers.filter(t => t.life > 0);
 
+        // cannon tracks the mouse with a little weight
+        const c = cannon();
+        const want = clampAim(Math.atan2(mouseY - c.py, mouseX - c.px));
+        aim += (want - aim) * Math.min(1, dt * 16);
+        kick = Math.max(0, kick - dt * 6);
+        muzzleFlash = Math.max(0, muzzleFlash - dt * 14);
+
+        // casings arc out, bounce on the grid, and fade
+        for (const sh of shells) {
+            sh.vy += 1100 * dt;
+            sh.x += sh.vx * dt;
+            sh.y += sh.vy * dt;
+            sh.rot += sh.vr * dt;
+            sh.life -= dt * 0.55;
+            if (sh.y > sh.floor) {
+                sh.y = sh.floor;
+                sh.vy = Math.abs(sh.vy) < 60 ? 0 : -sh.vy * 0.35;
+                sh.vx *= 0.55;
+                sh.vr *= 0.5;
+            }
+        }
+        shells = shells.filter(sh => sh.life > 0);
+
         if (state !== 'playing') return;
 
         // spawning and wave progress
@@ -459,8 +526,10 @@
         for (const e of enemies) placeEnemy(e);
         enemies.sort((a, b) => b.d - a.d);
         for (const e of enemies) drawEnemy(e);
+        drawCannon();
         drawTracers();
         drawParticles();
+        drawShells();
         ctx.restore();
 
         if (flash) {
@@ -675,8 +744,96 @@
         ctx.globalAlpha = m;
     }
 
+    function drawCannon() {
+        const power = easeOut(seg(m, 0.85, 1));
+        if (!power) return;
+        const c = cannon();
+        const s = c.s;
+        const lineRgb = integrity <= 2 && wave > 0 ? [255, 59, 92] : accent;
+        const armed = state === 'playing' || state === 'paused';
+        const col = armed ? TYPES[ammo].color : rgba(accent, 1);
+        const bw = s * 0.26;
+
+        ctx.save();
+        ctx.globalAlpha = m * power;
+        ctx.translate(c.px, c.py);
+
+        // barrel
+        ctx.save();
+        ctx.rotate(aim);
+        ctx.fillStyle = 'rgba(0,0,0,0.9)';
+        ctx.strokeStyle = rgba(lineRgb, 1);
+        ctx.lineWidth = 1.5;
+        ctx.shadowColor = rgba(lineRgb, 1);
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.rect(0, -bw / 2, c.len, bw);
+        ctx.fill();
+        ctx.stroke();
+        // energy channel and muzzle collar in the ammo color
+        ctx.strokeStyle = col;
+        ctx.shadowColor = col;
+        ctx.shadowBlur = 10;
+        ctx.lineWidth = Math.max(1.5, s * 0.06);
+        ctx.beginPath();
+        ctx.moveTo(s * 0.5, 0);
+        ctx.lineTo(c.len - s * 0.14, 0);
+        ctx.stroke();
+        ctx.fillStyle = col;
+        ctx.fillRect(c.len - s * 0.14, -bw * 0.65, s * 0.14, bw * 1.3);
+        if (muzzleFlash) {
+            const fx = c.len + s * 0.2, fr = s * 0.7 * muzzleFlash;
+            const g = ctx.createRadialGradient(fx, 0, 0, fx, 0, fr);
+            g.addColorStop(0, `rgba(255,255,255,${muzzleFlash})`);
+            g.addColorStop(0.35, col);
+            g.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = g;
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(fx, 0, fr, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+
+        // housing: a dome over the barrel's pivot
+        ctx.fillStyle = 'rgba(0,0,0,0.9)';
+        ctx.strokeStyle = rgba(lineRgb, 1);
+        ctx.lineWidth = 2;
+        ctx.shadowColor = rgba(lineRgb, 1);
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(0, 0, s * 0.5, Math.PI, 0);
+        ctx.lineTo(s * 0.62, s * 0.3);
+        ctx.lineTo(-s * 0.62, s * 0.3);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = col;
+        ctx.beginPath();
+        ctx.arc(0, 0, s * 0.1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+
+    function drawShells() {
+        for (const sh of shells) {
+            ctx.save();
+            ctx.globalAlpha = clamp(sh.life * 1.6, 0, 1) * m;
+            ctx.translate(sh.x, sh.y);
+            ctx.rotate(sh.rot);
+            ctx.fillStyle = sh.color;
+            ctx.shadowColor = sh.color;
+            ctx.shadowBlur = 8;
+            ctx.fillRect(-sh.w / 2, -sh.h / 2, sh.w, sh.h);
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';   // bright rim at the casing's base
+            ctx.fillRect(-sh.w / 2, sh.h / 2 - sh.h * 0.22, sh.w, sh.h * 0.22);
+            ctx.restore();
+        }
+    }
+
     function drawTracers() {
-        const fromY = groundY(NEAR);
         for (const t of tracers) {
             ctx.strokeStyle = t.color;
             ctx.globalAlpha = t.life * m;
@@ -684,7 +841,7 @@
             ctx.shadowColor = t.color;
             ctx.shadowBlur = 10;
             ctx.beginPath();
-            ctx.moveTo(W / 2, fromY);
+            ctx.moveTo(t.x0, t.y0);
             ctx.lineTo(t.x, t.y);
             ctx.stroke();
         }

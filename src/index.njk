@@ -293,10 +293,17 @@ permalink: /index.html
                             </div>
                         </a>
                         <a href="#studies" class="latest-project-card" data-project="project-shamcheck">
-                            <img src="shamcheck-screenshot.png" alt="ShamCheck interface screenshot" class="latest-project-img"/>
+                            <img src="shamcheck-banner.webp" alt="ShamCheck banner: an orange target logo around a chat bubble beside the tagline &quot;Is that message a sham?&quot;" class="latest-project-img"/>
                             <div class="latest-project-info">
                                 <h4 class="latest-project-title">ShamCheck.com</h4>
                                 <p class="latest-project-desc">A free scam-detection tool that helps people identify and defend against online messaging scams.</p>
+                            </div>
+                        </a>
+                        <a href="#studies" class="latest-project-card" data-project="project-kgoh">
+                            <img src="kgoh-banner.webp" alt="kgoh.net banner: the HUD minimap inside circuit-trace corner brackets beside the site title" class="latest-project-img"/>
+                            <div class="latest-project-info">
+                                <h4 class="latest-project-title">kgoh.net</h4>
+                                <p class="latest-project-desc">This site! A game HUD-inspired portfolio with three swappable themes and an interactive minimap.</p>
                             </div>
                         </a>
                     </div>
@@ -516,9 +523,27 @@ permalink: /index.html
             </section>
 
             <section id="studies" class="section">
-                <div class="section-header">
-                    <h2>PROJECTS</h2>
-                    <div class="header-line"></div>
+                <div class="section-header section-header-tools">
+                    <div>
+                        <h2>PROJECTS</h2>
+                        <div class="header-line"></div>
+                    </div>
+                    <button type="button" class="layout-toggle-btn" data-target="rows" aria-label="Switch to rows view" title="Switch to rows view">
+                        <svg viewBox="0 0 18 18" aria-hidden="true">
+                            <g class="icon-masonry">
+                                <rect x="1.5" y="1.5" width="6.5" height="8"/>
+                                <rect x="1.5" y="12" width="6.5" height="4.5"/>
+                                <rect x="10" y="1.5" width="6.5" height="4.5"/>
+                                <rect x="10" y="8" width="6.5" height="8.5"/>
+                                <line class="icon-slash" x1="0.5" y1="17.5" x2="17.5" y2="0.5"/>
+                            </g>
+                            <g class="icon-rows">
+                                <rect x="1.5" y="1.5" width="15" height="4"/>
+                                <rect x="1.5" y="7" width="15" height="4"/>
+                                <rect x="1.5" y="12.5" width="15" height="4"/>
+                            </g>
+                        </svg>
+                    </button>
                 </div>
                 <div class="project-card-grid">
                     <article class="project-card" id="project-lastlayer">
@@ -555,17 +580,8 @@ permalink: /index.html
                             <a href="/case-studies/yamamoto/" class="project-card-btn">[ CASE STUDY ]</a>
                         </div>
                     </article>
-                    <article class="project-card">
-                        <img src="graphyte-photo.png" alt="Graphyte 3D-printed fidget toy" class="project-card-img"/>
-                        <h3 class="project-card-title">Graphyte</h3>
-                        <p class="project-card-desc">A pocket-sized, 3D-printed fidget toy inspired by a classic school pastime: spinning your pencil until the teacher takes it away.</p>
-                        <div class="project-card-links">
-                            <span class="project-card-btn coming-soon-btn">[ PURCHASE ]<span class="coming-soon-tag">COMING SOON!</span></span>
-                            <span class="project-card-btn coming-soon-btn">[ PHOTOS ]<span class="coming-soon-tag">COMING SOON!</span></span>
-                        </div>
-                    </article>
                     <article class="project-card" id="project-shamcheck">
-                        <img src="shamcheck-screenshot.png" alt="ShamCheck interface screenshot" class="project-card-img"/>
+                        <img src="shamcheck-banner.webp" alt="ShamCheck banner: an orange target logo around a chat bubble beside the tagline &quot;Is that message a sham?&quot;" class="project-card-img"/>
                         <h3 class="project-card-title">ShamCheck.com</h3>
                         <p class="project-card-desc">I designed the UX interface and graphical elements for ShamCheck, a free service that helps people detect and defend against online messaging scams.</p>
                         <div class="project-card-links">

@@ -804,3 +804,51 @@ document.addEventListener('keydown', e => {
 window.matchMedia('(min-width: 769px) and (max-height: 599px), (min-width: 769px) and (max-width: 1099px)')
     .addEventListener('change', () => setDockPanel(null));
 
+
+// Projects layout toggle: Masonry (two columns) or Rows (one column). One
+// icon button shows the layout a click switches to. Masonry needs the grid
+// to be at least 620px wide: two 300px columns plus the 20px gap, set by
+// .project-card-grid in style.css. Narrower than that the cards fall into
+// one column anyway, so the button greys out. The visitor's pick is
+// remembered and comes back when the window widens.
+(function () {
+    const grid = document.querySelector('.project-card-grid');
+    const button = document.querySelector('.layout-toggle-btn');
+    if (!grid || !button) return;
+
+    const MASONRY_MIN_WIDTH = 620;
+    let preferred = localStorage.getItem('projectsLayout') === 'rows' ? 'rows' : 'masonry';
+    let tooNarrow = false;
+
+    function render() {
+        const layout = tooNarrow ? 'rows' : preferred;
+        const target = layout === 'rows' ? 'masonry' : 'rows';
+        const label = tooNarrow
+            ? 'Window too narrow for masonry view'
+            : 'Switch to ' + target + ' view';
+        grid.classList.toggle('is-rows', layout === 'rows');
+        button.dataset.target = target;
+        button.setAttribute('aria-disabled', String(tooNarrow));
+        button.setAttribute('aria-label', label);
+        button.title = label;
+    }
+
+    button.addEventListener('click', () => {
+        if (tooNarrow) return;
+        preferred = button.dataset.target;
+        localStorage.setItem('projectsLayout', preferred);
+        render();
+    });
+
+    new ResizeObserver(([entry]) => {
+        const width = entry.contentRect.width;
+        if (width === 0) return; // Projects section is hidden
+        const narrow = width < MASONRY_MIN_WIDTH;
+        if (narrow !== tooNarrow) {
+            tooNarrow = narrow;
+            render();
+        }
+    }).observe(grid);
+
+    render();
+})();

@@ -12,7 +12,7 @@
        no wider than --stage-max. On wider screens (ultrawides) the whole
        stage centers and --stage-gutter is the black margin on each side;
        below the cap the gutter is 0 and nothing moves. */
-    --stage-max:     2000px;
+    --stage-max:     1320px;
     --stage-gutter:  max(0px, (100vw - var(--stage-max)) / 2);
 }
 
@@ -441,23 +441,18 @@ body.mode-retro .nav-link.active {
     margin-bottom: 8px;
 }
 
-/* Latest Work as a log: one row per project with a 16:9 thumbnail beside
-   the full title and description. Capped to the intro text's width so the
-   two line up. Once the section is wide enough for three comfortable cards
-   (960px+), it switches back to a three-card gallery. */
+/* Latest Work: a 2x2 grid of project cards, capped to the intro text's
+   width so the two line up. In narrow columns (under 500px) they stack. */
 .latest-projects-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
     max-width: 720px;
 }
 
 .latest-project-card {
-    display: grid;
-    grid-template-columns: 160px minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 18px;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
     background: var(--panel-bg);
     border: var(--border-width) solid var(--border-color);
     text-decoration: none;
@@ -472,30 +467,17 @@ body.mode-retro .nav-link.active {
     box-shadow: 0 0 14px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.2);
 }
 
-.latest-project-card::after {
-    content: '→';
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 16px;
-    color: var(--accent-color);
-    padding-right: 8px;
-    transition: transform 0.25s ease;
-}
-
-.latest-project-card:hover::after {
-    transform: translateX(4px);
-}
-
 .latest-project-img {
     display: block;
-    width: 160px;
+    width: 100%;
     height: auto;
     aspect-ratio: 16 / 9;
     object-fit: cover;
-    border: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .latest-project-info {
-    padding: 0;
+    padding: 14px 16px 16px;
 }
 
 .latest-project-title {
@@ -515,62 +497,9 @@ body.mode-retro .nav-link.active {
     opacity: 0.8;
 }
 
-/* Narrow columns (phones, around 550px screens and below, or tight desktop
-   windows): side-by-side gets cramped, so each card stacks its image on top
-   with the text underneath. */
 @container (max-width: 500px) {
-    .latest-project-card {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0;
-        padding: 0;
-    }
-
-    .latest-project-img {
-        width: 100%;
-        border: none;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .latest-project-info {
-        padding: 14px 16px 16px;
-    }
-
-    .latest-project-card::after {
-        display: none;
-    }
-}
-
-/* Wide sections: back to a three-card gallery */
-@container (min-width: 960px) {
     .latest-projects-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 20px;
-        max-width: none;
-    }
-
-    .latest-project-card {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0;
-        padding: 0;
-    }
-
-    .latest-project-card::after {
-        display: none;
-    }
-
-    .latest-project-img {
-        width: 100%;
-        border: none;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .latest-project-info {
-        padding: 16px;
+        grid-template-columns: 1fr;
     }
 }
 
@@ -666,22 +595,93 @@ body.mode-retro .nav-link.active {
 }
 
 /* Project Card Grid */
-/* Two columns only when each can be at least 380px wide; otherwise the
-   cards stack in a single column. Keeps titles and text from getting
-   squeezed into a narrow strip at mid-size windows. */
+/* Two-column masonry. Cards are sized to fit two across the 720px content
+   column (about 350px each); below 300px per column they stack instead. */
 .project-card-grid {
-    columns: 2 380px;
-    column-gap: 30px;
+    columns: 2 300px;
+    column-gap: 20px;
+}
+
+/* Section header with a tool on the right (the Projects layout toggle).
+   The tool sits on the heading's baseline and wraps under it if needed. */
+.section-header-tools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+/* Masonry / Rows toggle: one square icon button. It shows the layout a
+   click switches to (script.js swaps the icon). When the grid is under
+   620px wide, too narrow for two columns, script.js marks it aria-disabled
+   and it greys out with a slash through the masonry icon. */
+.layout-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 4px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.layout-toggle-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+}
+
+.layout-toggle-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.layout-toggle-btn .icon-rows,
+.layout-toggle-btn .icon-slash,
+.layout-toggle-btn[data-target="rows"] .icon-masonry {
+    display: none;
+}
+
+.layout-toggle-btn[data-target="rows"] .icon-rows,
+.layout-toggle-btn[aria-disabled="true"] .icon-slash {
+    display: inline;
+}
+
+.layout-toggle-btn[aria-disabled="true"] {
+    opacity: 0.35;
+    cursor: not-allowed;
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+/* Phones: keep the button clear of the NAV drawer tab on the right edge */
+@media (max-width: 768px) {
+    .layout-toggle-btn {
+        margin-right: 28px;
+    }
+}
+
+/* Rows layout: one project per line, each card full width with its
+   image or embed above the text. */
+.project-card-grid.is-rows {
+    columns: 1;
 }
 
 .project-card {
     background: var(--panel-bg);
     border: var(--border-width) solid var(--border-color);
-    padding: 30px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     break-inside: avoid;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -694,11 +694,11 @@ body.mode-retro .nav-link.active {
     width: 100%;
     height: auto;
     border: 1px solid var(--border-color);
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .project-card-embed {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     border-radius: 12px;
     overflow: hidden;
 }
@@ -709,23 +709,24 @@ body.mode-retro .nav-link.active {
 
 .project-card-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
     letter-spacing: 1px;
+    line-height: 1.4;
     text-transform: uppercase;
     color: var(--accent-color);
-    padding-bottom: 16px;
-    margin-bottom: 18px;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
     border-bottom: 1px solid var(--border-color);
 }
 
 .project-card-desc {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 16px;
-    line-height: 1.8;
+    font-size: 14px;
+    line-height: 1.7;
     opacity: 0.8;
     flex: 1;
-    margin-bottom: 24px;
+    margin-bottom: 18px;
 }
 
 .project-card-links {

@@ -5,7 +5,6 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "about-photo.png": "about-photo.png" });
     eleventyConfig.addPassthroughCopy({ "shamcheck-screenshot.png": "shamcheck-screenshot.png" });
     eleventyConfig.addPassthroughCopy({ "yamamoto-editorial.png": "yamamoto-editorial.png" });
-    eleventyConfig.addPassthroughCopy({ "graphyte-photo.png": "graphyte-photo.png" });
     eleventyConfig.addPassthroughCopy({ "shamcheck-scan-interface.png": "shamcheck-scan-interface.png" });
     eleventyConfig.addPassthroughCopy({ "shamcheck-trading-cards.png": "shamcheck-trading-cards.png" });
     eleventyConfig.addPassthroughCopy({ "shamcheck-app-store.png": "shamcheck-app-store.png" });
@@ -20,6 +19,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "digimonke-screenshot.png": "digimonke-screenshot.png" });
     eleventyConfig.addPassthroughCopy({ "lastlayer-banner.webp": "lastlayer-banner.webp" });
     eleventyConfig.addPassthroughCopy({ "kgoh-banner.webp": "kgoh-banner.webp" });
+    eleventyConfig.addPassthroughCopy({ "shamcheck-banner.webp": "shamcheck-banner.webp" });
     eleventyConfig.addPassthroughCopy({ "CNAME": "CNAME" });
 
     eleventyConfig.addCollection("blog", function (collectionApi) {

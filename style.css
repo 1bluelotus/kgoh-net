@@ -418,6 +418,7 @@ body.mode-retro .nav-link.active {
 /* Latest Projects (Home section) */
 .latest-projects {
     margin-top: 80px;
+    container-type: inline-size;
 }
 
 .latest-projects-header {
@@ -433,15 +434,23 @@ body.mode-retro .nav-link.active {
     margin-bottom: 8px;
 }
 
+/* Latest Work as a log: one row per project with a 16:9 thumbnail beside
+   the full title and description. Capped to the intro text's width so the
+   two line up. Once the section is wide enough for three comfortable cards
+   (960px+), it switches back to a three-card gallery. */
 .latest-projects-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 720px;
 }
 
 .latest-project-card {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    padding: 10px;
     background: var(--panel-bg);
     border: var(--border-width) solid var(--border-color);
     text-decoration: none;
@@ -456,15 +465,30 @@ body.mode-retro .nav-link.active {
     box-shadow: 0 0 14px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.2);
 }
 
+.latest-project-card::after {
+    content: '→';
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    color: var(--accent-color);
+    padding-right: 8px;
+    transition: transform 0.25s ease;
+}
+
+.latest-project-card:hover::after {
+    transform: translateX(4px);
+}
+
 .latest-project-img {
-    width: 100%;
-    height: 140px;
+    display: block;
+    width: 160px;
+    height: auto;
+    aspect-ratio: 16 / 9;
     object-fit: cover;
-    border-bottom: 1px solid var(--border-color);
+    border: 1px solid var(--border-color);
 }
 
 .latest-project-info {
-    padding: 16px;
+    padding: 0;
 }
 
 .latest-project-title {
@@ -474,7 +498,7 @@ body.mode-retro .nav-link.active {
     letter-spacing: 1px;
     text-transform: uppercase;
     color: var(--accent-color);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .latest-project-desc {
@@ -482,6 +506,54 @@ body.mode-retro .nav-link.active {
     font-size: 13px;
     line-height: 1.6;
     opacity: 0.8;
+}
+
+/* Narrow columns (phones, tight windows): smaller thumbnail, no arrow */
+@container (max-width: 460px) {
+    .latest-project-card {
+        grid-template-columns: 104px minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .latest-project-img {
+        width: 104px;
+    }
+
+    .latest-project-card::after {
+        display: none;
+    }
+}
+
+/* Wide sections: back to a three-card gallery */
+@container (min-width: 960px) {
+    .latest-projects-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+        max-width: none;
+    }
+
+    .latest-project-card {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 0;
+    }
+
+    .latest-project-card::after {
+        display: none;
+    }
+
+    .latest-project-img {
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .latest-project-info {
+        padding: 16px;
+    }
 }
 
 /* Blog Card Grid */

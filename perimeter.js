@@ -19,18 +19,24 @@
     const BOOT_SECS = 2.4;     // grid materialize
     const DEREZ_SECS = 0.9;    // grid collapse on exit
 
-    const waveSize       = n => Math.min(6 + 3 * (n - 1), 40);               // hostiles per wave
-    const waveSpeed      = n => 0.7 * Math.min(1 + 0.1 * (n - 1), 2.6);      // depth units per second
-    const spawnGap       = n => Math.max(0.4, 2.0 * Math.pow(0.86, n - 1));  // seconds between spawns
-    const maxOnField     = n => Math.min(4 + n, 13);                          // keeps it from getting too dense
+    const waveSize       = n => Math.min(8 + 4 * (n - 1), 48);               // hostiles per wave
+    const waveSpeed      = n => 1.0 * Math.min(1 + 0.16 * (n - 1), 3.2);     // depth units per second, before each type's own pace
+    const spawnGap       = n => Math.max(0.3, 1.5 * Math.pow(0.82, n - 1));  // seconds between spawns
+    const maxOnField     = n => Math.min(5 + Math.ceil(n * 1.5), 15);         // cap on hostiles at once
     const typesInWave    = n => Math.min(n, 4);                               // a new kind each wave until all four
-    const repeatChance   = n => Math.max(0.1, 0.75 - 0.12 * (n - 1));         // early waves come in same-color runs
+    const repeatChance   = n => Math.max(0.05, 0.6 - 0.15 * (n - 1));         // early waves come in same-color runs
+    const repairsOn      = n => n % 2 === 0;                                  // core integrity +1 after every other wave
 
+    // Each kind has its own way of moving (see hostilePace / hostileDrift):
+    //   SPIKE  rusher    fastest, charges straight in, in lunging surges
+    //   BLOCK  armored   slow and heavy; takes two hits, the first knocks it back
+    //   SHARD  evasive   zigzags hard from side to side
+    //   HIVE   splitter  bursts into two small, fast mini-hives when destroyed
     const TYPES = [
-        { key: 'A', name: 'SPIKE', color: '#ff3b5c', sides: 3, rot: -Math.PI / 2 },
-        { key: 'S', name: 'BLOCK', color: '#ffc400', sides: 4, rot: Math.PI / 4 },
-        { key: 'D', name: 'SHARD', color: '#3dff8a', sides: 4, rot: -Math.PI / 2, squash: 0.8 },
-        { key: 'F', name: 'HIVE',  color: '#8f7bff', sides: 6, rot: 0, spin: 0.5 },
+        { key: 'A', name: 'SPIKE', trait: 'RUSHER',   color: '#ff3b5c', sides: 3, rot: -Math.PI / 2, pace: 1.3, hp: 1 },
+        { key: 'S', name: 'BLOCK', trait: 'ARMORED',  color: '#ffc400', sides: 4, rot: Math.PI / 4, pace: 0.7, hp: 2 },
+        { key: 'D', name: 'SHARD', trait: 'EVASIVE',  color: '#3dff8a', sides: 4, rot: -Math.PI / 2, squash: 0.8, pace: 1.05, hp: 1 },
+        { key: 'F', name: 'HIVE',  trait: 'SPLITTER', color: '#8f7bff', sides: 6, rot: 0, spin: 0.5, pace: 0.85, hp: 1 },
     ];
     const KEYS = { KeyA: 0, KeyS: 1, KeyD: 2, KeyF: 3, Digit1: 0, Digit2: 1, Digit3: 2, Digit4: 3 };
 
@@ -187,7 +193,7 @@
         updateHud();
         const t = TYPES[wave - 1];
         if (wave <= 4) {
-            showBanner(`WAVE ${pad(wave, 2)}`, `NEW HOSTILE: ${t.name} // AMMO [${t.key}]`, t.color);
+            showBanner(`WAVE ${pad(wave, 2)}`, `NEW HOSTILE: ${t.name} // ${t.trait} // AMMO [${t.key}]`, t.color);
         } else {
             showBanner(`WAVE ${pad(wave, 2)}`, 'HOLD THE LINE');
         }
@@ -205,10 +211,31 @@
             type,
             x0: rand(-2.6, 2.6),
             d: FAR + 0.5,
-            speed: waveSpeed(wave) * rand(0.85, 1.15),
+            speed: waveSpeed(wave) * TYPES[type].pace * rand(0.9, 1.1),
             phase: rand(0, Math.PI * 2),
             flash: 0,
+            hp: TYPES[type].hp,
+            scale: 1,
         });
+    }
+
+    // speed multiplier over time; SPIKEs lunge in surges, everything else holds pace
+    function hostilePace(e) {
+        if (e.type === 0) return 0.45 + 1.5 * Math.max(0, Math.sin(time * 4.2 + e.phase)) ** 2;
+        return 1;
+    }
+
+    // sideways offset (world units) on top of the drift toward the core
+    function hostileDrift(e) {
+        switch (e.type) {
+            case 0: return 0;                                                     // SPIKE: dead straight
+            case 1: return Math.sin(time * 0.9 + e.phase) * 0.06;                 // BLOCK: barely sways
+            case 2: {                                                             // SHARD: sharp zigzag
+                const t = (time * 0.75 + e.phase) % 2;
+                return (t < 1 ? t * 2 - 1 : 3 - t * 2) * 1.1;
+            }
+            default: return Math.sin(time * 1.6 + e.phase) * (e.mini ? 0.5 : 0.3);   // HIVE: wide weave
+        }
     }
 
     function endGame() {
@@ -263,7 +290,8 @@
         const target = enemyAt(x, y);
         if (!target) return;
         if (target.type === ammo) {
-            destroy(target);
+            if (--target.hp > 0) armorHit(target);
+            else destroy(target);
         } else {
             target.flash = 1;   // wrong ammo: it shrugs the hit off
             burst(target.sx, target.sy, [200, 200, 200], 6, target.r * 0.6);
@@ -272,10 +300,30 @@
 
     function destroy(e) {
         enemies.splice(enemies.indexOf(e), 1);
-        score += 100 * wave;
+        score += (e.mini ? 50 : 100) * wave;
         burst(e.sx, e.sy, TYPES[e.type].rgb, 18, e.r * 2.2);
         particles.push({ ring: true, x: e.sx, y: e.sy, r: e.r, life: 1, rgb: TYPES[e.type].rgb });
+        // a HIVE bursts into two smaller, faster hives that peel off to either side
+        if (e.type === 3 && !e.mini) {
+            for (const side of [-1, 1]) {
+                enemies.push({
+                    type: 3, mini: true, scale: 0.6, hp: 1, flash: 0.6,
+                    x0: e.x0 + side * 0.7,
+                    d: e.d + 0.15,
+                    speed: e.speed * 1.6,
+                    phase: e.phase + side,
+                });
+            }
+        }
         updateHud();
+    }
+
+    // a BLOCK's first hit: armor plating blows off and the impact shoves it back
+    function armorHit(e) {
+        e.flash = 1;
+        e.d = Math.min(e.d + 0.6, FAR);
+        burst(e.sx, e.sy, TYPES[e.type].rgb, 10, e.r * 1.2);
+        burst(e.sx, e.sy, [255, 255, 255], 5, e.r * 0.8);
     }
 
     function breach(e) {
@@ -512,7 +560,7 @@
         } else if (enemies.length === 0) {
             if (waveBreak === 0) {
                 waveBreak = 2.6;
-                const repaired = integrity < MAX_INTEGRITY;
+                const repaired = repairsOn(wave) && integrity < MAX_INTEGRITY;
                 if (repaired) integrity++;
                 updateHud();
                 showBanner(`WAVE ${pad(wave, 2)} CLEARED`, repaired ? 'CORE INTEGRITY +1' : '');
@@ -522,7 +570,7 @@
         }
 
         for (const e of [...enemies]) {
-            e.d -= e.speed * dt;
+            e.d -= e.speed * hostilePace(e) * dt;
             e.flash = Math.max(0, e.flash - dt * 4);
             if (e.d <= NEAR) breach(e);
             if (state !== 'playing') return;   // that breach ended the game
@@ -713,9 +761,9 @@
 
     function placeEnemy(e) {
         const progress = clamp((e.d - NEAR) / (FAR - NEAR), 0, 1);
-        // hostiles drift in toward the core as they close in, with a little sway
-        const x = e.x0 * (0.35 + 0.65 * progress) + Math.sin(time * 1.3 + e.phase) * 0.12;
-        e.r = Math.max(enemyR / e.d, 5);
+        // hostiles drift in toward the core as they close in, plus their own sideways motion
+        const x = (e.x0 + hostileDrift(e)) * (0.35 + 0.65 * progress);
+        e.r = Math.max((enemyR * e.scale) / e.d, 4);
         e.gy = groundY(e.d);
         e.sx = screenX(x, e.d);
         e.sy = e.gy - e.r * 1.6;   // hovering above the ground
@@ -733,6 +781,19 @@
         ctx.ellipse(e.sx, e.gy, e.r * 0.9, e.r * 0.22, 0, 0, Math.PI * 2);
         ctx.fill();
 
+        // SPIKE surge: afterimages streaming out behind it
+        if (e.type === 0) {
+            const surge = hostilePace(e) - 1;
+            for (let i = 1; surge > 0 && i <= 3; i++) {
+                ctx.globalAlpha = fadeIn * Math.min(1, surge * 1.4) * (0.55 - 0.13 * i);
+                ctx.strokeStyle = t.color;
+                ctx.lineWidth = Math.max(1, e.r * 0.07);
+                polygon(e.sx, e.sy + bob - e.r * 0.75 * i * surge, e.r * (1 - 0.12 * i), t.sides, t.rot, t.squash);
+                ctx.stroke();
+            }
+            ctx.globalAlpha = fadeIn;
+        }
+
         const stroke = e.flash ? `rgba(255,255,255,${0.5 + e.flash * 0.5})` : t.color;
         ctx.shadowColor = t.color;
         ctx.shadowBlur = e.r * 0.8;
@@ -743,9 +804,23 @@
         ctx.fill();
         ctx.stroke();
         ctx.shadowBlur = 0;
-        ctx.globalAlpha = fadeIn * 0.6;
-        polygon(e.sx, e.sy + bob, e.r * 0.45, t.sides, t.rot - (t.spin || 0) * time, t.squash);
-        ctx.stroke();
+        if (e.hp >= 2) {
+            // armor plating: a heavy inner block that blows off on the first hit
+            ctx.globalAlpha = fadeIn * 0.9;
+            ctx.fillStyle = rgba(t.rgb, 0.45);
+            polygon(e.sx, e.sy + bob, e.r * 0.55, t.sides, t.rot, t.squash);
+            ctx.fill();
+            ctx.stroke();
+        } else if (TYPES[e.type].hp >= 2) {
+            // armor gone: show the cracked core
+            ctx.globalAlpha = fadeIn * (0.5 + 0.5 * Math.random());
+            polygon(e.sx, e.sy + bob, e.r * 0.3, t.sides, t.rot + time * 3, t.squash);
+            ctx.stroke();
+        } else {
+            ctx.globalAlpha = fadeIn * 0.6;
+            polygon(e.sx, e.sy + bob, e.r * 0.45, t.sides, t.rot - (t.spin || 0) * time, t.squash);
+            ctx.stroke();
+        }
         ctx.globalAlpha = m;
     }
 

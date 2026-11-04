@@ -103,6 +103,14 @@ html.pm-lock {
     color: var(--ammo);
 }
 
+.pm-legend small {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--text-color);
+    opacity: 0.6;
+    margin-top: -4px;
+}
+
 .pm-legend svg,
 .pm-slot svg {
     width: 28px;

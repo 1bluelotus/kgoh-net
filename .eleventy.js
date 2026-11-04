@@ -1,6 +1,7 @@
 module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "style.css": "style.css" });
     eleventyConfig.addPassthroughCopy({ "script.js": "script.js" });
+    eleventyConfig.addPassthroughCopy({ "reticle.js": "reticle.js" });
     eleventyConfig.addPassthroughCopy({ "profile.png": "profile.png" });
     eleventyConfig.addPassthroughCopy({ "about-photo.png": "about-photo.png" });
     eleventyConfig.addPassthroughCopy({ "yamamoto-editorial.png": "yamamoto-editorial.png" });

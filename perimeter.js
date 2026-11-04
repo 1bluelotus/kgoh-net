@@ -61,7 +61,7 @@
     let best = +localStorage.getItem(BEST_KEY) || 0;
     let m = 0;                 // materialize progress: 0 = nothing, 1 = battlefield fully built
     let flash = 0, shake = 0;
-    let aim = -Math.PI / 2;    // cannon angle (screen space, pointing up)
+    let yaw = 0, pitch = 0.15; // cannon aim: swivel across the floor, tilt up from it
     let kick = 0, muzzleFlash = 0;
     let shells = [];
     let mouseX = -999, mouseY = -999;
@@ -254,13 +254,12 @@
 
     function fire(x, y) {
         // the cannon snaps onto the shot, kicks back, and beams to wherever you clicked
-        const c = cannon();
-        aim = clampAim(Math.atan2(y - c.py, x - c.px));
+        ({ yaw, pitch } = aimAt(x, y));
         kick = 1;
         muzzleFlash = 1;
-        const tip = cannon();
-        tracers.push({ x0: tip.mx, y0: tip.my, x, y, color: TYPES[ammo].color, life: 1 });
-        ejectShell(tip);
+        const tip = muzzle();
+        tracers.push({ x0: tip[0], y0: tip[1], x, y, color: TYPES[ammo].color, life: 1 });
+        ejectShell();
         const target = enemyAt(x, y);
         if (!target) return;
         if (target.type === ammo) {
@@ -290,32 +289,64 @@
     }
 
     // ---------- Cannon ----------
-    // sits on the core; returns its pivot and muzzle in screen space
-    function cannon() {
-        const s = enemyR;
-        const px = W / 2, py = groundY(NEAR) - s * 0.3;
-        const len = s * 1.7 * (1 - kick * 0.3);   // the barrel slides back on recoil
-        return { s, px, py, len, mx: px + Math.cos(aim) * len, my: py + Math.sin(aim) * len };
+    // A small 3-D model drawn through the same camera as the grid, so it sits on
+    // the floor's perspective. Model space: 1 unit = kY px at depth 1 (the camera
+    // is 1 unit above the floor), x right, y up, z = depth away from the viewer.
+    const unit = () => enemyR / kY;                  // model scale, ties to hostile size
+    const BARREL = 1.55;                             // rail length, in model units
+    const recoil = () => kick * 0.35 * unit();       // rails slide back when firing
+
+    function project(p) {
+        const z = Math.max(p[2], 0.2);
+        return [W / 2 + (p[0] * kY) / z, horizonY + (kY * (1 - p[1])) / z, z];
+    }
+    const rotY = (p, a) => [p[0] * Math.cos(a) + p[2] * Math.sin(a), p[1], -p[0] * Math.sin(a) + p[2] * Math.cos(a)];
+    const rotX = (p, a) => [p[0], p[1] * Math.cos(a) + p[2] * Math.sin(a), -p[1] * Math.sin(a) + p[2] * Math.cos(a)];
+
+    // head space: origin on top of the pedestal, swivels with yaw
+    const PEDESTAL_H = 0.22;
+    function headPoint(p, u = unit()) {
+        const r = rotY(p, yaw);
+        return [r[0], r[1] + PEDESTAL_H * u, r[2] + NEAR];
+    }
+    // barrel space: origin at the trunnion inside the head, tilts with pitch
+    function barrelPoint(p, u = unit()) {
+        const r = rotX(p, pitch);
+        return headPoint([r[0], r[1] + 0.56 * u, r[2] - 0.08 * u], u);
     }
 
-    // keep the barrel above the floor: anything below the pivot pins it to that side
-    function clampAim(a) {
-        if (a > 0) a = a < Math.PI / 2 ? 0 : -Math.PI;
-        return clamp(a, -Math.PI + 0.12, -0.12);
+    function muzzle() {
+        return project(barrelPoint([0, 0, BARREL * unit() - recoil()]));
     }
 
-    // a spent casing in the current ammo color, kicked out of the barrel's right side
-    function ejectShell(c) {
-        const dx = Math.cos(aim), dy = Math.sin(aim);
+    // swivel/tilt that points the rails at the screen point (mx, my), reading it
+    // as a spot at hostile hover height out on the field
+    function aimAt(mx, my) {
+        const pivot = barrelPoint([0, 0, 0]);
+        const hover = (1.6 * enemyR) / kY;           // see placeEnemy: hostiles float this high
+        const d = clamp((kY * (1 - hover)) / Math.max(my - horizonY, 1), NEAR + 0.25, 40);
+        const x = ((mx - W / 2) * d) / kY;
+        const v = [x - pivot[0], hover - pivot[1], d - pivot[2]];
+        return {
+            yaw: clamp(Math.atan2(v[0], v[2]), -1.35, 1.35),
+            pitch: clamp(Math.atan2(v[1], Math.hypot(v[0], v[2])), -0.05, 0.8),
+        };
+    }
+
+    // a spent casing in the current ammo color, kicked out of the breech's right side
+    function ejectShell() {
+        const u = unit();
+        const port = project(barrelPoint([0.22 * u, 0.04 * u, 0.1 * u]));
+        const out = project(barrelPoint([0.9 * u, 0.04 * u, 0.1 * u]));
+        const len = Math.hypot(out[0] - port[0], out[1] - port[1]) || 1;
         const side = rand(150, 230), up = rand(140, 220);
         shells.push({
-            x: c.px + dx * c.len * 0.35,
-            y: c.py + dy * c.len * 0.35,
-            vx: -dy * side - dx * 40,
-            vy: dx * side - dy * 40 - up,
-            rot: aim, vr: rand(-18, 18),
+            x: port[0], y: port[1],
+            vx: ((out[0] - port[0]) / len) * side,
+            vy: ((out[1] - port[1]) / len) * side - up,
+            rot: rand(0, Math.PI), vr: rand(-18, 18),
             floor: groundY(NEAR) + rand(6, 40) * (H / 850),   // lands on the grid just in front of the core
-            w: c.s * 0.11, h: c.s * 0.26,
+            w: enemyR * 0.11, h: enemyR * 0.26,
             color: TYPES[ammo].color,
             life: 1,
         });
@@ -445,9 +476,10 @@
         tracers = tracers.filter(t => t.life > 0);
 
         // cannon tracks the mouse with a little weight
-        const c = cannon();
-        const want = clampAim(Math.atan2(mouseY - c.py, mouseX - c.px));
-        aim += (want - aim) * Math.min(1, dt * 16);
+        const want = aimAt(mouseX, mouseY);
+        const ease = Math.min(1, dt * 14);
+        yaw += (want.yaw - yaw) * ease;
+        pitch += (want.pitch - pitch) * ease;
         kick = Math.max(0, kick - dt * 6);
         muzzleFlash = Math.max(0, muzzleFlash - dt * 14);
 
@@ -744,74 +776,127 @@
         ctx.globalAlpha = m;
     }
 
+    // ---- cannon meshes (model units × u) ----
+    // a hull lofted between a rear and a front cross-section: [halfWidth, yBottom, yTop] at depth z
+    function hull(x, z0, [w0, b0, t0], z1, [w1, b1, t1]) {
+        return {
+            v: [
+                [x - w0, b0, z0], [x + w0, b0, z0], [x + w0, t0, z0], [x - w0, t0, z0],
+                [x - w1, b1, z1], [x + w1, b1, z1], [x + w1, t1, z1], [x - w1, t1, z1],
+            ],
+            f: [[0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 5, 4], [3, 2, 6, 7], [0, 3, 7, 4], [1, 2, 6, 5]],
+        };
+    }
+
+    // hexagonal pedestal, tapering up from the core
+    function pedestal(u) {
+        const v = [];
+        for (let i = 0; i < 6; i++) {
+            const a = (i / 6) * Math.PI * 2 + Math.PI / 6;
+            v.push([Math.cos(a) * 0.62 * u, 0, Math.sin(a) * 0.62 * u]);
+            v.push([Math.cos(a) * 0.46 * u, PEDESTAL_H * u, Math.sin(a) * 0.46 * u]);
+        }
+        const f = [[1, 3, 5, 7, 9, 11]];
+        for (let i = 0; i < 6; i++) {
+            const j = (i + 1) % 6;
+            f.push([i * 2, j * 2, j * 2 + 1, i * 2 + 1]);
+        }
+        return { v, f };
+    }
+
     function drawCannon() {
         const power = easeOut(seg(m, 0.85, 1));
         if (!power) return;
-        const c = cannon();
-        const s = c.s;
+        const u = unit() * power;   // grows in as the core powers up
+        const rk = recoil();
         const lineRgb = integrity <= 2 && wave > 0 ? [255, 59, 92] : accent;
         const armed = state === 'playing' || state === 'paused';
         const col = armed ? TYPES[ammo].color : rgba(accent, 1);
-        const bw = s * 0.26;
+        const colRgb = armed ? TYPES[ammo].rgb : accent;
+
+        const toWorld = {
+            base: p => [p[0], p[1], p[2] + NEAR],
+            head: p => headPoint(p, u),
+            barrel: p => barrelPoint(p, u),
+        };
+        // [mesh, transform]; the pedestal always draws first since everything sits on it
+        const pedestalPart = [pedestal(u), toWorld.base];
+        const parts = [
+            // wedge-shaped head: tall and wide at the back, sloping low and narrow at the front
+            [hull(0, -0.5 * u, [0.4 * u, 0, 0.44 * u], 0.36 * u, [0.22 * u, 0, 0.18 * u]), toWorld.head],
+            // swept side fins
+            [hull(-0.47 * u, -0.56 * u, [0.025 * u, 0.06 * u, 0.4 * u], 0.12 * u, [0.025 * u, 0.02 * u, 0.1 * u]), toWorld.head],
+            [hull(0.47 * u, -0.56 * u, [0.025 * u, 0.06 * u, 0.4 * u], 0.12 * u, [0.025 * u, 0.02 * u, 0.1 * u]), toWorld.head],
+            // trunnion block, then the twin rails; all three slide back on recoil
+            [hull(0, -0.34 * u - rk, [0.21 * u, -0.1 * u, 0.09 * u], 0.16 * u - rk, [0.18 * u, -0.08 * u, 0.07 * u]), toWorld.barrel],
+            [hull(-0.12 * u, -0.08 * u - rk, [0.042 * u, -0.055 * u, 0.055 * u], BARREL * u - rk, [0.028 * u, -0.03 * u, 0.04 * u]), toWorld.barrel],
+            [hull(0.12 * u, -0.08 * u - rk, [0.042 * u, -0.055 * u, 0.055 * u], BARREL * u - rk, [0.028 * u, -0.03 * u, 0.04 * u]), toWorld.barrel],
+        ];
+
+        // light each part's camera-facing faces; parts paint far → near
+        const L = [0.35, 0.85, -0.4];
+        const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+        const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+        const mean = pts => pts.reduce((acc, p) => [acc[0] + p[0] / pts.length, acc[1] + p[1] / pts.length, acc[2] + p[2] / pts.length], [0, 0, 0]);
+        function build([mesh, xf]) {
+            const w = mesh.v.map(xf);
+            const centre = mean(w);
+            const faces = [];
+            for (const f of mesh.f) {
+                const q = f.map(i => w[i]);
+                const fc = mean(q);
+                const e1 = sub(q[1], q[0]), e2 = sub(q[2], q[0]);
+                let n = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]];
+                if (dot(n, sub(fc, centre)) < 0) n = n.map(c => -c);        // make it point outward
+                if (dot(n, sub([0, 1, 0], fc)) <= 0) continue;              // facing away from the camera
+                const light = Math.abs(dot(n, L)) / (Math.hypot(...n) || 1);
+                faces.push({ pts: q.map(project), light });
+            }
+            return { faces, depth: Math.hypot(centre[0], centre[1] - 1, centre[2]) };
+        }
+        const built = parts.map(build).sort((a, b) => b.depth - a.depth);
+        const faces = [build(pedestalPart), ...built].flatMap(b => b.faces);
 
         ctx.save();
         ctx.globalAlpha = m * power;
-        ctx.translate(c.px, c.py);
-
-        // barrel
-        ctx.save();
-        ctx.rotate(aim);
-        ctx.fillStyle = 'rgba(0,0,0,0.9)';
-        ctx.strokeStyle = rgba(lineRgb, 1);
-        ctx.lineWidth = 1.5;
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 1.2;
         ctx.shadowColor = rgba(lineRgb, 1);
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.rect(0, -bw / 2, c.len, bw);
-        ctx.fill();
-        ctx.stroke();
-        // energy channel and muzzle collar in the ammo color
+        for (const f of faces) {
+            ctx.beginPath();
+            f.pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+            ctx.closePath();
+            // dark hard-light panels, tinted by how much they catch the light
+            const t = 0.04 + 0.2 * f.light;
+            ctx.fillStyle = `rgb(${Math.round(4 + lineRgb[0] * t)},${Math.round(8 + lineRgb[1] * t)},${Math.round(10 + lineRgb[2] * t)})`;
+            ctx.shadowBlur = 0;
+            ctx.fill();
+            ctx.strokeStyle = rgba(lineRgb, 0.55 + 0.45 * f.light);
+            ctx.shadowBlur = 6;
+            ctx.stroke();
+        }
+
+        // energy beam running between the rails, in the ammo color
+        const a0 = project(barrelPoint([0, 0, 0.2 * u - rk], u));
+        const a1 = project(barrelPoint([0, 0, BARREL * u - rk], u));
         ctx.strokeStyle = col;
         ctx.shadowColor = col;
-        ctx.shadowBlur = 10;
-        ctx.lineWidth = Math.max(1.5, s * 0.06);
-        ctx.beginPath();
-        ctx.moveTo(s * 0.5, 0);
-        ctx.lineTo(c.len - s * 0.14, 0);
-        ctx.stroke();
-        ctx.fillStyle = col;
-        ctx.fillRect(c.len - s * 0.14, -bw * 0.65, s * 0.14, bw * 1.3);
-        if (muzzleFlash) {
-            const fx = c.len + s * 0.2, fr = s * 0.7 * muzzleFlash;
-            const g = ctx.createRadialGradient(fx, 0, 0, fx, 0, fr);
-            g.addColorStop(0, `rgba(255,255,255,${muzzleFlash})`);
-            g.addColorStop(0.35, col);
-            g.addColorStop(1, 'rgba(0,0,0,0)');
-            ctx.fillStyle = g;
-            ctx.shadowBlur = 0;
-            ctx.beginPath();
-            ctx.arc(fx, 0, fr, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        ctx.restore();
-
-        // housing: a dome over the barrel's pivot
-        ctx.fillStyle = 'rgba(0,0,0,0.9)';
-        ctx.strokeStyle = rgba(lineRgb, 1);
-        ctx.lineWidth = 2;
-        ctx.shadowColor = rgba(lineRgb, 1);
         ctx.shadowBlur = 12;
+        ctx.lineWidth = Math.max(1.5, (0.05 * u * kY) / a1[2]);
         ctx.beginPath();
-        ctx.arc(0, 0, s * 0.5, Math.PI, 0);
-        ctx.lineTo(s * 0.62, s * 0.3);
-        ctx.lineTo(-s * 0.62, s * 0.3);
-        ctx.closePath();
-        ctx.fill();
+        ctx.moveTo(a0[0], a0[1]);
+        ctx.lineTo(a1[0], a1[1]);
         ctx.stroke();
+        // emitter glow at the tips, flaring on each shot
+        const glowR = enemyR * (0.18 + 0.6 * muzzleFlash);
+        const g = ctx.createRadialGradient(a1[0], a1[1], 0, a1[0], a1[1], glowR);
+        g.addColorStop(0, `rgba(255,255,255,${0.6 + 0.4 * muzzleFlash})`);
+        g.addColorStop(0.35, rgba(colRgb, 0.9));
+        g.addColorStop(1, rgba(colRgb, 0));
+        ctx.fillStyle = g;
         ctx.shadowBlur = 0;
-        ctx.fillStyle = col;
         ctx.beginPath();
-        ctx.arc(0, 0, s * 0.1, 0, Math.PI * 2);
+        ctx.arc(a1[0], a1[1], glowR, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
     }

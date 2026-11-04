@@ -472,24 +472,81 @@
         }
     }
 
-    // The ground builds TRON-style as m goes 0 → 1 (and collapses as it goes back):
-    //   0.00–0.22  the horizon line streaks outward from the vanishing point
-    //   0.12–0.80  rails shoot down from the horizon, center first, each with a bright head
-    //   0.40–0.90  cross lines snap on from the horizon toward the viewer, flaring as they land
+    // The ground is a finite floor: it ends at GRID_FAR, well short of the horizon,
+    // so the rails never pinch together into a single vanishing point. Its far
+    // edge dissolves into the dark gap below the horizon line.
+    const GRID_FAR = 16;     // depth of the floor's far edge
+    const FOG_NEAR = 5;      // the fade starts here and reaches black at GRID_FAR
+
+    // It builds TRON-style as m goes 0 → 1 (and collapses as it goes back):
+    //   0.00–0.22  the horizon line streaks outward from the center
+    //   0.12–0.80  rails shoot from the floor's far edge toward the viewer, center first, each with a bright head
+    //   0.40–0.90  cross lines snap on from far to near, flaring as they land
     //   0.78–1.00  the core and defense line power up
     function drawGround() {
         const base = ctx.globalAlpha;
-        const vpX = W / 2;
+        const cx = W / 2;
+        const nearD = 0.45;
+        const farY = groundY(GRID_FAR);
+        ctx.lineWidth = 1;
+
+        // rails, wide enough that the far edge reaches both sides of the screen
+        const reach = Math.ceil((cx * GRID_FAR) / kX / 0.5) * 0.5;
+        for (let x = -reach; x <= reach; x += 0.5) {
+            const start = 0.12 + 0.36 * Math.min(1, Math.abs(x) / 8);
+            const pr = easeOut(seg(m, start, start + 0.32));
+            if (!pr) continue;
+            const fx = screenX(x, GRID_FAR);
+            const tipX = fx + (screenX(x, nearD) - fx) * pr;
+            const tipY = farY + (groundY(nearD) - farY) * pr;
+            ctx.strokeStyle = rgba(accent, (x === 0 ? 0.35 : 0.18) + 0.4 * (1 - pr));
+            ctx.beginPath();
+            ctx.moveTo(fx, farY);
+            ctx.lineTo(tipX, tipY);
+            ctx.stroke();
+            if (pr < 1) lightHead(tipX, tipY);
+        }
+
+        // cross lines, drifting slowly toward the player
+        const step = 0.5;
+        const drift = (time * 0.35) % step;
+        for (let d = nearD + step - drift; d <= GRID_FAR; d += step) {
+            const y = groundY(d);
+            if (y > H) continue;
+            const depth = (y - farY) / (H - farY);   // 0 at the far edge, 1 at the bottom
+            const start = 0.4 + 0.38 * depth;
+            const pr = seg(m, start, start + 0.12);
+            if (!pr) continue;
+            const flare = 1 - seg(m, start + 0.12, start + 0.3);   // bright as it lands, then settles
+            const half = cx * easeOut(pr);
+            ctx.strokeStyle = rgba(accent, clamp(0.5 / d, 0.05, 0.35) * pr + 0.45 * flare * pr);
+            ctx.beginPath();
+            ctx.moveTo(cx - half, y);
+            ctx.lineTo(cx + half, y);
+            ctx.stroke();
+        }
+
+        // distance fog: erase the floor progressively toward its far edge
+        const fogY = groundY(FOG_NEAR);
+        ctx.save();
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = 'destination-out';
+        const fog = ctx.createLinearGradient(0, farY, 0, fogY);
+        fog.addColorStop(0, 'rgba(0,0,0,1)');
+        fog.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = fog;
+        ctx.fillRect(0, farY - 2, W, fogY - farY + 2);
+        ctx.restore();
 
         // center flare when the horizon ignites
         const ignite = seg(m, 0, 0.08) * (1 - seg(m, 0.08, 0.35));
         if (ignite) {
-            const g = ctx.createRadialGradient(vpX, horizonY, 0, vpX, horizonY, 140);
+            const g = ctx.createRadialGradient(cx, horizonY, 0, cx, horizonY, 140);
             g.addColorStop(0, `rgba(255,255,255,${0.9 * ignite})`);
             g.addColorStop(0.2, rgba(accent, 0.6 * ignite));
             g.addColorStop(1, rgba(accent, 0));
             ctx.fillStyle = g;
-            ctx.fillRect(vpX - 140, horizonY - 140, 280, 280);
+            ctx.fillRect(cx - 140, horizonY - 140, 280, 280);
         }
 
         // glow along the horizon
@@ -501,58 +558,21 @@
         ctx.fillStyle = glow;
         ctx.fillRect(0, horizonY - 60, W, 100);
 
-        ctx.lineWidth = 1;
-
-        // rails running toward the horizon
-        const nearD = 0.45;
-        for (let x = -8; x <= 8; x += 0.5) {
-            const start = 0.12 + 0.36 * (Math.abs(x) / 8);
-            const pr = easeOut(seg(m, start, start + 0.32));
-            if (!pr) continue;
-            const tipX = vpX + (screenX(x, nearD) - vpX) * pr;
-            const tipY = horizonY + (groundY(nearD) - horizonY) * pr;
-            ctx.strokeStyle = rgba(accent, (x === 0 ? 0.35 : 0.18) + 0.4 * (1 - pr));
-            ctx.beginPath();
-            ctx.moveTo(vpX, horizonY);
-            ctx.lineTo(tipX, tipY);
-            ctx.stroke();
-            if (pr < 1) lightHead(tipX, tipY);
-        }
-
-        // cross lines, drifting slowly toward the player
-        const step = 0.5;
-        const drift = (time * 0.35) % step;
-        for (let d = 0.45 + step - drift; d < 40; d += step) {
-            const y = groundY(d);
-            if (y > H) continue;
-            const depth = (y - horizonY) / (H - horizonY);   // 0 at the horizon, 1 at the bottom
-            const start = 0.4 + 0.38 * depth;
-            const pr = seg(m, start, start + 0.12);
-            if (!pr) continue;
-            const flare = 1 - seg(m, start + 0.12, start + 0.3);   // bright as it lands, then settles
-            const half = (W / 2) * easeOut(pr);
-            ctx.strokeStyle = rgba(accent, clamp(0.5 / d, 0.03, 0.35) * pr + 0.45 * flare * pr);
-            ctx.beginPath();
-            ctx.moveTo(vpX - half, y);
-            ctx.lineTo(vpX + half, y);
-            ctx.stroke();
-        }
-
         // the horizon line itself
         const h = easeOut(seg(m, 0, 0.22));
         const hot = 1 - seg(m, 0.22, 0.5);
         ctx.strokeStyle = `rgba(255,255,255,${0.7 * hot})`;
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(vpX - (W / 2) * h, horizonY);
-        ctx.lineTo(vpX + (W / 2) * h, horizonY);
+        ctx.moveTo(cx - cx * h, horizonY);
+        ctx.lineTo(cx + cx * h, horizonY);
         ctx.stroke();
         ctx.strokeStyle = rgba(accent, 0.5);
         ctx.lineWidth = 1;
         ctx.stroke();
         if (h < 1) {
-            lightHead(vpX - (W / 2) * h, horizonY);
-            lightHead(vpX + (W / 2) * h, horizonY);
+            lightHead(cx - cx * h, horizonY);
+            lightHead(cx + cx * h, horizonY);
         }
         ctx.globalAlpha = base;
     }

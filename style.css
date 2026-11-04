@@ -576,8 +576,11 @@ body.mode-retro .nav-link.active {
 }
 
 /* Project Card Grid */
+/* Two columns only when each can be at least 380px wide; otherwise the
+   cards stack in a single column. Keeps titles and text from getting
+   squeezed into a narrow strip at mid-size windows. */
 .project-card-grid {
-    columns: 2;
+    columns: 2 380px;
     column-gap: 30px;
 }
 

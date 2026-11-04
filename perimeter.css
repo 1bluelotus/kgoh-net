@@ -1,21 +1,41 @@
-/* PERIMETER — the minigame at /perimeter/. Loaded only on that page. */
+/* PERIMETER — the minigame. Runs on its own page at /perimeter/ and embedded
+   in the homepage, where it takes the content column's place between the
+   side HUD panels (those sit at z-index 50, above everything here). */
 
 .pm-page {
     height: 100vh;
     overflow: hidden;
 }
 
+.pm-root[hidden] { display: none; }
+
 #pm-canvas {
     position: fixed;
     inset: 0;
     display: block;
-    z-index: 0;
+    z-index: 1;
 }
 
-/* While a round is running the reticle is the only cursor */
-.pm-page.pm-running,
-.pm-page.pm-running * {
+/* While a round is running the reticle is the only cursor over the battlefield */
+.pm-running #pm-canvas {
     cursor: none;
+}
+
+/* Homepage: the content column fades out while the game is up */
+.content {
+    transition: opacity 0.35s ease, visibility 0s;
+}
+
+body.pm-active .content {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+}
+
+/* no page scrolling under the battlefield; keep the scrollbar's space so nothing shifts */
+html.pm-lock {
+    overflow: hidden;
+    scrollbar-gutter: stable;
 }
 
 .pm-label {
@@ -33,7 +53,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    z-index: 60;
+    z-index: 42;
     width: min(560px, calc(100vw - 48px));
     max-height: calc(100vh - 140px);
     overflow-y: auto;
@@ -93,7 +113,7 @@
     filter: drop-shadow(0 0 4px var(--ammo));
 }
 
-.pm-page kbd {
+.pm-root kbd {
     font-family: 'Orbitron', sans-serif;
     font-size: 11px;
     font-weight: 700;
@@ -137,6 +157,16 @@
     gap: 14px;
 }
 
+.pm-panel:not(.pm-panel-small) .pm-actions { justify-content: flex-start; }
+
+/* panels power up once the grid has materialized */
+.pm-panel:not([hidden]) { animation: pm-panel-in 0.35s ease; }
+
+@keyframes pm-panel-in {
+    from { opacity: 0; clip-path: inset(50% 0 50% 0); }
+    to   { opacity: 1; clip-path: inset(0 0 0 0); }
+}
+
 .pm-needs { color: #ffc400; font-size: 13px; }
 
 .pm-results {
@@ -163,7 +193,7 @@
 .pm-hud {
     position: fixed;
     inset: 0;
-    z-index: 50;
+    z-index: 40;
     pointer-events: none;
 }
 
@@ -266,7 +296,7 @@
     top: 24%;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 55;
+    z-index: 41;
     text-align: center;
     pointer-events: none;
     opacity: 0;

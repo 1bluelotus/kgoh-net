@@ -9,6 +9,7 @@ permalink: /index.html
     <title>Keven!</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👾</text></svg>">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/perimeter.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -551,7 +552,7 @@ permalink: /index.html
                         <h3 class="project-card-title">PERIMETER</h3>
                         <p class="project-card-desc">A little wave-defense minigame built around this site's reticle cursor. Hostiles advance across a 3-D grid toward the core, and each kind only goes down to its matching ammo: swap with A, S, D and F before they break through.</p>
                         <div class="project-card-links">
-                            <a href="/perimeter/" class="project-card-btn">[ PLAY ]</a>
+                            <a href="/perimeter/" class="project-card-btn" data-perimeter-launch>[ PLAY ]</a>
                         </div>
                     </article>
                     <article class="project-card" id="project-lastlayer">
@@ -640,11 +641,16 @@ permalink: /index.html
         </div>
     </div>
 
+    <!-- PERIMETER minigame: materializes in place of the content column when PLAY is clicked -->
+    {% set pm_mode = "embedded" %}
+    {% include "perimeter-game.njk" %}
+
     <!-- Retro Mode Overlays (mode 2) -->
     <div class="retro-overlay retro-scanlines"></div>
     <div class="retro-overlay retro-vignette"></div>
 
     <script src="script.js"></script>
     <script src="/reticle.js" defer></script>
+    <script src="/perimeter.js" defer></script>
 </body>
 </html>

@@ -2,11 +2,22 @@
 // Hostiles advance across a 3-D grid toward the core. Each of the four kinds
 // only goes down to its matching ammo (A S D F). Waves get faster, denser and
 // more mixed until the core's integrity runs out.
+//
+// Two modes, set by data-pm-mode on #pm-root (see _includes/perimeter-game.njk):
+//   page      /perimeter/ — the grid materializes as soon as the page loads
+//   embedded  homepage — PLAY fades the content column out and the grid
+//             materializes in its place, between the side HUD panels
 (() => {
+    const root = document.getElementById('pm-root');
+    if (!root) return;
+    const EMBEDDED = root.dataset.pmMode === 'embedded';
+
     // ---------- Tuning ----------
     const NEAR = 1;            // depth of the defense line (closest to the player)
     const FAR = 9;             // depth where hostiles spawn
     const MAX_INTEGRITY = 5;
+    const BOOT_SECS = 2.4;     // grid materialize
+    const DEREZ_SECS = 0.9;    // grid collapse on exit
 
     const waveSize       = n => Math.min(6 + 3 * (n - 1), 40);               // hostiles per wave
     const waveSpeed      = n => 0.7 * Math.min(1 + 0.1 * (n - 1), 2.6);      // depth units per second
@@ -29,7 +40,7 @@
     const ctx = canvas.getContext('2d');
     const hud = $('pm-hud');
     const panels = { start: $('pm-start'), pause: $('pm-pause'), over: $('pm-over') };
-    const slots = [...document.querySelectorAll('.pm-slot')];
+    const slots = [...root.querySelectorAll('.pm-slot')];
     const integrityEl = $('pm-integrity').parentElement;
     const integrityBars = [...$('pm-integrity').children];
     const banner = $('pm-banner');
@@ -41,11 +52,14 @@
     const BEST_KEY = 'perimeterBest';
 
     // ---------- State ----------
-    let state = 'idle';        // idle | playing | paused | over
-    let wave, score, integrity, ammo, enemies, particles, tracers;
+    // offline (embedded, not launched) → booting → briefing → playing ⇄ paused → over
+    // and from any of those → shutdown → offline
+    let state = 'offline';
+    let wave = 0, score = 0, integrity = MAX_INTEGRITY, ammo = 0;
+    let enemies = [], particles = [], tracers = [];
     let toSpawn, spawnTimer, waveBreak, lastType, firstSpawnOfWave;
     let best = +localStorage.getItem(BEST_KEY) || 0;
-    let gridT = 0;             // 0→1 grid sweep-in when the game starts
+    let m = 0;                 // materialize progress: 0 = nothing, 1 = battlefield fully built
     let flash = 0, shake = 0;
     let mouseX = -999, mouseY = -999;
     let time = 0, lastFrame = 0;
@@ -63,10 +77,13 @@
         canvas.style.width = W + 'px';
         canvas.style.height = H + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // on the homepage the battlefield only uses the column between the side panels
+        const side = EMBEDDED ? 260 + Math.max(0, (W - 1320) / 2) : 0;
+        const fieldW = W - side * 2;
         horizonY = H * 0.34;
         kY = H * 0.74 - horizonY;              // defense line sits at 74% of the screen height
-        kX = Math.min(W * 0.4, H * 0.75);
-        enemyR = Math.min(W, H) * 0.05;
+        kX = Math.min(fieldW * 0.4, H * 0.75);
+        enemyR = Math.min(fieldW, H) * 0.05;
     }
 
     // world (x, depth) → screen
@@ -76,16 +93,66 @@
     // ---------- Helpers ----------
     const rand = (a, b) => a + Math.random() * (b - a);
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const seg = (v, a, b) => clamp((v - a) / (b - a), 0, 1);   // 0→1 as v moves from a to b
+    const easeOut = t => 1 - Math.pow(1 - t, 3);
     const pad = (n, len) => String(n).padStart(len, '0');
     const rgba = (rgb, a) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
     function hexToRgb(hex) {
-        const m = hex.trim().match(/^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
-        return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [0, 255, 255];
+        const match = hex.trim().match(/^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
+        return match ? [parseInt(match[1], 16), parseInt(match[2], 16), parseInt(match[3], 16)] : [0, 255, 255];
     }
     TYPES.forEach(t => (t.rgb = hexToRgb(t.color)));
 
+    function readAccent() {
+        accent = hexToRgb(getComputedStyle(document.body).getPropertyValue('--accent-color') || '#00ffff');
+    }
+    // follow theme changes made from the HUD THEME panel mid-game
+    new MutationObserver(readAccent).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+    // ---------- Boot / launch / exit ----------
+    function boot() {
+        if (EMBEDDED && state !== 'launching') return;   // exited before the grid started
+        readAccent();
+        resetGame();
+        m = 0;
+        state = 'booting';
+    }
+
+    // homepage: PLAY swaps the content column for the battlefield
+    function canEmbed() {
+        return EMBEDDED && hasMouse && innerWidth >= 1100 && innerHeight >= 600;
+    }
+
+    function launch() {
+        root.hidden = false;
+        document.documentElement.classList.add('pm-lock');
+        document.body.classList.add('pm-active');   // fades the content column out
+        state = 'launching';
+        setTimeout(boot, reduceMotion ? 0 : 380);
+    }
+
+    function exit() {
+        if (state === 'offline' || state === 'shutdown') return;
+        state = 'shutdown';
+        document.body.classList.remove('pm-running');
+        Reticle.lock(null);
+        Reticle.color(null);
+        showPanel(null);
+        hud.hidden = true;
+        banner.classList.remove('is-showing');
+    }
+
+    function finishExit() {
+        state = 'offline';
+        m = 0;
+        resetGame();
+        root.hidden = true;
+        document.documentElement.classList.remove('pm-lock');
+        document.body.classList.remove('pm-active');   // content column fades back in
+    }
+
     // ---------- Game flow ----------
-    function newGame() {
+    function resetGame() {
         wave = 0;
         score = 0;
         integrity = MAX_INTEGRITY;
@@ -93,9 +160,12 @@
         particles = [];
         tracers = [];
         lastType = 0;
-        accent = hexToRgb(getComputedStyle(document.body).getPropertyValue('--accent-color') || '#00ffff');
-        setAmmo(0);
         updateHud();
+    }
+
+    function newGame() {
+        resetGame();
+        setAmmo(0);
         showPanel(null);
         hud.hidden = false;
         state = 'playing';
@@ -151,7 +221,7 @@
         $('pm-final-best').textContent = pad(best, 6);
         $('pm-new-best').hidden = !isBest;
         updateHud();
-        setTimeout(() => showPanel('over'), 900);   // let the breach explosion play first
+        setTimeout(() => state === 'over' && showPanel('over'), 900);   // let the breach explosion play first
     }
 
     function pause() {
@@ -229,26 +299,47 @@
     }, { passive: true });
 
     addEventListener('keydown', e => {
-        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        if (e.metaKey || e.ctrlKey || e.altKey || state === 'offline') return;
         if (state === 'playing' && e.code in KEYS) {
             setAmmo(KEYS[e.code]);
             e.preventDefault();
         } else if (e.code === 'Escape' || e.code === 'KeyP') {
             if (state === 'playing') pause();
             else if (state === 'paused') resume();
+            else if (EMBEDDED && e.code === 'Escape' && (state === 'briefing' || state === 'over')) exit();
         }
     });
 
     slots.forEach((s, i) => s.addEventListener('click', () => state === 'playing' && setAmmo(i)));
 
-    $('pm-start-btn').addEventListener('click', startFromPanel);
-    $('pm-retry-btn').addEventListener('click', startFromPanel);
+    for (const id of ['pm-start-btn', 'pm-retry-btn', 'pm-restart-btn']) {
+        $(id).addEventListener('click', e => {
+            e.currentTarget.blur();
+            newGame();
+        });
+    }
     $('pm-resume-btn').addEventListener('click', resume);
-    $('pm-restart-btn').addEventListener('click', startFromPanel);
 
-    function startFromPanel(e) {
-        e.currentTarget.blur();
-        newGame();
+    if (EMBEDDED) {
+        // PLAY on the Projects card: materialize in place when there's room, else fall
+        // through to the /perimeter/ page (small screens, touch devices)
+        document.addEventListener('click', e => {
+            const play = e.target.closest('[data-perimeter-launch]');
+            if (play && state === 'offline' && canEmbed()) {
+                e.preventDefault();
+                play.blur();
+                launch();
+            }
+        });
+        // EXIT buttons collapse the grid instead of following their link
+        root.querySelectorAll('.pm-exit').forEach(a => a.addEventListener('click', e => {
+            e.preventDefault();
+            exit();
+        }));
+        // navigating with the side panels leaves the game
+        document.addEventListener('click', e => {
+            if (state !== 'offline' && e.target.closest('.hud-nav a')) exit();
+        }, true);
     }
 
     document.addEventListener('visibilitychange', () => document.hidden && pause());
@@ -280,8 +371,20 @@
 
     // ---------- Simulation ----------
     function update(dt) {
+        if (state === 'paused') return;   // freeze everything, including the grid drift
         time += dt;
-        gridT = Math.min(1, gridT + dt / 1.4);
+
+        if (state === 'booting') {
+            m = Math.min(1, m + dt / (reduceMotion ? 0.3 : BOOT_SECS));
+            if (m === 1) {
+                state = 'briefing';
+                showPanel('start');
+            }
+        } else if (state === 'shutdown') {
+            m = Math.max(0, m - dt / (reduceMotion ? 0.2 : DEREZ_SECS));
+            if (m === 0) finishExit();
+        }
+
         flash = Math.max(0, flash - dt * 2.5);
         shake = Math.max(0, shake - dt * 40);
 
@@ -339,20 +442,23 @@
     // ---------- Drawing ----------
     function draw() {
         ctx.clearRect(0, 0, W, H);
-        if (gridT === 0) return;
+        if (m === 0) return;
 
         ctx.save();
         if (shake) ctx.translate(rand(-shake, shake), rand(-shake, shake));
-        const ease = 1 - Math.pow(1 - gridT, 3);
 
-        drawGround(ease);
-        drawCore(ease);
+        // while the grid is building, the whole thing flickers like it's powering up
+        const building = m < 1 && !reduceMotion;
+        ctx.globalAlpha = building && Math.random() < 0.08 ? 0.55 : 1;
+        drawGround();
+        drawCore();
+        ctx.globalAlpha = 1;
 
         // position every hostile, then draw far → near so close ones overlap far ones
+        ctx.globalAlpha = m;
         for (const e of enemies) placeEnemy(e);
         enemies.sort((a, b) => b.d - a.d);
         for (const e of enemies) drawEnemy(e);
-
         drawTracers();
         drawParticles();
         ctx.restore();
@@ -366,28 +472,51 @@
         }
     }
 
-    function drawGround(ease) {
+    // The ground builds TRON-style as m goes 0 → 1 (and collapses as it goes back):
+    //   0.00–0.22  the horizon line streaks outward from the vanishing point
+    //   0.12–0.80  rails shoot down from the horizon, center first, each with a bright head
+    //   0.40–0.90  cross lines snap on from the horizon toward the viewer, flaring as they land
+    //   0.78–1.00  the core and defense line power up
+    function drawGround() {
+        const base = ctx.globalAlpha;
+        const vpX = W / 2;
+
+        // center flare when the horizon ignites
+        const ignite = seg(m, 0, 0.08) * (1 - seg(m, 0.08, 0.35));
+        if (ignite) {
+            const g = ctx.createRadialGradient(vpX, horizonY, 0, vpX, horizonY, 140);
+            g.addColorStop(0, `rgba(255,255,255,${0.9 * ignite})`);
+            g.addColorStop(0.2, rgba(accent, 0.6 * ignite));
+            g.addColorStop(1, rgba(accent, 0));
+            ctx.fillStyle = g;
+            ctx.fillRect(vpX - 140, horizonY - 140, 280, 280);
+        }
+
         // glow along the horizon
+        const glowA = seg(m, 0.1, 0.6);
         const glow = ctx.createLinearGradient(0, horizonY - 60, 0, horizonY + 40);
         glow.addColorStop(0, rgba(accent, 0));
-        glow.addColorStop(0.6, rgba(accent, 0.12 * ease));
+        glow.addColorStop(0.6, rgba(accent, 0.12 * glowA));
         glow.addColorStop(1, rgba(accent, 0));
         ctx.fillStyle = glow;
         ctx.fillRect(0, horizonY - 60, W, 100);
 
         ctx.lineWidth = 1;
-        const bottom = horizonY + (H - horizonY) * ease;   // lines sweep down from the horizon
 
         // rails running toward the horizon
+        const nearD = 0.45;
         for (let x = -8; x <= 8; x += 0.5) {
-            const nearD = 0.45;
-            ctx.strokeStyle = rgba(accent, (x === 0 ? 0.35 : 0.18) * ease);
+            const start = 0.12 + 0.36 * (Math.abs(x) / 8);
+            const pr = easeOut(seg(m, start, start + 0.32));
+            if (!pr) continue;
+            const tipX = vpX + (screenX(x, nearD) - vpX) * pr;
+            const tipY = horizonY + (groundY(nearD) - horizonY) * pr;
+            ctx.strokeStyle = rgba(accent, (x === 0 ? 0.35 : 0.18) + 0.4 * (1 - pr));
             ctx.beginPath();
-            ctx.moveTo(W / 2, horizonY);
-            const x2 = screenX(x, nearD), y2 = groundY(nearD);
-            const t = clamp((bottom - horizonY) / (y2 - horizonY), 0, 1);
-            ctx.lineTo(W / 2 + (x2 - W / 2) * t, horizonY + (y2 - horizonY) * t);
+            ctx.moveTo(vpX, horizonY);
+            ctx.lineTo(tipX, tipY);
             ctx.stroke();
+            if (pr < 1) lightHead(tipX, tipY);
         }
 
         // cross lines, drifting slowly toward the player
@@ -395,44 +524,79 @@
         const drift = (time * 0.35) % step;
         for (let d = 0.45 + step - drift; d < 40; d += step) {
             const y = groundY(d);
-            if (y > bottom) continue;
-            ctx.strokeStyle = rgba(accent, clamp(0.5 / d, 0.03, 0.35) * ease);
+            if (y > H) continue;
+            const depth = (y - horizonY) / (H - horizonY);   // 0 at the horizon, 1 at the bottom
+            const start = 0.4 + 0.38 * depth;
+            const pr = seg(m, start, start + 0.12);
+            if (!pr) continue;
+            const flare = 1 - seg(m, start + 0.12, start + 0.3);   // bright as it lands, then settles
+            const half = (W / 2) * easeOut(pr);
+            ctx.strokeStyle = rgba(accent, clamp(0.5 / d, 0.03, 0.35) * pr + 0.45 * flare * pr);
             ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(W, y);
+            ctx.moveTo(vpX - half, y);
+            ctx.lineTo(vpX + half, y);
             ctx.stroke();
         }
 
-        ctx.strokeStyle = rgba(accent, 0.5 * ease);
+        // the horizon line itself
+        const h = easeOut(seg(m, 0, 0.22));
+        const hot = 1 - seg(m, 0.22, 0.5);
+        ctx.strokeStyle = `rgba(255,255,255,${0.7 * hot})`;
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(0, horizonY);
-        ctx.lineTo(W, horizonY);
+        ctx.moveTo(vpX - (W / 2) * h, horizonY);
+        ctx.lineTo(vpX + (W / 2) * h, horizonY);
         ctx.stroke();
+        ctx.strokeStyle = rgba(accent, 0.5);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        if (h < 1) {
+            lightHead(vpX - (W / 2) * h, horizonY);
+            lightHead(vpX + (W / 2) * h, horizonY);
+        }
+        ctx.globalAlpha = base;
     }
 
-    function drawCore(ease) {
+    // the white-hot leading tip of a line being drawn
+    function lightHead(x, y) {
+        ctx.save();
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = rgba(accent, 1);
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(x, y, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+
+    function drawCore() {
+        const power = easeOut(seg(m, 0.78, 1));
+        if (!power) return;
         const y = groundY(NEAR);
         const healthy = integrity / MAX_INTEGRITY;
-        const lineRgb = integrity <= 2 && state !== 'idle' ? [255, 59, 92] : accent;
+        const lineRgb = integrity <= 2 && wave > 0 ? [255, 59, 92] : accent;
+        const base = ctx.globalAlpha;
 
-        // the defense line
-        const lg = ctx.createLinearGradient(0, 0, W, 0);
+        // the defense line, drawn outward from the core
+        const half = (W / 2) * power;
+        const lg = ctx.createLinearGradient(W / 2 - half, 0, W / 2 + half, 0);
         lg.addColorStop(0, rgba(lineRgb, 0));
-        lg.addColorStop(0.5, rgba(lineRgb, 0.75 * ease));
+        lg.addColorStop(0.5, rgba(lineRgb, 0.75));
         lg.addColorStop(1, rgba(lineRgb, 0));
         ctx.strokeStyle = lg;
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(W, y);
+        ctx.moveTo(W / 2 - half, y);
+        ctx.lineTo(W / 2 + half, y);
         ctx.stroke();
 
         // the core: two counter-rotating hexagons lying flat on the grid
-        const r = enemyR * 1.5;
+        const r = enemyR * 1.5 * power;
         const pulse = 1 + Math.sin(time * 3) * 0.06;
+        ctx.globalAlpha = base * (power < 1 && !reduceMotion && Math.random() < 0.3 ? 0.35 : 1);
         ctx.shadowColor = rgba(lineRgb, 1);
         ctx.shadowBlur = 18;
-        ctx.strokeStyle = rgba(lineRgb, ease);
+        ctx.strokeStyle = rgba(lineRgb, 1);
         ctx.fillStyle = rgba(lineRgb, 0.12 + 0.18 * healthy);
         ctx.lineWidth = 2;
         flatPolygon(W / 2, y, r * pulse, time * 0.4);
@@ -441,6 +605,7 @@
         ctx.shadowBlur = 0;
         flatPolygon(W / 2, y, r * 0.5, -time * 0.8);
         ctx.stroke();
+        ctx.globalAlpha = base;
     }
 
     // hexagon squashed vertically so it reads as lying on the ground plane
@@ -464,7 +629,7 @@
 
     function drawEnemy(e) {
         const t = TYPES[e.type];
-        const fadeIn = clamp((FAR + 0.5 - e.d) / 0.8, 0, 1);
+        const fadeIn = clamp((FAR + 0.5 - e.d) / 0.8, 0, 1) * m;
         const bob = Math.sin(time * 4 + e.phase) * e.r * 0.12;
 
         ctx.globalAlpha = fadeIn;
@@ -487,14 +652,14 @@
         ctx.globalAlpha = fadeIn * 0.6;
         polygon(e.sx, e.sy + bob, e.r * 0.45, t.sides, t.rot - (t.spin || 0) * time, t.squash);
         ctx.stroke();
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = m;
     }
 
     function drawTracers() {
         const fromY = groundY(NEAR);
         for (const t of tracers) {
             ctx.strokeStyle = t.color;
-            ctx.globalAlpha = t.life;
+            ctx.globalAlpha = t.life * m;
             ctx.lineWidth = 2;
             ctx.shadowColor = t.color;
             ctx.shadowBlur = 10;
@@ -503,13 +668,13 @@
             ctx.lineTo(t.x, t.y);
             ctx.stroke();
         }
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = m;
         ctx.shadowBlur = 0;
     }
 
     function drawParticles() {
         for (const p of particles) {
-            ctx.globalAlpha = clamp(p.life, 0, 1);
+            ctx.globalAlpha = clamp(p.life, 0, 1) * m;
             if (p.ring) {
                 ctx.strokeStyle = rgba(p.rgb, 1);
                 ctx.lineWidth = 2;
@@ -521,7 +686,7 @@
                 ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
             }
         }
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = m;
     }
 
     function burst(x, y, rgb, count, spread) {
@@ -546,18 +711,20 @@
     function frame(now) {
         const dt = Math.min((now - lastFrame) / 1000 || 0, 0.05);   // clamp so a hitch can't teleport hostiles
         lastFrame = now;
-        if (state !== 'idle' && state !== 'paused') update(dt);
-        draw();
+        if (state !== 'offline') {
+            update(dt);
+            draw();
+        }
         requestAnimationFrame(frame);
     }
 
-    // ---------- Boot ----------
+    // ---------- Start ----------
     resize();
-    wave = 0; score = 0; integrity = MAX_INTEGRITY; enemies = []; particles = []; tracers = [];
     updateHud();
     if (!hasMouse) {
         $('pm-start-btn').disabled = true;
         $('pm-needs').hidden = false;
     }
+    if (!EMBEDDED) boot();   // the standalone page builds its grid right away
     requestAnimationFrame(frame);
 })();

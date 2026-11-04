@@ -18,10 +18,7 @@
         if (cls) document.body.classList.add(cls);
     })();
     </script>
-    <div class="corner-decoration top-left"></div>
-    <div class="corner-decoration top-right"></div>
-    <div class="corner-decoration bottom-left"></div>
-    <div class="corner-decoration bottom-right"></div>
+    {% include "hud-frame.njk" %}
 
     <header class="cs-topbar">
         <a href="/" class="cs-back-link">[ &larr; {{ back_label | default("BACK TO PORTFOLIO") }} ]</a>

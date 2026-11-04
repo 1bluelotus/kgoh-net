@@ -23,110 +23,60 @@ body {
     min-height: 100vh;
 }
 
-/* Corner Decorations */
-.corner-decoration {
+/* HUD Frame — circuit-trace corners: an angled trace with a square node on
+   each end, plus a fainter inner trace. position:fixed lives on the outer
+   element and filter on the inner one, since combining them can break fixed
+   positioning in Safari. */
+.hud-frame {
+    --hud-line:   var(--border-color);
+    --hud-accent: var(--accent-color);
+    --hud-glow:   drop-shadow(0 0 4px rgba(0, 255, 255, 0.45));
     position: fixed;
-    width: 120px;
-    height: 120px;
+    inset: 0;
     pointer-events: none;
-    z-index: 100;
+    z-index: 45;
 }
 
-.corner-decoration::before,
-.corner-decoration::after {
-    content: '';
+.hud-frame-inner {
     position: absolute;
-    background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 4px,
-        var(--border-color) 4px,
-        var(--border-color) 6px
-    );
+    inset: 0;
+    filter: var(--hud-glow);
 }
 
-.top-left {
-    top: 0;
-    left: 0;
+.hud-corner {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    overflow: visible;
 }
 
-.top-left::before {
-    width: 100%;
-    height: 30px;
-    top: 0;
-    left: 0;
-    clip-path: polygon(0 0, 100% 0, 0 100%);
+.hud-corner-tl { top: 0;    left: 0; }
+.hud-corner-tr { top: 0;    right: 0; transform: scaleX(-1); }
+.hud-corner-bl { bottom: 0; left: 0;  transform: scaleY(-1); }
+.hud-corner-br { bottom: 0; right: 0; transform: scale(-1, -1); }
+
+.hud-trace {
+    fill: none;
+    stroke: var(--hud-line);
+    stroke-width: 1.5;
 }
 
-.top-left::after {
-    width: 30px;
-    height: 100%;
-    top: 0;
-    left: 0;
-    clip-path: polygon(0 0, 100% 0, 0 100%);
+.hud-trace-faint {
+    stroke-width: 1;
+    opacity: 0.5;
 }
 
-.top-right {
-    top: 0;
-    right: 0;
+.hud-node {
+    fill: var(--hud-accent);
 }
 
-.top-right::before {
-    width: 100%;
-    height: 30px;
-    top: 0;
-    right: 0;
-    clip-path: polygon(100% 0, 100% 100%, 0 0);
+body.mode-retro .hud-frame {
+    --hud-glow: drop-shadow(0 0 4px #33ff33);
 }
 
-.top-right::after {
-    width: 30px;
-    height: 100%;
-    top: 0;
-    right: 0;
-    clip-path: polygon(100% 0, 100% 100%, 0 0);
-}
-
-.bottom-left {
-    bottom: 0;
-    left: 0;
-}
-
-.bottom-left::before {
-    width: 100%;
-    height: 30px;
-    bottom: 0;
-    left: 0;
-    clip-path: polygon(0 100%, 100% 100%, 0 0);
-}
-
-.bottom-left::after {
-    width: 30px;
-    height: 100%;
-    bottom: 0;
-    left: 0;
-    clip-path: polygon(0 100%, 100% 100%, 0 0);
-}
-
-.bottom-right {
-    bottom: 0;
-    right: 0;
-}
-
-.bottom-right::before {
-    width: 100%;
-    height: 30px;
-    bottom: 0;
-    right: 0;
-    clip-path: polygon(100% 100%, 100% 0, 0 100%);
-}
-
-.bottom-right::after {
-    width: 30px;
-    height: 100%;
-    bottom: 0;
-    right: 0;
-    clip-path: polygon(100% 100%, 100% 0, 0 100%);
+body.mode-neon .hud-frame {
+    --hud-accent: #ffff00;
+    --hud-glow:   drop-shadow(0 0 4px #ff006e);
 }
 
 /* HUD Navigation */
@@ -749,29 +699,6 @@ body.mode-retro .nav-link.active {
     opacity: 1;
 }
 
-/* Status Bar */
-.status-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.9);
-    border-top: var(--border-width) solid var(--border-color);
-    padding: 10px 20px;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    font-size: 12px;
-    letter-spacing: 1px;
-    z-index: 50;
-    max-width: 80%;
-    margin: 0 auto;
-}
-
-.status-item {
-    opacity: 0.8;
-}
-
 /* Right HUD Panel — stacks music player + display mode */
 .right-hud {
     position: fixed;
@@ -1006,7 +933,7 @@ body.mode-retro .nav-link.active {
 /* Social Weapons */
 .social-weapons {
     position: fixed;
-    bottom: 70px;
+    bottom: 40px;
     left: 40px;
     display: flex;
     gap: 15px;
@@ -1259,8 +1186,7 @@ body.mode-retro .nav-panel,
 body.mode-retro .minimap-container,
 body.mode-retro .weather-panel,
 body.mode-retro .display-mode,
-body.mode-retro .weapon-slot,
-body.mode-retro .status-bar {
+body.mode-retro .weapon-slot {
     box-shadow: 0 0 10px #33ff33;
 }
 
@@ -1331,8 +1257,7 @@ body.mode-neon {
 body.mode-neon .nav-panel,
 body.mode-neon .minimap-container,
 body.mode-neon .weather-panel,
-body.mode-neon .display-mode,
-body.mode-neon .status-bar {
+body.mode-neon .display-mode {
     box-shadow: 0 0 12px #ff006e, 0 0 28px rgba(255, 0, 110, 0.4);
 }
 
@@ -1374,19 +1299,6 @@ body.mode-neon .nav-link.active {
     background: rgba(40, 0, 20, 0.5);
     text-shadow: 0 0 10px #00f5ff, 0 0 20px rgba(0, 245, 255, 0.5);
     box-shadow: inset 0 0 8px rgba(0, 245, 255, 0.15);
-}
-
-/* Corner decorations — yellow hatching with pink glow */
-body.mode-neon .corner-decoration::before,
-body.mode-neon .corner-decoration::after {
-    background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 4px,
-        rgba(255, 255, 0, 0.55) 4px,
-        rgba(255, 255, 0, 0.55) 6px
-    );
-    filter: drop-shadow(0 0 4px #ff006e);
 }
 
 /* Neon yellow: arrow, active nav icon, target indicator */
@@ -2049,9 +1961,8 @@ body.mode-neon .nav-link.active .nav-icon {
     }
 
     /* Ambient chrome that doesn't earn its keep on a small screen */
-    .corner-decoration,
-    .right-hud,
-    .status-bar {
+    .hud-frame,
+    .right-hud {
         display: none;
     }
 

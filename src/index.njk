@@ -39,11 +39,7 @@ permalink: /index.html
     </button>
     <div id="drawer-backdrop" class="drawer-backdrop"></div>
 
-    <!-- HUD Corner Decorations -->
-        <div class="corner-decoration top-left"></div>
-        <div class="corner-decoration top-right"></div>
-        <div class="corner-decoration bottom-left"></div>
-        <div class="corner-decoration bottom-right"></div>
+    {% include "hud-frame.njk" %}
 
         <!-- Minimap and Navigation -->
         <div class="hud-nav" id="hud-nav">
@@ -601,16 +597,6 @@ permalink: /index.html
             <a href="mailto:kevengoh@proton.me" class="weapon-slot" data-label="EMAIL">
                 <span>✉</span>
             </a>
-        </div>
-
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-item">SYS: ONLINE</div>
-            <div class="status-item" id="browser-info">BROWSER: --</div>
-            <div class="status-item" id="os-info">OS: --</div>
-            <div class="status-item" id="resolution-info">RES: --</div>
-            <div class="status-item" id="last-updated">UPDATED: --</div>
-            <div class="status-item">COPYRIGHT © 2026 KEVEN GOH</div>
         </div>
 
     <!-- Blog Overlay -->

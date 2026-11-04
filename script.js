@@ -330,55 +330,6 @@ navLinks.forEach(link => {
 
 
 
-// Detect and display system information
-function detectSystemInfo() {
-    // Browser detection
-    const userAgent = navigator.userAgent;
-    let browserName = 'UNKNOWN';
-    
-    if (userAgent.indexOf('Firefox') > -1) {
-        browserName = 'FIREFOX';
-    } else if (userAgent.indexOf('Chrome') > -1) {
-        browserName = 'CHROME';
-    } else if (userAgent.indexOf('Safari') > -1) {
-        browserName = 'SAFARI';
-    } else if (userAgent.indexOf('Edge') > -1) {
-        browserName = 'EDGE';
-    }
-    
-    // OS detection
-    let osName = 'UNKNOWN';
-    
-    if (userAgent.indexOf('Win') > -1) {
-        osName = 'WINDOWS';
-    } else if (userAgent.indexOf('Mac') > -1) {
-        osName = 'MACOS';
-    } else if (userAgent.indexOf('Linux') > -1) {
-        osName = 'LINUX';
-    } else if (userAgent.indexOf('Android') > -1) {
-        osName = 'ANDROID';
-    } else if (userAgent.indexOf('iOS') > -1) {
-        osName = 'IOS';
-    }
-    
-    // Screen resolution
-    const resolution = `${window.screen.width}x${window.screen.height}`;
-    
-    // Update status bar
-    document.getElementById('browser-info').textContent = `BROWSER: ${browserName}`;
-    document.getElementById('os-info').textContent = `OS: ${osName}`;
-    document.getElementById('resolution-info').textContent = `RES: ${resolution}`;
-}
-
-// Initialize system info
-detectSystemInfo();
-
-// Last updated date from the document's last-modified timestamp
-const lastMod = new Date(document.lastModified);
-const pad = n => String(n).padStart(2, '0');
-const lastUpdatedStr = `${lastMod.getFullYear()}.${pad(lastMod.getMonth() + 1)}.${pad(lastMod.getDate())}`;
-document.getElementById('last-updated').textContent = `UPDATED: ${lastUpdatedStr}`;
-
 // Weather Panel — Open-Meteo (free, no API key)
 const WEATHER_PARAMS = '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&temperature_unit=fahrenheit&wind_speed_unit=mph';
 const SEATTLE = { lat: 47.6062, lon: -122.3321, label: 'SEATTLE, WA' };

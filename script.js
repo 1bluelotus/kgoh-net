@@ -507,7 +507,43 @@ function applyVisualMode(modeName) {
 // Load saved mode on page load
 applyVisualMode(localStorage.getItem('visualMode') || 'straylight');
 
-vmBtns.forEach(btn => btn.addEventListener('click', () => applyVisualMode(btn.dataset.mode)));
+// Theme transition: a scanline sweeps the new theme down the screen. The look
+// lives in style.css under "HUD theme transition". Starting a new sweep while
+// one is running skips the old one, so rapid clicks stay responsive.
+const reduceThemeMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const themeSweepLine = document.createElement('div');
+themeSweepLine.className = 'theme-sweep-line';
+themeSweepLine.setAttribute('aria-hidden', 'true');
+let activeThemeSweep = null;
+
+function switchVisualMode(modeName) {
+    if (localStorage.getItem('visualMode') === modeName) return;
+
+    if (!document.startViewTransition || reduceThemeMotion.matches) {
+        applyVisualMode(modeName);
+        return;
+    }
+
+    const root = document.documentElement;
+    root.dataset.themeSweep = modeName;
+
+    const sweep = document.startViewTransition(() => {
+        applyVisualMode(modeName);
+        document.body.appendChild(themeSweepLine);
+    });
+    activeThemeSweep = sweep;
+
+    const cleanUp = () => {
+        if (activeThemeSweep !== sweep) return;
+        activeThemeSweep = null;
+        themeSweepLine.remove();
+        delete root.dataset.themeSweep;
+    };
+    sweep.ready.catch(() => {});   // a skipped sweep rejects this; nothing to do
+    sweep.finished.then(cleanUp, cleanUp);
+}
+
+vmBtns.forEach(btn => btn.addEventListener('click', () => switchVisualMode(btn.dataset.mode)));
 
 // Blog overlay
 const blogBackdrop = document.getElementById('blog-overlay-backdrop');

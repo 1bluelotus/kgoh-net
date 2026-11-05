@@ -2979,3 +2979,176 @@ html.boot .content {
     from { clip-path: inset(0 0 100% 0); opacity: 0.4; }
     to   { clip-path: inset(0 0 0 0); opacity: 1; }
 }
+
+/* ==========================================================
+   HUD theme transition — a scanline sweeps down the screen, writing the new
+   theme over the old (the browser's View Transitions API snapshots both).
+   script.js sets html[data-theme-sweep] to the incoming theme, so each one
+   can arrive differently. Browsers without the API, and visitors who prefer
+   reduced motion, get the plain instant swap.
+   ========================================================== */
+@property --sweep-y {        /* how far down the screen the sweep has reached */
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 0%;
+}
+
+:root {
+    --sweep-tail: 180px;     /* length of the glow trailing behind the line */
+}
+
+/* Let clicks through to the page while a sweep runs, so people can keep
+   flipping between themes. */
+::view-transition {
+    pointer-events: none;
+}
+
+/* The old theme holds still underneath. The new one is revealed down to the
+   line, and stays live, so the minimap keeps moving. */
+::view-transition-old(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+    mix-blend-mode: normal;
+    clip-path: polygon(0 0, 100% 0, 100% var(--sweep-y), 0 var(--sweep-y));
+    animation: sweep-clean 0.5s cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+.theme-sweep-line {
+    --sweep-color: var(--accent-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--sweep-tail);
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 9999;               /* under the reticle */
+    view-transition-name: theme-sweep-line;
+    background: linear-gradient(to bottom,
+        transparent,
+        color-mix(in srgb, var(--sweep-color) 14%, transparent));
+    border-bottom: 2px solid var(--sweep-color);
+    box-shadow: 0 2px 16px var(--sweep-color);
+    clip-path: inset(0 0 -24px 0);   /* keeps the glow off the tail's top edge */
+}
+
+body.mode-retro .theme-sweep-line {
+    background: linear-gradient(to bottom,
+        transparent,
+        color-mix(in srgb, var(--sweep-color) 32%, transparent));
+}
+
+body.mode-neon .theme-sweep-line {
+    --sweep-color: #ff006e;
+}
+
+::view-transition-group(theme-sweep-line) {
+    top: calc(var(--sweep-y) - var(--sweep-tail));
+    animation:
+        sweep-clean 0.5s cubic-bezier(0.45, 0, 0.55, 1) both,
+        sweep-line-out 0.12s ease-out 0.5s both;
+}
+
+::view-transition-old(theme-sweep-line) {
+    display: none;
+}
+
+::view-transition-new(theme-sweep-line) {
+    animation: none;
+}
+
+/* The reticle stays live and on top, so the cursor never freezes mid-sweep.
+   It's normally a zero-size box, which the browser wouldn't draw here, so it
+   fills the screen for just this moment. */
+html[data-theme-sweep] .reticle {
+    view-transition-name: reticle;
+    width: 100vw;
+    height: 100vh;
+}
+
+::view-transition-group(reticle),
+::view-transition-new(reticle) {
+    animation: none;
+}
+
+::view-transition-old(reticle) {
+    display: none;
+}
+
+/* DECKARD: an old CRT redrawing itself, in stutters, with a long phosphor tail */
+html[data-theme-sweep="retro"]::view-transition-new(root) {
+    animation: sweep-stutter 0.68s linear both;
+}
+
+html[data-theme-sweep="retro"]::view-transition-group(theme-sweep-line) {
+    animation:
+        sweep-stutter 0.68s linear both,
+        sweep-line-out 0.12s ease-out 0.68s both;
+}
+
+/* CYBERPSYCHO: a fast sweep, then the screen tears before snapping in. The
+   torn bands show the old theme through the gaps. */
+html[data-theme-sweep="neon"]::view-transition-new(root) {
+    animation:
+        sweep-clean 0.26s cubic-bezier(0.5, 0, 0.9, 0.6) both,
+        sweep-tear 0.18s 0.26s;
+}
+
+html[data-theme-sweep="neon"]::view-transition-group(theme-sweep-line) {
+    animation:
+        sweep-clean 0.26s cubic-bezier(0.5, 0, 0.9, 0.6) both,
+        sweep-line-out 0.06s linear 0.26s both;
+}
+
+@keyframes sweep-clean {
+    from { --sweep-y: 0%; }
+    to   { --sweep-y: 100%; }
+}
+
+@keyframes sweep-stutter {
+    0%   { --sweep-y: 0%; }
+    24%  { --sweep-y: 26%; }
+    32%  { --sweep-y: 26%; }
+    54%  { --sweep-y: 58%; }
+    62%  { --sweep-y: 58%; }
+    84%  { --sweep-y: 86%; }
+    90%  { --sweep-y: 86%; }
+    100% { --sweep-y: 100%; }
+}
+
+@keyframes sweep-line-out {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+/* Each polygon traces the whole screen with zero-width jumps down the left
+   edge, which cuts full-width bands out of it. */
+@keyframes sweep-tear {
+    0% {
+        clip-path: polygon(0 0, 100% 0, 100% 18%, 0 18%, 0 24%, 100% 24%, 100% 61%, 0 61%, 0 72%, 100% 72%, 100% 100%, 0 100%);
+        transform: translateX(-10px);
+        animation-timing-function: steps(1, end);
+    }
+    30% {
+        clip-path: polygon(0 0, 100% 0, 100% 41%, 0 41%, 0 53%, 100% 53%, 100% 84%, 0 84%, 0 88%, 100% 88%, 100% 100%, 0 100%);
+        transform: translateX(14px);
+        animation-timing-function: steps(1, end);
+    }
+    60% {
+        clip-path: polygon(0 0, 100% 0, 100% 9%, 0 9%, 0 13%, 100% 13%, 100% 69%, 0 69%, 0 75%, 100% 75%, 100% 100%, 0 100%);
+        transform: translateX(-5px);
+        animation-timing-function: steps(1, end);
+    }
+    85% {
+        clip-path: polygon(0 0, 100% 0, 100% 47%, 0 47%, 0 50%, 100% 50%, 100% 100%, 0 100%);
+        transform: translateX(3px);
+        animation-timing-function: steps(1, end);
+    }
+    100% {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        transform: none;
+    }
+}

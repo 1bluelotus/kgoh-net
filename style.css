@@ -683,6 +683,13 @@ body.mode-retro .nav-link.active {
     }
 }
 
+/* Smallest phones: no room beside the title, so the tool wraps under it */
+@media (max-width: 350px) {
+    .section-header-tools {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Rows layout: one project per line, each card full width with its
    image or embed above the text. */
 .project-card-grid.is-rows {

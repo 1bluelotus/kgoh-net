@@ -87,14 +87,19 @@ body.mode-neon .hud-frame {
 }
 
 /* HUD header greebles — the rule under each panel title gets an accent
-   segment at the left and a row of fine ticks at the right. */
+   segment at the left and a row of fine ticks at the right. Content
+   headers carry the same rule, via .header-line or .cs-body h2. */
 .nav-header,
-.player-header {
+.player-header,
+.header-line,
+.cs-body h2 {
     position: relative;
 }
 
 .nav-header::after,
-.player-header::after {
+.player-header::after,
+.header-line::after,
+.cs-body h2::after {
     content: '';
     position: absolute;
     left: 0;
@@ -104,8 +109,17 @@ body.mode-neon .hud-frame {
     background: var(--hud-node, var(--accent-color));
 }
 
+/* Content headers keep the longer 100px accent. The 100% lets it grow in
+   with the rule's draw-in animation. */
+.header-line::after,
+.cs-body h2::after {
+    width: min(100px, 100%);
+}
+
 .nav-header::before,
-.player-header::before {
+.player-header::before,
+.header-line::before,
+.cs-body h2::before {
     content: '';
     position: absolute;
     right: 0;
@@ -324,15 +338,13 @@ body.mode-retro .nav-link.active {
 }
 
 .header-line {
-    width: 100px;
-    height: 3px;
-    background: var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
     animation: expandLine 0.8s ease;
 }
 
 @keyframes expandLine {
     from { width: 0; }
-    to { width: 100px; }
+    to { width: 100%; }
 }
 
 /* Home page layout */
@@ -603,13 +615,16 @@ body.mode-retro .nav-link.active {
 }
 
 /* Section header with a tool on the right (the Projects layout toggle).
-   The tool sits on the heading's baseline and wraps under it if needed. */
+   The tool sits on the heading's baseline, with the rule running under both. */
 .section-header-tools {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    column-gap: 16px;
+}
+
+.section-header-tools .header-line {
+    grid-column: 1 / -1;
 }
 
 /* Masonry / Rows toggle: one square icon button. It shows the layout a
@@ -1252,6 +1267,10 @@ body.mode-retro .nav-link.active {
     margin-bottom: 10px;
 }
 
+.blog-overlay-content .header-line {
+    margin-bottom: 12px;
+}
+
 .blog-overlay-content .blog-post-meta {
     font-family: 'Share Tech Mono', monospace;
     font-size: 13px;
@@ -1759,7 +1778,9 @@ body.mode-neon .nav-link.active .nav-icon {
     color: var(--heading-color);
     text-transform: uppercase;
     margin-top: 48px;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .cs-body h3 {

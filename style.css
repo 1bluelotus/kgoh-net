@@ -154,15 +154,6 @@ body.mode-neon {
 .minimap {
     width: 100%;
     height: 100%;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-}
-
-body.mode-retro .minimap {
-    filter: drop-shadow(0 0 10px rgba(51, 255, 51, 0.4));
-}
-
-body.mode-neon .minimap {
-    filter: drop-shadow(0 0 10px rgba(255, 0, 110, 0.4));
 }
 
 .waypoint {
@@ -1367,6 +1358,7 @@ body.mode-retro .nav-panel,
 body.mode-retro .minimap-container,
 body.mode-retro .weather-panel,
 body.mode-retro .display-mode,
+body.mode-retro .audio-panel,
 body.mode-retro .weapon-slot {
     box-shadow: 0 0 10px #33ff33;
 }
@@ -1438,7 +1430,8 @@ body.mode-neon {
 body.mode-neon .nav-panel,
 body.mode-neon .minimap-container,
 body.mode-neon .weather-panel,
-body.mode-neon .display-mode {
+body.mode-neon .display-mode,
+body.mode-neon .audio-panel {
     box-shadow: 0 0 12px #ff006e, 0 0 28px rgba(255, 0, 110, 0.4);
 }
 
@@ -2520,24 +2513,34 @@ body.mode-neon .weapon-slot.chamfer {
     box-shadow: none !important;
 }
 
-body.mode-retro .chamfer-svg #minimap-border {
-    filter: drop-shadow(0 0 5px #33ff33);
+.chamfer-svg .minimap {
+    filter: var(--chamfer-glow);
+    transition: filter 0.3s ease;
 }
 
-body.mode-neon .chamfer-svg #minimap-border {
-    filter: drop-shadow(0 0 6px #ff006e) drop-shadow(0 0 14px rgba(255, 0, 110, 0.4));
+.chamfer-svg:hover .minimap {
+    filter: var(--chamfer-glow-hover);
 }
 
-.chamfer-svg:hover #minimap-border {
-    filter: drop-shadow(0 0 7px rgba(0, 255, 255, 0.5)) drop-shadow(0 0 15px rgba(0, 255, 255, 0.2));
+/* The solid shape the glow is cast from. It's the page color and fully opaque
+   so it hides the glow behind it, leaving the glow outside the map only. */
+#minimap-bg {
+    fill: var(--page-bg);
 }
 
-body.mode-retro .chamfer-svg:hover #minimap-border {
-    filter: drop-shadow(0 0 9px #33ff33) drop-shadow(0 0 18px rgba(51, 255, 51, 0.3));
+/* Cyberpsycho's chromatic jitter. box-shadow can't show on cut-corner panels
+   (see .chamfer), so these use a filter version of @keyframes glitch. With no
+   100% step, it settles into each panel's hover glow. */
+@keyframes glitch-filter {
+    0%  { filter: drop-shadow(2px 0 0 #ff0000) drop-shadow(-2px 0 0 #00ffff); }
+    25% { filter: drop-shadow(-3px 0 0 #ff0000) drop-shadow(3px 0 0 #00ffff); }
+    50% { filter: drop-shadow(4px 0 0 #ff0000) drop-shadow(-4px 0 0 #00ffff); }
+    75% { filter: drop-shadow(-2px 0 0 #ff0000) drop-shadow(2px 0 0 #00ffff); }
 }
 
-body.mode-neon .chamfer-svg:hover #minimap-border {
-    filter: drop-shadow(0 0 6px #ff006e) drop-shadow(0 0 14px rgba(255, 0, 110, 0.4));
+body.mode-neon .chamfer:hover,
+body.mode-neon .chamfer-svg:hover .minimap {
+    animation: glitch-filter 0.3s ease-out;
 }
 
 /* ------------------------------------------------------------------
@@ -3041,8 +3044,21 @@ body.mode-retro .theme-sweep-line {
         color-mix(in srgb, var(--sweep-color) 32%, transparent));
 }
 
+/* CYBERPSYCHO: the same blue-to-purple as the minimap arrow's trail, purple at
+   the leading edge just like the arrow head (SANDEVISTAN_COLORS in script.js) */
 body.mode-neon .theme-sweep-line {
-    --sweep-color: #ff006e;
+    --sweep-color: #e040fb;
+    background: linear-gradient(to bottom,
+        transparent,
+        color-mix(in srgb, #00f5ff 16%, transparent) 25%,
+        color-mix(in srgb, #38bdf8 26%, transparent) 50%,
+        color-mix(in srgb, #8b5cf6 38%, transparent) 75%,
+        color-mix(in srgb, #c060ff 48%, transparent) 90%,
+        color-mix(in srgb, #e040fb 58%, transparent));
+    box-shadow:
+        0 2px 16px var(--sweep-color),
+        0 6px 40px color-mix(in srgb, var(--sweep-color) 60%, transparent);
+    clip-path: inset(0 0 -60px 0);
 }
 
 ::view-transition-group(theme-sweep-line) {
@@ -3058,6 +3074,12 @@ body.mode-neon .theme-sweep-line {
 
 ::view-transition-new(theme-sweep-line) {
     animation: none;
+}
+
+/* Skip the overlays' usual fade during a sweep: the line already reveals them,
+   and a full-screen fade on top of it makes Firefox choppy. */
+html[data-theme-sweep] .retro-overlay {
+    transition: none;
 }
 
 /* The reticle stays live and on top, so the cursor never freezes mid-sweep.
@@ -3078,19 +3100,23 @@ html[data-theme-sweep] .reticle {
     display: none;
 }
 
-/* DECKARD: an old CRT redrawing itself, in stutters, with a long phosphor tail */
+/* DECKARD: the same clean sweep, slower and heavier, with a long phosphor tail */
 html[data-theme-sweep="retro"]::view-transition-new(root) {
-    animation: sweep-stutter 0.68s linear both;
+    animation: sweep-clean 0.68s cubic-bezier(0.45, 0, 0.55, 1) both;
 }
 
 html[data-theme-sweep="retro"]::view-transition-group(theme-sweep-line) {
     animation:
-        sweep-stutter 0.68s linear both,
+        sweep-clean 0.68s cubic-bezier(0.45, 0, 0.55, 1) both,
         sweep-line-out 0.12s ease-out 0.68s both;
 }
 
-/* CYBERPSYCHO: a fast sweep, then the screen tears before snapping in. The
-   torn bands show the old theme through the gaps. */
+/* CYBERPSYCHO: a fast sweep with a longer trail, then the screen tears before
+   snapping in. The torn bands show the old theme through the gaps. */
+html[data-theme-sweep="neon"] {
+    --sweep-tail: 280px;
+}
+
 html[data-theme-sweep="neon"]::view-transition-new(root) {
     animation:
         sweep-clean 0.26s cubic-bezier(0.5, 0, 0.9, 0.6) both,
@@ -3100,23 +3126,12 @@ html[data-theme-sweep="neon"]::view-transition-new(root) {
 html[data-theme-sweep="neon"]::view-transition-group(theme-sweep-line) {
     animation:
         sweep-clean 0.26s cubic-bezier(0.5, 0, 0.9, 0.6) both,
-        sweep-line-out 0.06s linear 0.26s both;
+        sweep-line-out 0.14s ease-out 0.26s both;
 }
 
 @keyframes sweep-clean {
     from { --sweep-y: 0%; }
     to   { --sweep-y: 100%; }
-}
-
-@keyframes sweep-stutter {
-    0%   { --sweep-y: 0%; }
-    24%  { --sweep-y: 26%; }
-    32%  { --sweep-y: 26%; }
-    54%  { --sweep-y: 58%; }
-    62%  { --sweep-y: 58%; }
-    84%  { --sweep-y: 86%; }
-    90%  { --sweep-y: 86%; }
-    100% { --sweep-y: 100%; }
 }
 
 @keyframes sweep-line-out {

@@ -96,6 +96,7 @@ permalink: /index.html
                             </feMerge>
                         </filter>
                     </defs>
+                    <polygon id="minimap-bg" points="15.5,0 200,0 200,200 0,200 0,15.5"/>
                     <rect id="minimap-flash-bg" clip-path="url(#minimap-clip)" width="200" height="200" fill="#00ff41" opacity="0" style="transition: opacity 0.3s ease;"/>
                     <rect id="minimap-grid-bg" clip-path="url(#minimap-clip)" width="200" height="200" fill="url(#grid-straylight)"/>
                     
@@ -652,7 +653,10 @@ permalink: /index.html
                 </svg>
             </a>
             <a href="mailto:kevengoh@proton.me" class="weapon-slot" data-label="EMAIL">
-                <span>✉</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+                    <path d="M1.8 3h20.4c.99 0 1.8.81 1.8 1.8v.6L12 12.9 0 5.4v-.6C0 3.81.81 3 1.8 3z"/>
+                    <path d="M0 8l11.4 7.1c.37.23.83.23 1.2 0L24 8v11.2c0 .99-.81 1.8-1.8 1.8H1.8C.81 21 0 20.19 0 19.2V8z"/>
+                </svg>
             </a>
         </div>
 

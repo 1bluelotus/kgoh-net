@@ -3519,7 +3519,9 @@ body.mode-kaneda .theme-sweep-line {
     clip-path: polygon(0 0, 100% 0, calc(100% - 14vw) 100%, 0 100%);
 }
 
+/* The other sweeps ride this bar down the screen; this one crosses at full height */
 html[data-theme-sweep="kaneda"]::view-transition-group(theme-sweep-line) {
+    top: 0;
     animation: kaneda-bar 0.46s cubic-bezier(0.75, 0, 0.2, 1) both;
 }
 

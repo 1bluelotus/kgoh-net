@@ -2,6 +2,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "style.css": "style.css" });
     eleventyConfig.addPassthroughCopy({ "script.js": "script.js" });
     eleventyConfig.addPassthroughCopy({ "reticle.js": "reticle.js" });
+    eleventyConfig.addPassthroughCopy({ "kaneda-stickers.js": "kaneda-stickers.js" });
     eleventyConfig.addPassthroughCopy({ "perimeter.js": "perimeter.js" });
     eleventyConfig.addPassthroughCopy({ "perimeter.css": "perimeter.css" });
     eleventyConfig.addPassthroughCopy({ "profile.png": "profile.png" });

@@ -88,6 +88,9 @@ permalink: /index.html
                         <pattern id="grid-neon" width="20" height="20" patternUnits="userSpaceOnUse">
                             <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,245,255,0.25)" stroke-width="0.5"/>
                         </pattern>
+                        <pattern id="grid-kaneda" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M20 0H0V20" fill="none" stroke="#807778" stroke-opacity="0.3" stroke-width="1"/>
+                        </pattern>
                         <filter id="dot-glow" x="-150%" y="-150%" width="400%" height="400%">
                             <feGaussianBlur stdDeviation="2.5" result="blur"/>
                             <feMerge>
@@ -181,6 +184,15 @@ permalink: /index.html
                     </g>
 
                     
+                    <!-- Kaneda: lightning thrown off the arrow -->
+                    <g id="arrow-lightning" clip-path="url(#minimap-clip)" aria-hidden="true">
+                        <g id="arc-carrier">
+                            <path class="arc-bloom"/>
+                            <path class="arc-bolt"/>
+                            <path class="arc-core"/>
+                        </g>
+                    </g>
+
                     <!-- Arrow indicator -->
                     <polygon id="arrow" points="0,-8 -6,8 6,8" transform="translate(50, 50) rotate(0)"/>
                     
@@ -279,6 +291,7 @@ permalink: /index.html
                     <button class="vm-btn active" data-mode="straylight">1</button>
                     <button class="vm-btn" data-mode="retro">2</button>
                     <button class="vm-btn" data-mode="neon">3</button>
+                    <button class="vm-btn" data-mode="kaneda">4</button>
                 </div>
             </div>
         </div>

@@ -972,7 +972,7 @@ body.mode-retro .nav-link.active {
 .vm-buttons {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 6px;
 }
 
 .vm-btn {
@@ -982,7 +982,8 @@ body.mode-retro .nav-link.active {
     font-family: 'Orbitron', sans-serif;
     font-size: 13px;
     font-weight: 700;
-    width: 36px;
+    flex: 0 1 36px;
+    min-width: 0;
     height: 36px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -3166,4 +3167,368 @@ html[data-theme-sweep="neon"]::view-transition-group(theme-sweep-line) {
         clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
         transform: none;
     }
+}
+
+/* ==========================================================
+   KANEDA theme — cel-shaded red paint against the bike's own black.
+   HUD panels are bodywork, lightning green is the accent, and hard offset
+   shadows replace the other themes' soft glows.
+   Stickers come from kaneda-stickers.js. Images are never altered.
+   ========================================================== */
+body.mode-kaneda {
+    /* Every colour here is sampled from frames of the film: the red holds most
+       of its area in shadow, and everything else comes off the bike too:
+       black rubber and the green lightning it throws. No blue anywhere. */
+    --paint:       #dc141f;
+    --paint-mid:   #b30b14;
+    --paint-low:   #950308;
+    --paint-deep:  #4c0308;
+    --oxblood:     #380203;
+    --tire:        #000000;
+    --hard-shadow: #570a0e;
+    --arc:         #5dffa6;
+    --arc-core:    #ecfff4;
+    --red-bloom:   rgba(200, 24, 24, 0.2);
+    --cel-paint:
+        linear-gradient(112deg, transparent 18%, rgba(255, 255, 255, 0.08) 18% 26%, transparent 26%),
+        linear-gradient(158deg, var(--paint) 0 56%, var(--paint-mid) 56% 80%, var(--paint-low) 80%);
+
+    --text-color:    #d9d3d3;
+    --heading-color: #ffffff;
+    --accent-color:  var(--arc);
+    --border-color:  var(--paint-low);
+    --panel-bg:      rgba(0, 0, 0, 0.92);
+    --page-bg:       var(--tire);
+    --hud-node:      var(--paint);
+    --chamfer-glow:       drop-shadow(5px 5px 0 var(--hard-shadow)) drop-shadow(0 0 14px var(--red-bloom));
+    --chamfer-glow-hover: drop-shadow(8px 8px 0 var(--hard-shadow)) drop-shadow(0 0 20px rgba(93, 255, 166, 0.3));
+
+    /* True black, with one thin red streak along the bottom */
+    background-color: var(--tire);
+    background-image:
+        linear-gradient(90deg, transparent, rgba(200, 30, 24, 0.5) 75%, transparent);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 70vw 2px;
+    background-position: 40% 99%;
+}
+
+/* The game needs a clean playfield, so the streak stays off it */
+body.mode-kaneda.pm-page {
+    background-image: none;
+}
+
+body.mode-kaneda .hud-frame {
+    --hud-line:   var(--arc);
+    --hud-accent: var(--arc);
+    --hud-glow:   none;
+}
+
+/* Bodywork panels */
+body.mode-kaneda :is(.nav-panel, .audio-panel, .weather-panel, .display-mode, .weapon-slot, .dock-btn) {
+    --text-color:    #ffffff;
+    --heading-color: #ffffff;
+    --border-color:  var(--oxblood);
+    --accent-color:  #ffffff;
+    --hud-node:      var(--arc);
+    color: #ffffff;
+}
+
+body.mode-kaneda :is(.nav-panel, .audio-panel, .weapon-slot, .dock-btn):not(.chamfer) {
+    background: var(--cel-paint);
+    border-color: var(--paint-deep);
+    box-shadow: 5px 5px 0 var(--hard-shadow), 0 0 14px var(--red-bloom);
+}
+
+body.mode-kaneda :is(.nav-panel, .audio-panel, .weapon-slot, .dock-btn):not(.chamfer):hover {
+    box-shadow: 8px 8px 0 var(--hard-shadow), 0 0 20px rgba(93, 255, 166, 0.3);
+}
+
+body.mode-kaneda .chamfer-body {
+    background: var(--paint-deep);
+}
+
+/* Cut-corner panels paint their fill on two layers */
+body.mode-kaneda .chamfer-body::before,
+body.mode-kaneda .chamfer-inner::before {
+    background: var(--cel-paint);
+}
+
+body.mode-kaneda .weapon-slot.chamfer:hover :is(.chamfer-body, .chamfer-inner)::before {
+    background: var(--paint);
+}
+
+body.mode-kaneda .weapon-slot:not(.chamfer):hover {
+    background: var(--paint);
+}
+
+/* "Lit" states read like a dark console: green on black */
+body.mode-kaneda .nav-link.active,
+body.mode-kaneda .vm-btn.active,
+body.mode-kaneda .vm-btn.active:hover {
+    background: var(--tire);
+    border-color: var(--oxblood);
+    color: var(--arc);
+    box-shadow: none;
+}
+
+body.mode-kaneda .nav-link.active .nav-icon {
+    color: var(--arc);
+}
+
+body.mode-kaneda :is(.vm-display, .audio-track-display) {
+    background: var(--tire);
+    border-color: var(--oxblood);
+    color: var(--arc);
+}
+
+body.mode-kaneda .audio-track-label {
+    color: var(--arc);
+}
+
+body.mode-kaneda :is(.vm-btn, .audio-ctrl-btn) {
+    border-color: var(--oxblood);
+    opacity: 1;
+}
+
+body.mode-kaneda .audio-ctrl-btn:hover {
+    background: var(--tire);
+    border-color: var(--oxblood);
+    color: var(--arc);
+}
+
+/* Minimap: a dark instrument dial */
+body.mode-kaneda #minimap-bg {
+    fill: var(--tire);
+}
+
+body.mode-kaneda #minimap-border {
+    stroke: var(--paint-low);
+}
+
+body.mode-kaneda .waypoint {
+    fill: var(--arc);
+    opacity: 0.9;
+}
+
+body.mode-kaneda #arrow {
+    fill: #ff4a2e;
+    filter: drop-shadow(0 0 6px rgba(93, 255, 166, 0.9));
+    transition: transform 0.38s cubic-bezier(0.8, 0, 0.1, 1);
+}
+
+/* Lightning off the arrow: plain strokes, no filters, so it costs nothing to draw */
+#arrow-lightning {
+    display: none;
+}
+
+body.mode-kaneda #arrow-lightning {
+    display: inline;
+    fill: none;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    pointer-events: none;
+}
+
+/* Rides with the arrow, so the bolts stay attached at full speed */
+body.mode-kaneda #arc-carrier {
+    transition: transform 0.38s cubic-bezier(0.8, 0, 0.1, 1);
+}
+
+body.mode-kaneda .arc-bloom {
+    stroke: var(--arc);
+    stroke-width: 4;
+    opacity: 0.22;
+}
+
+body.mode-kaneda .arc-bolt {
+    stroke: var(--arc);
+    stroke-width: 1.6;
+}
+
+body.mode-kaneda .arc-core {
+    stroke: var(--arc-core);
+    stroke-width: 0.6;
+}
+
+/* Type: the shared title font, with a flat red shadow in place of a glow */
+body.mode-kaneda :is(.section-header h1, .section-header h2, .cs-title) {
+    text-shadow: 4px 4px 0 var(--paint-low);
+}
+
+body.mode-kaneda :is(.content h3, .cs-body h2) {
+    color: #ffffff;
+    text-shadow: 2px 2px 0 var(--paint-low);
+}
+
+/* Project names, flat green: a red shadow would fight it */
+body.mode-kaneda .latest-project-title,
+body.mode-kaneda .project-card-grid .project-card-title {
+    color: var(--arc);
+    text-shadow: none;
+}
+
+/* Frames and shadows only: the images inside stay exactly as they are */
+body.mode-kaneda .profile-photo {
+    border-color: var(--paint-low);
+    box-shadow: 6px 6px 0 var(--hard-shadow);
+}
+
+body.mode-kaneda :is(.blog-card, .project-card, .latest-project-card) {
+    box-shadow: 5px 5px 0 var(--hard-shadow);
+}
+
+body.mode-kaneda :is(.blog-card, .project-card, .latest-project-card):hover {
+    box-shadow: 9px 9px 0 var(--paint-low), 0 0 20px rgba(93, 255, 166, 0.25);
+}
+
+body.mode-kaneda .blog-overlay-panel {
+    box-shadow: 8px 8px 0 var(--hard-shadow);
+}
+
+body.mode-kaneda .nav-tab-glow {
+    filter: drop-shadow(4px 4px 0 var(--hard-shadow)) drop-shadow(0 0 12px var(--red-bloom));
+}
+
+body.mode-kaneda .hud-nav.drawer-open {
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), 0 0 20px var(--red-bloom);
+}
+
+body.mode-kaneda .reticle {
+    --reticle-core: var(--arc);
+    filter: drop-shadow(0 0 6px rgba(93, 255, 166, 0.8));
+}
+
+/* Stickers */
+.kaneda-decals,
+.kaneda-fairing-wrap {
+    display: none;
+}
+
+body.mode-kaneda .kaneda-decals {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+}
+
+/* Anchors for the stickers that hang off these panels */
+body.mode-kaneda :is(#home .section-header, .minimap-container, .nav-panel) {
+    position: relative;
+}
+
+body.mode-kaneda .kaneda-headline-decals {
+    inset: auto 0 16px auto;
+    width: 270px;
+    height: 66px;
+    z-index: 2;
+    transform: scale(0.8);
+    transform-origin: right bottom;
+}
+
+/* The wrapper casts the shadow, since the clipped slab inside it can't */
+body.mode-kaneda .kaneda-fairing-wrap:not([hidden]) {
+    display: block;
+    position: fixed;
+    top: var(--fairing-top);
+    left: calc(40px + var(--stage-gutter));
+    width: 180px;
+    height: var(--fairing-height);
+    z-index: 40;
+    pointer-events: none;
+    filter: drop-shadow(5px 5px 0 var(--hard-shadow)) drop-shadow(0 0 14px var(--red-bloom));
+}
+
+.kaneda-fairing {
+    position: absolute;
+    inset: 0;
+    background: var(--cel-paint);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+.sticker {
+    position: absolute;
+    display: block;
+    width: var(--w);
+    transform: rotate(var(--r));
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.55));
+    animation: sticker-slap 0.26s cubic-bezier(0.2, 1.4, 0.4, 1) calc(0.32s + var(--i) * 45ms) both;
+}
+
+.sticker svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+@keyframes sticker-slap {
+    from { opacity: 0; transform: rotate(calc(var(--r) - 8deg)) scale(1.7); }
+    30%  { opacity: 1; }
+    to   { opacity: 1; transform: rotate(var(--r)) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sticker { animation: none; }
+}
+
+/* No room beside the headline on narrower screens */
+@media (max-width: 1279px) {
+    body.mode-kaneda .kaneda-headline-decals { display: none; }
+}
+
+/* Phones: the run of stickers moves into the open space above the headline,
+   and the drawer drops the sticker that would collide with its neighbour */
+@media (max-width: 768px) {
+    body.mode-kaneda .kaneda-headline-decals {
+        display: block;
+        inset: -82px auto auto 0;
+        transform: none;
+    }
+
+    body.mode-kaneda .nav-panel .sticker {
+        display: none;
+    }
+}
+
+/* Arrival: a red bar with a green lightning trail tears across, leaning forward */
+@property --sweep-x {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 0%;
+}
+
+html[data-theme-sweep="kaneda"]::view-transition-new(root) {
+    clip-path: polygon(0 0, calc(var(--sweep-x) + 14vw) 0, var(--sweep-x) 100%, 0 100%);
+    animation: kaneda-reveal 0.46s cubic-bezier(0.75, 0, 0.2, 1) both;
+}
+
+@keyframes kaneda-reveal {
+    from { --sweep-x: -16%; }
+    to   { --sweep-x: 102%; }
+}
+
+body.mode-kaneda .theme-sweep-line {
+    right: auto;
+    width: 64vw;
+    height: 100vh;
+    border: 0;
+    box-shadow: none;
+    background: linear-gradient(90deg, transparent, #6c180d 40%, #5dffa6 74%, #dc141f 90%, #ecfff4);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 14vw) 100%, 0 100%);
+}
+
+html[data-theme-sweep="kaneda"]::view-transition-group(theme-sweep-line) {
+    animation: kaneda-bar 0.46s cubic-bezier(0.75, 0, 0.2, 1) both;
+}
+
+@keyframes kaneda-bar {
+    from { transform: translateX(-64vw); }
+    to   { transform: translateX(114vw); }
+}
+
+/* Stickers wait for the HUD to finish booting */
+html.boot .sticker {
+    visibility: hidden;
 }

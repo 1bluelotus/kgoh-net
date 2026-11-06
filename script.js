@@ -11,6 +11,7 @@ const waypoints = {
 const navLinks = document.querySelectorAll('.nav-link');
 const sections = document.querySelectorAll('.section');
 const arrow = document.getElementById('arrow');
+const arcCarrier = document.getElementById('arc-carrier');
 
 // Arrow state
 let currentSection = 'home';
@@ -58,6 +59,7 @@ function getDotColor(index, total) {
         return interpolateGradient(SANDEVISTAN_COLORS, index / (total - 1));
     }
     if (body.classList.contains('mode-retro')) return '#33ff33';
+    if (body.classList.contains('mode-kaneda')) return '#5dffa6';
     return '#00ffff';
 }
 
@@ -179,6 +181,7 @@ function calculateAngle(fromSection, toSection) {
 // jumped straight to its waypoint instead of travelling there.
 function setArrowTransform(x, y, angle) {
     arrow.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+    arcCarrier.style.transform = `translate(${x}px, ${y}px)`;
 }
 
 // Initialize arrow at home, pointing up
@@ -199,6 +202,77 @@ function triggerMinimapFlash() {
         minimapFlashBg.setAttribute('opacity', '0');
         minimapFlashBg.style.opacity = '0';
     }, 650);
+}
+
+
+// Kaneda: green lightning thrown off the arrow as it pulls away. Each frame is
+// held like anime on twos and the bolts are redrawn at random, so no two
+// launches match. One burst per trip, never a loop.
+const arcLayers = document.querySelectorAll('#arc-carrier path');
+const ARC_FRAME_MS = 80;
+const ARC_BURST = [
+    { bolts: 2, reach: 16 },
+    { bolts: 3, reach: 38 },
+    { bolts: 3, reach: 30 },
+    { bolts: 1, reach: 16 }
+];
+const ARROW_TAIL = 8;
+let arcTimers = [];
+
+function setArcs(path) {
+    arcLayers.forEach(layer => layer.setAttribute('d', path));
+}
+
+// A zigzag that swings to alternating sides of its line, tapering to a point
+function zigzag(x, y, heading, reach, segments) {
+    const along = [Math.cos(heading), Math.sin(heading)];
+    const across = [-along[1], along[0]];
+    const swing = reach * 0.2;
+    const joints = [];
+    let path = `M${x.toFixed(1)} ${y.toFixed(1)}`;
+    for (let i = 1; i <= segments; i++) {
+        const distance = (reach * i) / segments;
+        const taper = 1 - i / (segments + 1);
+        const offset = (i % 2 ? 1 : -1) * swing * taper * (0.5 + Math.random() * 0.8);
+        const px = x + along[0] * distance + across[0] * offset;
+        const py = y + along[1] * distance + across[1] * offset;
+        path += `L${px.toFixed(1)} ${py.toFixed(1)}`;
+        joints.push({ x: px, y: py });
+    }
+    return { path, joints };
+}
+
+function bolt(x, y, heading, reach) {
+    const main = zigzag(x, y, heading, reach, 5);
+    if (reach < 24 || Math.random() < 0.4) return main.path;
+    const fork = main.joints[1];
+    const side = Math.random() < 0.5 ? -0.7 : 0.7;
+    return main.path + zigzag(fork.x, fork.y, heading + side, reach * 0.45, 3).path;
+}
+
+function fireArrowLightning(fromSection, toSection) {
+    arcTimers.forEach(clearTimeout);
+    arcTimers = [];
+    setArcs('');
+    if (!document.body.classList.contains('mode-kaneda') || reduceThemeMotion.matches) return;
+
+    const from = waypoints[fromSection];
+    const to = waypoints[toSection];
+    const behind = Math.atan2(from.y - to.y, from.x - to.x);
+    const tailX = Math.cos(behind) * ARROW_TAIL;
+    const tailY = Math.sin(behind) * ARROW_TAIL;
+
+    ARC_BURST.forEach(({ bolts, reach }, frame) => {
+        arcTimers.push(setTimeout(() => {
+            let path = '';
+            for (let i = 0; i < bolts; i++) {
+                const fan = (i - (bolts - 1) / 2) * 0.45 + (Math.random() - 0.5) * 0.25;
+                path += bolt(tailX, tailY, behind + fan, reach);
+            }
+            setArcs(path);
+        }, frame * ARC_FRAME_MS));
+    });
+    arcTimers.push(setTimeout(() => setArcs(''), ARC_BURST.length * ARC_FRAME_MS));
 }
 
 
@@ -297,6 +371,7 @@ navLinks.forEach(link => {
         if (sectionId !== currentSection) {
             updateTrail(sectionId);
             triggerMinimapFlash();
+            fireArrowLightning(currentSection, sectionId);
         }
 
         // Rotate to face direction of travel, then move simultaneously
@@ -470,15 +545,28 @@ const minimapGridBg = document.getElementById('minimap-grid-bg');
 const visualModes = {
     straylight: { name: 'STRAYLIGHT',  bodyClass: '',           gridPattern: 'grid-straylight', defaultTrack: 0 },
     retro:    { name: 'DECKARD',     bodyClass: 'mode-retro', gridPattern: 'grid-retro',    defaultTrack: 1 },
-    neon:     { name: 'CYBERPSYCHO', bodyClass: 'mode-neon',  gridPattern: 'grid-neon',     defaultTrack: 2 }
+    neon:     { name: 'CYBERPSYCHO', bodyClass: 'mode-neon',  gridPattern: 'grid-neon',     defaultTrack: 2, lockLabel: 'SANDEVISTAN: READY' },
+    kaneda:   { name: 'KANEDA',      bodyClass: 'mode-kaneda', gridPattern: 'grid-kaneda',  defaultTrack: 0, lockLabel: 'SOL: TRACKING' }
 };
+
+// Kaneda's stickers live in their own file, fetched the first time the theme is used
+let kanedaStickersRequested = false;
+
+function loadKanedaStickers() {
+    if (kanedaStickersRequested) return;
+    kanedaStickersRequested = true;
+    const script = document.createElement('script');
+    script.src = '/kaneda-stickers.js';
+    script.onerror = () => { kanedaStickersRequested = false; };   // retry next time
+    document.head.appendChild(script);
+}
 
 function applyVisualMode(modeName) {
     const mode = visualModes[modeName];
     if (!mode) return;
 
     // Swap body class — all variable overrides live in CSS
-    document.body.classList.remove('mode-retro', 'mode-neon');
+    document.body.classList.remove('mode-retro', 'mode-neon', 'mode-kaneda');
     if (mode.bodyClass) document.body.classList.add(mode.bodyClass);
 
     // Swap minimap grid pattern
@@ -487,7 +575,7 @@ function applyVisualMode(modeName) {
     // Update target lock label
     const targetLockText = document.getElementById('target-lock-text');
     if (targetLockText) {
-        targetLockText.textContent = modeName === 'neon' ? 'SANDEVISTAN: READY' : 'TARGET: LOCKED';
+        targetLockText.textContent = mode.lockLabel || 'TARGET: LOCKED';
     }
 
     // Update display and active button
@@ -495,6 +583,8 @@ function applyVisualMode(modeName) {
     vmBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === modeName));
 
     localStorage.setItem('visualMode', modeName);
+
+    if (modeName === 'kaneda') loadKanedaStickers();
 
     // Cue the theme's default track only if nothing is currently playing
     if (window.audioSystemReady && !audioIsPlaying) {
@@ -505,7 +595,10 @@ function applyVisualMode(modeName) {
 }
 
 // Load saved mode on page load
-applyVisualMode(localStorage.getItem('visualMode') || 'straylight');
+// A saved theme that no longer exists falls back to the default
+const savedMode = localStorage.getItem('visualMode');
+const initialMode = savedMode in visualModes ? savedMode : 'straylight';
+applyVisualMode(initialMode);
 
 // Theme transition: a scanline sweeps the new theme down the screen. The look
 // lives in style.css under "HUD theme transition". Starting a new sweep while
@@ -784,8 +877,7 @@ window.onYouTubeIframeAPIReady = function () {
 
 // Mark audio system as ready and cue the default track for the active theme (no autoplay)
 window.audioSystemReady = true;
-const _initMode = localStorage.getItem('visualMode') || 'straylight';
-cueTrack(visualModes[_initMode].defaultTrack);
+cueTrack(visualModes[initialMode].defaultTrack);
 
 // Prev / Next → load and play with directional scroll
 document.getElementById('audio-prev').addEventListener('click', () => {

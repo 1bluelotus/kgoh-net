@@ -1,0 +1,56 @@
+[
+    {
+        "id": "home",
+        "label": "HOME",
+        "path": "/",
+        "x": 50,
+        "y": 50,
+        "title": "Keven!",
+        "description": "Keven Goh is a Master's student in User Experience Design at Arizona State University. A game HUD-inspired portfolio of projects, writing and photos."
+    },
+    {
+        "id": "about",
+        "label": "ABOUT",
+        "path": "/about/",
+        "x": 150,
+        "y": 50,
+        "title": "About — Keven Goh",
+        "description": "From the Pacific Northwest and an English degree to a Master's in User Experience Design: the story behind Keven Goh."
+    },
+    {
+        "id": "studies",
+        "label": "PROJECTS",
+        "path": "/projects/",
+        "x": 100,
+        "y": 80,
+        "title": "Projects — Keven Goh",
+        "description": "Projects by Keven Goh, including Last Layer, ShamCheck, Digimonke and PERIMETER."
+    },
+    {
+        "id": "blog",
+        "label": "BLOG",
+        "path": "/blog/",
+        "x": 50,
+        "y": 120,
+        "title": "Blog — Keven Goh",
+        "description": "Writing by Keven Goh."
+    },
+    {
+        "id": "photos",
+        "label": "PHOTOS",
+        "path": "/photos/",
+        "x": 150,
+        "y": 120,
+        "title": "Photos — Keven Goh",
+        "description": "A small photo gallery from Keven Goh."
+    },
+    {
+        "id": "resume",
+        "label": "RESUME",
+        "path": "/resume/",
+        "x": 100,
+        "y": 155,
+        "title": "Resume — Keven Goh",
+        "description": "Resume of Keven Goh: skills, experience, projects, publications and education."
+    }
+]

@@ -32,10 +32,9 @@ body.pm-active .content {
     transition: opacity 0.35s ease, visibility 0s linear 0.35s;
 }
 
-/* no page scrolling under the battlefield; keep the scrollbar's space so nothing shifts */
-html.pm-lock {
-    overflow: hidden;
-    scrollbar-gutter: stable;
+/* The standalone game page fills the window, so it opts out of the always-on scrollbar */
+html:has(.pm-page) {
+    overflow-y: hidden;
 }
 
 .pm-label {

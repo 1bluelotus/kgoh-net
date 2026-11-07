@@ -13,13 +13,42 @@ const sections = document.querySelectorAll('.section');
 const arrow = document.getElementById('arrow');
 const arcCarrier = document.getElementById('arc-carrier');
 
-// Arrow state
-let currentSection = 'home';
+// Every section has its own real URL, built by Eleventy from src/_data/sections.json.
+// Moving between them inside the site never reloads the page: the address changes
+// and the HUD (music, weather, minimap, theme) simply stays where it is.
+const sectionInfo = {};
+navLinks.forEach(link => {
+    sectionInfo[link.dataset.section] = { path: link.getAttribute('href'), title: link.dataset.title };
+});
+
+// Blog posts, the Now page and case studies open in the centre column too. Each
+// belongs to a section, and the minimap stays on that section's waypoint.
+const PAGE_PATH = /^\/(?:blog\/[^/]+|case-studies\/[^/]+|now)\/$/;
+
+function sectionFromPath(path) {
+    const withSlash = path.endsWith('/') ? path : path + '/';
+    if (withSlash.startsWith('/blog/')) return 'blog';
+    if (withSlash.startsWith('/case-studies/')) return 'studies';
+    return Object.keys(sectionInfo).find(id => sectionInfo[id].path === withSlash) || 'home';
+}
+
+function isInternalRoute(path) {
+    return PAGE_PATH.test(path) || Object.values(sectionInfo).some(info => info.path === path);
+}
+
+// A plain click stays inside the HUD. Cmd/Ctrl/Shift clicks and middle clicks are
+// left to the browser, so sections can be opened in a new tab or window.
+function isPlainClick(e) {
+    return e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+}
+
+// Arrow state: the page is built with its own section already active
+let currentSection = document.querySelector('.nav-link.active').dataset.section;
 let travelAngle = 0;
 
 // Navigation trail
 const navTrail = document.getElementById('nav-trail');
-let navigationHistory = ['home'];
+let navigationHistory = [currentSection];
 let activeTrailGroup = null;   // the currently visible path
 let fadingTrailGroup = null;   // the path currently fading out
 
@@ -184,8 +213,8 @@ function setArrowTransform(x, y, angle) {
     arcCarrier.style.transform = `translate(${x}px, ${y}px)`;
 }
 
-// Initialize arrow at home, pointing up
-setArrowTransform(waypoints.home.x, waypoints.home.y, 0);
+// Initialize arrow at this page's waypoint, pointing up
+setArrowTransform(waypoints[currentSection].x, waypoints[currentSection].y, 0);
 
 // Sandevistan green background flash (Cyberpsycho mode only)
 const minimapFlashBg = document.getElementById('minimap-flash-bg');
@@ -300,13 +329,31 @@ function closeDrawerAfterArrival(arrowMoved) {
     drawerCloseTimer = setTimeout(closeDrawer, arrowMoved ? arrowTravelMs() + ARRIVAL_BEAT_MS : 0);
 }
 
+// Stop the page scrolling behind an overlay, keeping the scrollbar in place (see style.css)
+let lockedScrollY = null;
+
+function lockPageScroll() {
+    if (lockedScrollY !== null) return;
+    lockedScrollY = window.scrollY;
+    document.body.style.top = `-${lockedScrollY}px`;
+    document.documentElement.classList.add('page-locked');
+}
+
+function unlockPageScroll() {
+    if (lockedScrollY === null) return;
+    document.documentElement.classList.remove('page-locked');
+    document.body.style.top = '';
+    window.scrollTo(0, lockedScrollY);
+    lockedScrollY = null;
+}
+
 function openDrawer() {
     clearTimeout(drawerCloseTimer);
     hudNav.classList.add('drawer-open');
     drawerClose.classList.add('drawer-open');
     drawerBackdrop.classList.add('visible');
     drawerToggle.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
+    lockPageScroll();
 }
 
 function closeDrawer() {
@@ -315,7 +362,7 @@ function closeDrawer() {
     drawerClose.classList.remove('drawer-open');
     drawerBackdrop.classList.remove('visible');
     drawerToggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+    unlockPageScroll();
 }
 
 drawerToggle.addEventListener('click', openDrawer);
@@ -345,55 +392,161 @@ document.addEventListener('keydown', (e) => {
 
 const canHover = matchMedia('(hover: hover) and (pointer: fine)');
 
-navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
+// An old /#about link followed while already on the homepage doesn't reload the
+// page, so the forward in index.njk never runs. Catch it here instead.
+window.addEventListener('hashchange', () => {
+    const sectionId = window.location.hash.slice(1);
+    if (!sectionInfo[sectionId]) return;
+    window.history.replaceState(null, '', sectionInfo[sectionId].path);
+    showSection(sectionId);
+});
 
-        const sectionId = link.dataset.section;
+// Point the HUD at a section: the arrow flies there and the nav updates
+function moveHud(sectionId) {
+    // Mobile: close the nav drawer once the minimap arrow arrives
+    closeDrawerAfterArrival(sectionId !== currentSection);
 
-        // Mobile: close the nav drawer once the minimap arrow arrives
-        closeDrawerAfterArrival(sectionId !== currentSection);
-
-        // Update active nav state
-        navLinks.forEach(l => {
-            l.classList.remove('active');
-            l.querySelector('.nav-icon').textContent = '●';
-        });
-        link.classList.add('active');
-        link.querySelector('.nav-icon').textContent = '▲';
-
-        // Update waypoint opacity
-        document.querySelectorAll('.waypoint').forEach(w => {
-            w.style.opacity = w.dataset.section === sectionId ? '1' : '0.5';
-        });
-
-        // Draw navigation trail before updating currentSection
-        if (sectionId !== currentSection) {
-            updateTrail(sectionId);
-            triggerMinimapFlash();
-            fireArrowLightning(currentSection, sectionId);
-        }
-
-        // Rotate to face direction of travel, then move simultaneously
-        if (sectionId !== currentSection) {
-            travelAngle = calculateAngle(currentSection, sectionId);
-        }
-        const target = waypoints[sectionId];
-        setArrowTransform(target.x, target.y, travelAngle);
-        currentSection = sectionId;
-
-        // Switch visible section
-        sections.forEach(section => {
-            if (section.id === sectionId) {
-                section.classList.add('active');
-            } else {
-                section.classList.remove('active');
-            }
-        });
-
-        window.history.pushState(null, null, `#${sectionId}`);
+    // Update active nav state
+    navLinks.forEach(l => {
+        const isTarget = l.dataset.section === sectionId;
+        l.classList.toggle('active', isTarget);
+        l.querySelector('.nav-icon').textContent = isTarget ? '▲' : '●';
     });
 
+    // Update waypoint opacity
+    document.querySelectorAll('.waypoint').forEach(w => {
+        w.style.opacity = w.dataset.section === sectionId ? '1' : '0.5';
+    });
+
+    // Draw navigation trail before updating currentSection
+    if (sectionId !== currentSection) {
+        updateTrail(sectionId);
+        triggerMinimapFlash();
+        fireArrowLightning(currentSection, sectionId);
+    }
+
+    // Rotate to face direction of travel, then move simultaneously
+    if (sectionId !== currentSection) {
+        travelAngle = calculateAngle(currentSection, sectionId);
+    }
+    const target = waypoints[sectionId];
+    setArrowTransform(target.x, target.y, travelAngle);
+    currentSection = sectionId;
+}
+
+function showPanel(panelId) {
+    sections.forEach(section => section.classList.toggle('active', section.id === panelId));
+}
+
+function showSection(sectionId) {
+    moveHud(sectionId);
+    showPanel(sectionId);
+    pageContent.innerHTML = '';
+    document.title = sectionInfo[sectionId].title;
+}
+
+function showPage(path, page) {
+    moveHud(sectionFromPath(path));
+    pageContent.innerHTML = page.html;
+    showPanel('page');
+    document.title = page.title;
+}
+
+// Each page is fetched once, and only its centre column is used. A direct visit
+// already has its page in the HTML.
+const pageContent = document.getElementById('page-content');
+const pageCache = new Map();
+if (document.querySelector('#page.active')) {
+    pageCache.set(window.location.pathname, { html: pageContent.innerHTML, title: document.title });
+}
+
+async function loadPage(path) {
+    if (pageCache.has(path)) return pageCache.get(path);
+    const response = await fetch(path);
+    if (!response.ok) throw new Error(`Couldn't load ${path}`);
+    const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
+    const content = doc.getElementById('page-content');
+    if (!content) throw new Error(`No content at ${path}`);
+    const page = { html: content.innerHTML, title: doc.title };
+    pageCache.set(path, page);
+    return page;
+}
+
+// Put whatever lives at this path in the centre column. Resolves to false if a
+// newer click took over while the page was loading.
+let latestRoute = 0;
+
+async function showPath(path) {
+    const route = ++latestRoute;
+    if (!PAGE_PATH.test(path)) {
+        showSection(sectionFromPath(path));
+        return true;
+    }
+    const page = await loadPage(path);
+    if (route !== latestRoute) return false;
+    showPage(path, page);
+    return true;
+}
+
+// Scroll positions are kept with each history entry, so Back lands where you left off
+history.scrollRestoration = 'manual';
+
+function rememberScroll() {
+    const y = lockedScrollY === null ? window.scrollY : lockedScrollY;
+    history.replaceState({ y }, '');
+}
+
+// Move to a path inside the site. Back and Forward use showPath directly, so going
+// back never adds another history entry. If a page can't be fetched, fall back to
+// an ordinary page load.
+async function navigate(path) {
+    rememberScroll();
+    try {
+        if (!await showPath(path)) return;
+    } catch {
+        window.location.href = path;
+        return;
+    }
+    if (window.location.pathname !== path) history.pushState(null, '', path);
+    if (lockedScrollY !== null) lockedScrollY = 0;
+    window.scrollTo(0, 0);
+}
+
+document.addEventListener('click', (e) => {
+    if (e.defaultPrevented || !isPlainClick(e)) return;
+    const link = e.target.closest('a[href^="/"]');
+    if (link && !link.target && isInternalRoute(link.pathname)) {
+        e.preventDefault();
+        navigate(link.pathname);
+        return;
+    }
+    // The whole blog card opens the post, not just its button
+    const card = e.target.closest('.blog-card');
+    if (card) navigate(card.querySelector('.blog-card-btn').pathname);
+});
+
+window.addEventListener('popstate', async (e) => {
+    try {
+        if (!await showPath(window.location.pathname)) return;
+    } catch {
+        window.location.reload();
+        return;
+    }
+    window.scrollTo(0, (e.state && e.state.y) || 0);
+});
+
+// A reload or a return from another site picks up where the visitor left off. The
+// position is saved shortly after each scroll, as saving on the way out doesn't stick.
+let scrollSaveTimer = null;
+window.addEventListener('scroll', () => {
+    clearTimeout(scrollSaveTimer);
+    scrollSaveTimer = setTimeout(rememberScroll, 150);
+}, { passive: true });
+window.addEventListener('load', () => {
+    if (history.state && history.state.y) window.scrollTo(0, history.state.y);
+});
+
+navLinks.forEach(link => {
     // Hover previews (target lock + arrow turning to face the waypoint) are for
     // mouse users only. On touch, iOS fires these on the tap itself; the lock
     // fading in reads to Safari as hover-revealed content, so it can swallow
@@ -519,24 +672,6 @@ async function fetchWeather() {
 fetchWeather();
 setInterval(fetchWeather, 10 * 60 * 1000);
 
-// Add some glitch effect on page load
-window.addEventListener('load', () => {
-    // skip the fade when the page just ran its boot sequence (inline script in index.njk)
-    if (!document.documentElement.dataset.booted) {
-        document.body.style.opacity = '0';
-        setTimeout(() => {
-            document.body.style.transition = 'opacity 0.5s ease';
-            document.body.style.opacity = '1';
-        }, 100);
-    }
-
-    const hash = window.location.hash.slice(1);
-    if (hash) {
-        const targetLink = document.querySelector(`.nav-link[data-section="${hash}"]`);
-        if (targetLink) targetLink.click();
-    }
-});
-
 // Visual Mode Selector
 const vmDisplay = document.getElementById('vm-display');
 const vmBtns = document.querySelectorAll('.vm-btn');
@@ -638,82 +773,11 @@ function switchVisualMode(modeName) {
 
 vmBtns.forEach(btn => btn.addEventListener('click', () => switchVisualMode(btn.dataset.mode)));
 
-// Blog overlay
-const blogBackdrop = document.getElementById('blog-overlay-backdrop');
-const blogPanel    = document.getElementById('blog-overlay-panel');
-const blogContent  = document.getElementById('blog-overlay-content');
-const blogCloseBtn = document.getElementById('blog-overlay-close');
-let blogOverlayOpen = false;
-
-function openBlogOverlay(slug) {
-    blogContent.innerHTML = '<p style="opacity:0.5">LOADING...</p>';
-    blogBackdrop.hidden = false;
-    blogBackdrop.offsetHeight;
-    blogBackdrop.classList.add('visible');
-    blogOverlayOpen = true;
-    document.body.style.overflow = 'hidden';
-
-    fetch('/blog/' + slug + '/')
-        .then(function (r) { return r.text(); })
-        .then(function (html) {
-            var doc = new DOMParser().parseFromString(html, 'text/html');
-            var article = doc.getElementById('blog-post-content');
-            blogContent.innerHTML = article ? article.innerHTML : '<p>Post not found.</p>';
-        })
-        .catch(function () {
-            blogContent.innerHTML = '<p>Failed to load post.</p>';
-        });
-
-    history.pushState({ post: slug }, '', '/blog/' + slug + '/');
-}
-
-function closeBlogOverlay() {
-    if (!blogOverlayOpen) return;
-    blogBackdrop.classList.remove('visible');
-    blogOverlayOpen = false;
-    document.body.style.overflow = '';
-    setTimeout(function () {
-        blogBackdrop.hidden = true;
-        blogContent.innerHTML = '';
-    }, 300);
-    history.pushState(null, null, `#${currentSection}`);
-}
-
-blogCloseBtn.addEventListener('click', closeBlogOverlay);
-
-blogBackdrop.addEventListener('click', function (e) {
-    if (e.target === blogBackdrop) closeBlogOverlay();
-});
-
-document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && blogOverlayOpen) closeBlogOverlay();
-});
-
-window.addEventListener('popstate', function (e) {
-    if (e.state && e.state.post) {
-        openBlogOverlay(e.state.post);
-    } else if (blogOverlayOpen) {
-        blogBackdrop.classList.remove('visible');
-        blogOverlayOpen = false;
-        document.body.style.overflow = '';
-        setTimeout(function () {
-            blogBackdrop.hidden = true;
-            blogContent.innerHTML = '';
-        }, 300);
-    }
-
-    var hash = window.location.hash.slice(1);
-    if (hash) {
-        var targetLink = document.querySelector('.nav-link[data-section="' + hash + '"]');
-        if (targetLink) targetLink.click();
-    }
-});
-
 document.querySelectorAll('.latest-project-card').forEach(function (card) {
     card.addEventListener('click', function (e) {
+        if (!isPlainClick(e)) return;
         e.preventDefault();
-        var studiesLink = document.querySelector('.nav-link[data-section="studies"]');
-        if (studiesLink) studiesLink.click();
+        navigate(sectionInfo.studies.path);
 
         var targetId = card.dataset.project;
         if (!targetId) return;
@@ -730,23 +794,45 @@ document.querySelectorAll('.latest-project-card').forEach(function (card) {
     });
 });
 
-document.querySelectorAll('.blog-card').forEach(function (card) {
-    card.addEventListener('click', function () {
-        openBlogOverlay(card.dataset.slug);
-    });
-});
-
-// Handle direct URL navigation via ?post= query param
+// Case study image zoom. Pages are swapped in as visitors move around, so this
+// listens at the document rather than on each image.
 (function () {
-    var params = new URLSearchParams(window.location.search);
-    var slug = params.get('post');
-    if (slug) {
-        // Navigate to the blog section first
-        var blogLink = document.querySelector('.nav-link[data-section="blog"]');
-        if (blogLink) blogLink.click();
-        // Small delay to let the section switch, then open overlay
-        setTimeout(function () { openBlogOverlay(slug); }, 100);
+    const backdrop = document.getElementById('img-lightbox');
+    const img = document.getElementById('img-lightbox-img');
+    let open = false;
+
+    function close() {
+        if (!open) return;
+        backdrop.classList.remove('visible');
+        open = false;
+        unlockPageScroll();
+        setTimeout(() => {
+            if (open) return;   // reopened during the fade
+            backdrop.hidden = true;
+            img.src = '';
+        }, 300);
     }
+
+    document.addEventListener('click', (e) => {
+        const target = e.target.closest('.cs-body .cs-img');
+        if (!target) return;
+        img.src = target.src;
+        img.alt = target.alt;
+        backdrop.hidden = false;
+        backdrop.offsetHeight;
+        backdrop.classList.add('visible');
+        open = true;
+        lockPageScroll();
+    });
+
+    document.getElementById('img-lightbox-close').addEventListener('click', close);
+    img.addEventListener('click', close);
+    backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) close();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') close();
+    });
 })();
 
 // ========================

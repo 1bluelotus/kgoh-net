@@ -22,12 +22,17 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy({ "digimonke-screenshot.png": "digimonke-screenshot.png" });
     eleventyConfig.addPassthroughCopy({ "lastlayer-banner.webp": "lastlayer-banner.webp" });
     eleventyConfig.addPassthroughCopy({ "kgoh-banner.webp": "kgoh-banner.webp" });
+    eleventyConfig.addPassthroughCopy({ "kgoh-og.jpg": "kgoh-og.jpg" });
     eleventyConfig.addPassthroughCopy({ "shamcheck-banner.webp": "shamcheck-banner.webp" });
     eleventyConfig.addPassthroughCopy({ "perimeter-banner.webp": "perimeter-banner.webp" });
     eleventyConfig.addPassthroughCopy({ "CNAME": "CNAME" });
 
     eleventyConfig.addCollection("blog", function (collectionApi) {
         return collectionApi.getFilteredByGlob("src/blog/*.md").sort((a, b) => b.date - a.date);
+    });
+
+    eleventyConfig.addFilter("sectionById", function (sections, id) {
+        return sections.find((section) => section.id === id);
     });
 
     eleventyConfig.addFilter("blogDate", function (date) {

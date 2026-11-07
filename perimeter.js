@@ -134,7 +134,7 @@
 
     function launch() {
         root.hidden = false;
-        document.documentElement.classList.add('pm-lock');
+        lockPageScroll();   // no page scrolling under the battlefield (script.js)
         document.body.classList.add('pm-active');   // fades the content column out
         state = 'launching';
         setTimeout(boot, reduceMotion ? 0 : 380);
@@ -156,7 +156,7 @@
         m = 0;
         resetGame();
         root.hidden = true;
-        document.documentElement.classList.remove('pm-lock');
+        unlockPageScroll();
         document.body.classList.remove('pm-active');   // content column fades back in
     }
 

@@ -6,17 +6,7 @@ permalink: /404.html
 <head>
     <meta charset="UTF-8">
     <title>Redirecting...</title>
-    <script>
-        (function () {
-            var path = window.location.pathname;
-            var match = path.match(/^\/blog\/([^/]+)/);
-            if (match) {
-                window.location.replace('/?post=' + match[1]);
-            } else {
-                window.location.replace('/');
-            }
-        })();
-    </script>
+    <script>window.location.replace('/');</script>
 </head>
 <body></body>
 </html>

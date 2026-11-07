@@ -1,0 +1,352 @@
+            <section id="home" class="section{% if current.id == "home" %} active{% endif %}">
+                <div class="section-header">
+                    <h1>HI, I'M KEVEN.</h1>
+                    <div class="header-line"></div>
+                </div>
+                <div class="home-body">
+                    <div class="profile-photo-wrap">
+                        <img src="/profile.png" alt="Keven Goh" class="profile-photo"/>
+                    </div>
+                    <div class="section-content">
+                        <p>I'm a Master's Student studying User Experience Design at Arizona State University. I'm drawn to the challenge of making complex systems feel seamless and intuitive, without compromising on an exciting and disruptive visual aesthetic.</p>
+                        <p>In my spare time I love reading, tinkering with vintage tech, and exploring the great outdoors of my home in the beautiful Pacific Northwest. Thanks for stopping by!</p>
+                        <p class="now-link-line">To see what I've been up to lately, check out my <a href="/now/">now page</a>.</p>
+                    </div>
+                </div>
+
+                <div class="latest-projects">
+                    <div class="latest-projects-header">
+                        <h3>LATEST WORK:</h3>
+                        <div class="header-line"></div>
+                    </div>
+                    <div class="latest-projects-grid">
+                        <a href="/projects/" class="latest-project-card" data-project="project-lastlayer">
+                            <img src="/lastlayer-banner.webp" alt="Last Layer: Advanced Speed Cube Trainer banner" class="latest-project-img"/>
+                            <div class="latest-project-info">
+                                <h4 class="latest-project-title">LastLayer.net</h4>
+                                <p class="latest-project-desc">A free tool for learning, practicing, and mastering the 3×3 puzzle cube, wrapped in neo-80s chrome.</p>
+                            </div>
+                        </a>
+                        <a href="/projects/" class="latest-project-card" data-project="project-digimonke">
+                            <img src="/digimonke-screenshot.png" alt="Digimonke.com website screenshot" class="latest-project-img"/>
+                            <div class="latest-project-info">
+                                <h4 class="latest-project-title">Digimonke.com</h4>
+                                <p class="latest-project-desc">A physics-driven art portfolio where artwork floats as bubbles and expands on interaction.</p>
+                            </div>
+                        </a>
+                        <a href="/projects/" class="latest-project-card" data-project="project-shamcheck">
+                            <img src="/shamcheck-banner.webp" alt="ShamCheck banner: an orange target logo around a chat bubble beside the tagline &quot;Is that message a sham?&quot;" class="latest-project-img"/>
+                            <div class="latest-project-info">
+                                <h4 class="latest-project-title">ShamCheck.com</h4>
+                                <p class="latest-project-desc">A free scam-detection tool that helps people identify and defend against online messaging scams.</p>
+                            </div>
+                        </a>
+                        <a href="/projects/" class="latest-project-card" data-project="project-kgoh">
+                            <img src="/kgoh-banner.webp" alt="kgoh.net banner: the HUD minimap inside circuit-trace corner brackets beside the site title" class="latest-project-img"/>
+                            <div class="latest-project-info">
+                                <h4 class="latest-project-title">kgoh.net</h4>
+                                <p class="latest-project-desc">This site! A game HUD-inspired portfolio with swappable themes and an interactive minimap.</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="blog" class="section{% if current.id == "blog" %} active{% endif %}">
+                <div class="section-header">
+                    <h2>BLOG<span class="header-colon">:</span></h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="blog-card-grid">
+                    {% set posts = collections.blog %}
+                    {% for post in posts %}
+                    <article class="blog-card">
+                        <span class="blog-card-date">{{ post.data.date | blogDate }}</span>
+                        <h3 class="blog-card-title">{{ post.data.title }}</h3>
+                        <a href="{{ post.url }}" class="blog-card-btn">[ READ MORE ]</a>
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section id="resume" class="section{% if current.id == "resume" %} active{% endif %}">
+                <div class="section-header">
+                    <h2>RESUME<span class="header-colon">:</span></h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="section-content resume-wrap">
+                    <div class="resume-contact">
+                        <a href="https://linkedin.com/in/keven-goh" target="_blank">linkedin.com/in/keven-goh</a>
+                        <a href="https://kgoh.net">kgoh.net</a>
+                    </div>
+
+                    <div class="resume-divider"></div>
+
+                    <div class="resume-section">
+                        <div class="resume-section-label">SKILLS</div>
+                        <div class="resume-skills-grid">
+                            <span class="resume-sk-label">Technical</span>
+                            <span>HTML/CSS, JavaScript, OBS Studio, FigJam, Google Workspace</span>
+                            <span class="resume-sk-label">Design Tools</span>
+                            <span>Adobe Illustrator, InDesign, Photoshop; Figma</span>
+                            <span class="resume-sk-label">Core</span>
+                            <span>Interaction design, UX writing, information design, user research, accessibility</span>
+                        </div>
+                    </div>
+
+                    <div class="resume-divider"></div>
+
+                    <div class="resume-section">
+                        <div class="resume-section-label">EXPERIENCE</div>
+
+                        <div class="resume-entry">
+                            <div class="resume-entry-top">
+                                <span class="resume-entry-title">Design Intern</span>
+                                <span class="resume-entry-date">May 2025 – Present</span>
+                            </div>
+                            <div class="resume-entry-org">AppEsteem Corporation · Bellevue, WA</div>
+                            <ul class="resume-bullets">
+                                <li>Led UX and visual design for ShamCheck, a consumer-facing scam-detection web tool, from initial design through public launch</li>
+                                <li>Contributed to developing taxonomic terminology for categorizing known scam patterns, supporting cross-industry cybersecurity collaboration</li>
+                            </ul>
+                        </div>
+
+                        <div class="resume-entry">
+                            <div class="resume-entry-top">
+                                <span class="resume-entry-title">Program Facilitator</span>
+                                <span class="resume-entry-date">Dec 2022 – May 2023</span>
+                            </div>
+                            <div class="resume-entry-org">UW Center for International Relations &amp; Cultural Leadership Exchange · Seattle, WA</div>
+                            <ul class="resume-bullets">
+                                <li>Moderated structured cultural exchange sessions for 200+ participants across two quarters, synthesizing qualitative feedback to iterate on program design</li>
+                                <li>Designed facilitation frameworks emphasizing active listening and empathetic cross-cultural participant engagement</li>
+                            </ul>
+                        </div>
+
+                        <div class="resume-entry">
+                            <div class="resume-entry-top">
+                                <span class="resume-entry-title">Technical Writing Intern</span>
+                                <span class="resume-entry-date">Jun 2023 – Sep 2023</span>
+                            </div>
+                            <div class="resume-entry-org">Three Clicks Corporation · Bellevue, WA</div>
+                            <ul class="resume-bullets">
+                                <li>Maintained a public-facing newsletter and blog translating complex AI research into accessible updates, supporting brand transparency and public understanding of the company's work</li>
+                            </ul>
+                        </div>
+
+                        <div class="resume-entry">
+                            <div class="resume-entry-top">
+                                <span class="resume-entry-title">Malware Research Intern</span>
+                                <span class="resume-entry-date">Nov 2018 – Jun 2019</span>
+                            </div>
+                            <div class="resume-entry-org">AppEsteem Corporation · Bellevue, WA</div>
+                            <ul class="resume-bullets">
+                                <li>Systematically evaluated mobile applications against a compliance framework, producing structured technical reports documenting deceptive behavior patterns</li>
+                                <li>Research contributed to the first publicly accessible database of deceptive applications, establishing documentation standards adopted across the team</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="resume-divider"></div>
+
+                    <div class="resume-section">
+                        <div class="resume-section-label">PROJECTS</div>
+
+                        <div class="resume-entry">
+                            <div class="resume-entry-top">
+                                <a href="https://shamcheck.com" target="_blank" class="resume-entry-title resume-link">ShamCheck</a>
+                                <span class="resume-entry-date">Three Clicks Corporation</span>
+                            </div>
+                            <ul class="resume-bullets">
+                                <li>Designed and launched a consumer-facing web tool for identifying and flagging online scams, from initial concept through deployment</li>
+                            </ul>
+                            <div class="resume-entry-links">
+                                <a href="https://shamcheck.com" target="_blank">Web ↗</a>
+                                <a href="https://apps.apple.com/us/app/shamcheck/id6760807897" target="_blank">App Store ↗</a>
+                                <a href="/case-studies/shamcheck/">Case Study ↗</a>
+                            </div>
+                        </div>
+
+                        <div class="resume-entry">
+                            <div class="resume-entry-top">
+                                <a href="https://kgoh.net" class="resume-entry-title resume-link">kgoh.net</a>
+                                <span class="resume-entry-date">Personal Project</span>
+                            </div>
+                            <ul class="resume-bullets">
+                                <li>Designed and built a personal portfolio with a cyberpunk-inspired HUD aesthetic; deployed via GitHub Pages using an HTML/CSS/JS workflow</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="resume-divider"></div>
+
+                    <div class="resume-section">
+                        <div class="resume-section-label">PUBLICATIONS</div>
+                        <div class="resume-entry">
+                            <div class="resume-entry-top">
+                                <span class="resume-entry-title">Patent — US 11,507,269 B2</span>
+                                <span class="resume-entry-date">November 2022</span>
+                            </div>
+                            <p class="resume-patent-note">Technologies for Indicating Third Party Content and Resources on Mobile Devices — system for detecting deceptive content on mobile devices, emphasizing user transparency and security</p>
+                        </div>
+                    </div>
+
+                    <div class="resume-divider"></div>
+
+                    <div class="resume-section">
+                        <div class="resume-section-label">EDUCATION</div>
+                        <div class="resume-entry">
+                            <div class="resume-entry-top">
+                                <span class="resume-entry-title">Arizona State University</span>
+                                <span class="resume-entry-date">Autumn 2025 – Spring 2027</span>
+                            </div>
+                            <div class="resume-entry-org">Master of Science in User Experience</div>
+                        </div>
+                        <div class="resume-entry">
+                            <div class="resume-entry-top">
+                                <span class="resume-entry-title">University of Washington</span>
+                                <span class="resume-entry-date">Autumn 2021 – Spring 2025</span>
+                            </div>
+                            <div class="resume-entry-org">Bachelor of Arts in English · GPA: 3.73</div>
+                        </div>
+                    </div>
+
+                    <div class="resume-divider"></div>
+                </div>
+            </section>
+
+            <section id="about" class="section{% if current.id == "about" %} active{% endif %}">
+                <div class="section-header">
+                    <h2>ABOUT<span class="header-colon">:</span></h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="home-body">
+                    <div class="profile-photo-wrap">
+                        <img src="/about-photo.png" alt="Keven on a snowy hike" class="profile-photo about-photo"/>
+                    </div>
+                    <div class="section-content">
+                        <p>I was born in Redmond, Washington, and have spent most of my life living in the rainy Pacific Northwest. My passion for design began with watching my dad tinker with computers, cameras, and whatever other gadgets he could get his hands on. As I grew up, I also developed an interest in literature and writing, which gave me quite the headache when it came to deciding what to pursue when I graduated high school.</p>
+                        <p>I eventually elected to pursue a degree in English at the University of Washington, after which I was accepted into ASU's School of Engineering to pursue a Master's Degree in User Experience Design. While my path has been unorthodox, I've found my journey to have been deeply fulfilling. My background in the humanities has given me a unique perspective with which to approach design; one that emphasizes emotional impact and evocative storytelling.</p>
+                        <p>In my spare time I love being outside, riding bikes, or tinkering with vintage tech. In the past couple months, I've gotten really into restoring vintage japanese wristwatches. And, of course, as a former English major I've never lost my love for reading. Here's some of the books I've been reading (and rereading) recently:</p>
+                        <ul>
+                            <li><em>Do Androids Dream of Electric Sheep?</em> by Philip K. Dick</li>
+                            <li><em>The Housekeeper and the Professor</em> by Yoko Ogawa</li>
+                            <li><em>The Long Walk</em> by Stephen King</li>
+                            <li><em>Neuromancer</em> by William Gibson</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="photos" class="section{% if current.id == "photos" %} active{% endif %}">
+                <div class="section-header">
+                    <h2>PHOTOS<span class="header-colon">:</span></h2>
+                    <div class="header-line"></div>
+                </div>
+                <div class="section-content">
+                    <div class="masonry-grid">
+                        <div class="masonry-item" data-caption="1 — Forks, WA">
+                            <img src="/photos/signal-2025-02-24-180430_002.webp" alt="Photo" loading="lazy"/>
+                        </div>
+                        <div class="masonry-item" data-caption="3 — Forks, WA">
+                            <img src="/photos/FF02233A-22E3-4CE2-8F25-5FBD3865C2E6.webp" alt="Photo" loading="lazy"/>
+                        </div>
+                        <div class="masonry-item" data-caption="7 — Tenerriffe Falls, WA">
+                            <img src="/photos/IMG_3547.jpg" alt="Photo" loading="lazy"/>
+                        </div>
+                        <div class="masonry-item" data-caption="2 — Sitka, Alaska">
+                            <img src="/photos/signal-2025-02-24-180430_005.webp" alt="Photo" loading="lazy"/>
+                        </div>
+                        <div class="masonry-item" data-caption="6 — Bainbridge Island, WA">
+                            <img src="/photos/signal-2025-02-24-180430_007.webp" alt="Photo" loading="lazy"/>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="studies" class="section{% if current.id == "studies" %} active{% endif %}">
+                <div class="section-header section-header-tools">
+                    <h2>PROJECTS<span class="header-colon">:</span></h2>
+                    <button type="button" class="layout-toggle-btn" data-target="rows" aria-label="Switch to rows view" title="Switch to rows view">
+                        <svg viewBox="0 0 18 18" aria-hidden="true">
+                            <g class="icon-masonry">
+                                <rect x="1.5" y="1.5" width="6.5" height="8"/>
+                                <rect x="1.5" y="12" width="6.5" height="4.5"/>
+                                <rect x="10" y="1.5" width="6.5" height="4.5"/>
+                                <rect x="10" y="8" width="6.5" height="8.5"/>
+                                <line class="icon-slash" x1="0.5" y1="17.5" x2="17.5" y2="0.5"/>
+                            </g>
+                            <g class="icon-rows">
+                                <rect x="1.5" y="1.5" width="15" height="4"/>
+                                <rect x="1.5" y="7" width="15" height="4"/>
+                                <rect x="1.5" y="12.5" width="15" height="4"/>
+                            </g>
+                        </svg>
+                    </button>
+                    <div class="header-line"></div>
+                </div>
+                <div class="project-card-grid">
+                    <article class="project-card" id="project-perimeter">
+                        <img src="/perimeter-banner.webp" alt="PERIMETER banner: a magenta wireframe laser cannon fires an amber beam at a hostile across a neon grid under a sunset horizon, beneath the tagline HOLD THE LINE" class="project-card-img"/>
+                        <h3 class="project-card-title">PERIMETER</h3>
+                        <p class="project-card-desc">A little wave-defense minigame built around this site's reticle cursor. Hostiles advance across a 3-D grid toward the core, and each kind only goes down to its matching ammo: swap with A, S, D and F before they break through.</p>
+                        <div class="project-card-links">
+                            <a href="/perimeter/" class="project-card-btn" data-perimeter-launch>[ PLAY ]</a>
+                        </div>
+                    </article>
+                    <article class="project-card" id="project-lastlayer">
+                        <img src="/lastlayer-banner.webp" alt="Last Layer: Advanced Speed Cube Trainer banner" class="project-card-img"/>
+                        <h3 class="project-card-title">LastLayer.net</h3>
+                        <p class="project-card-desc">A free tool for learning, practicing, and mastering the 3×3 puzzle cube. Wrapped in exciting, neo-80s chrome. Collaborative project with my friend <a href="https://nicb.at" target="_blank">Nicholas</a>: I led the visual design and UX; he built the engine underneath.</p>
+                        <div class="project-card-links">
+                            <a href="https://lastlayer.net" target="_blank" class="project-card-btn">[ WEBSITE ]</a>
+                        </div>
+                    </article>
+                    <article class="project-card" id="project-digimonke">
+                        <img src="/digimonke-screenshot.png" alt="Digimonke.com website screenshot" class="project-card-img"/>
+                        <h3 class="project-card-title">Digimonke.com</h3>
+                        <p class="project-card-desc">I designed a website for a friend to showcase her digital art, using a physics-driven gallery format where artwork floats as bubbles and expands on interaction.</p>
+                        <div class="project-card-links">
+                            <a href="https://digimonke.com" target="_blank" class="project-card-btn">[ WEBSITE ]</a>
+                            <span class="project-card-btn coming-soon-btn">[ SCREENSHOTS ]<span class="coming-soon-tag">COMING SOON!</span></span>
+                        </div>
+                    </article>
+                    <article class="project-card" id="project-kgoh">
+                        <img src="/kgoh-banner.webp" alt="kgoh.net banner: the HUD minimap inside circuit-trace corner brackets beside the site title" class="project-card-img"/>
+                        <h3 class="project-card-title">kgoh.net</h3>
+                        <p class="project-card-desc">You're looking at it! This is my game HUD-inspired portfolio featuring swappable themes, an interactive minimap, and a few other fun widgets.</p>
+                        <div class="project-card-links">
+                            <a href="https://github.com/1bluelotus/kgoh-net" target="_blank" class="project-card-btn">[ VIEW SOURCE ]</a>
+                        </div>
+                    </article>
+                    <article class="project-card" id="project-yamamoto">
+                        <img src="/yamamoto-editorial.png" alt="Yohji Yamamoto editorial cover" class="project-card-img"/>
+                        <h3 class="project-card-title">Design Through The Decades: Yohji Yamamoto</h3>
+                        <p class="project-card-desc">I authored and designed a print editorial examining the career of fashion designer Yohji Yamamoto for Professor Cameron Rennacker's "Design Through The Decades" academic journal.</p>
+                        <div class="project-card-links">
+                            <a href="/yamamoto.pdf" target="_blank" class="project-card-btn">[ PDF ]</a>
+                            <a href="/case-studies/yamamoto/" class="project-card-btn">[ CASE STUDY ]</a>
+                        </div>
+                    </article>
+                    <article class="project-card" id="project-shamcheck">
+                        <img src="/shamcheck-banner.webp" alt="ShamCheck banner: an orange target logo around a chat bubble beside the tagline &quot;Is that message a sham?&quot;" class="project-card-img"/>
+                        <h3 class="project-card-title">ShamCheck.com</h3>
+                        <p class="project-card-desc">I designed the UX interface and graphical elements for ShamCheck, a free service that helps people detect and defend against online messaging scams.</p>
+                        <div class="project-card-links">
+                            <a href="https://shamcheck.com/sham-check" target="_blank" class="project-card-btn">[ WEBSITE ]</a>
+                            <a href="https://apps.apple.com/us/app/shamcheck/id6760807897" target="_blank" class="project-card-btn">[ APP STORE ]</a>
+                            <a href="/case-studies/shamcheck/" class="project-card-btn">[ CASE STUDY ]</a>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-card-embed">
+                            <iframe src="https://open.spotify.com/embed/album/2NZTmAKsOUhUtG0uTfPa2x?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+                        <h3 class="project-card-title">Always Alright</h3>
+                        <p class="project-card-desc">An album of songs I wrote and recorded with my friend Ariel, inspired by our experiences travelling through the rural village of Changming, China.</p>
+                        <div class="project-card-links">
+                            <a href="https://open.spotify.com/album/2NZTmAKsOUhUtG0uTfPa2x" target="_blank" class="project-card-btn">[ LISTEN ]</a>
+                        </div>
+                    </article>
+                </div>
+            </section>

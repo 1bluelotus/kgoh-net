@@ -1,112 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} — Keven Goh</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👾</text></svg>">
-    <link rel="stylesheet" href="/style.css">
-    <script src="/reticle.js" defer></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-</head>
-<body class="case-study-page">
-    <script>
-    (function () {
-        var modes = { retro: 'mode-retro', neon: 'mode-neon', kaneda: 'mode-kaneda' };
-        var cls = modes[localStorage.getItem('visualMode')];
-        if (cls) document.body.classList.add(cls);
-    })();
-    </script>
-    {% include "hud-frame.njk" %}
+---
+layout: shell.njk
+parentSection: studies
+---
+<article class="page-article">
+    <a href="/projects/" class="cs-back-link">[ &larr; PROJECTS ]</a>
+    <div class="section-header page-header">
+        <h1>{{ title }}</h1>
+        <div class="header-line"></div>
+    </div>
+    <p class="cs-subtitle">{{ subtitle }}</p>
 
-    <header class="cs-topbar">
-        <a href="/" class="cs-back-link">[ &larr; BACK TO PORTFOLIO ]</a>
-    </header>
-
-    <main class="cs-main">
-        <article class="cs-article">
-            <div class="cs-header">
-                <h1 class="cs-title">{{ title }}</h1>
-                <div class="header-line"></div>
-                <p class="cs-subtitle">{{ subtitle }}</p>
-            </div>
-
-            <div class="cs-meta-panel">
-                <div class="cs-meta-item">
-                    <span class="cs-meta-key">{{ meta_label_1 | default("COMPANY") }}</span>
-                    <span class="cs-meta-val">{{ meta_val_1 | default(company) }}</span>
-                </div>
-                <div class="cs-meta-item">
-                    <span class="cs-meta-key">{{ meta_label_2 | default("ROLE") }}</span>
-                    <span class="cs-meta-val">{{ meta_val_2 | default(role) }}</span>
-                </div>
-                <div class="cs-meta-item">
-                    <span class="cs-meta-key">{{ meta_label_3 | default("PLATFORMS") }}</span>
-                    <span class="cs-meta-val">{{ meta_val_3 | default(platforms) }}</span>
-                </div>
-                <div class="cs-meta-item">
-                    <span class="cs-meta-key">{{ meta_label_4 | default("LAUNCHED") }}</span>
-                    <span class="cs-meta-val">{{ meta_val_4 | default(launched) }}</span>
-                </div>
-            </div>
-
-            <div class="cs-body">
-                {{ content | safe }}
-            </div>
-        </article>
-    </main>
-
-    <footer class="cs-footer">
-        <span>COPYRIGHT &copy; 2026 KEVEN GOH</span>
-    </footer>
-
-    <div id="img-lightbox" class="img-lightbox-backdrop" hidden>
-        <button id="img-lightbox-close" class="img-lightbox-close">[ CLOSE ✕ ]</button>
-        <img id="img-lightbox-img" class="img-lightbox-img" src="" alt="" />
+    <div class="cs-meta-panel">
+        <div class="cs-meta-item">
+            <span class="cs-meta-key">{{ meta_label_1 | default("COMPANY") }}</span>
+            <span class="cs-meta-val">{{ meta_val_1 | default(company) }}</span>
+        </div>
+        <div class="cs-meta-item">
+            <span class="cs-meta-key">{{ meta_label_2 | default("ROLE") }}</span>
+            <span class="cs-meta-val">{{ meta_val_2 | default(role) }}</span>
+        </div>
+        <div class="cs-meta-item">
+            <span class="cs-meta-key">{{ meta_label_3 | default("PLATFORMS") }}</span>
+            <span class="cs-meta-val">{{ meta_val_3 | default(platforms) }}</span>
+        </div>
+        <div class="cs-meta-item">
+            <span class="cs-meta-key">{{ meta_label_4 | default("LAUNCHED") }}</span>
+            <span class="cs-meta-val">{{ meta_val_4 | default(launched) }}</span>
+        </div>
     </div>
 
-    <script>
-    (function () {
-        var backdrop = document.getElementById('img-lightbox');
-        var img = document.getElementById('img-lightbox-img');
-        var closeBtn = document.getElementById('img-lightbox-close');
-        var open = false;
-
-        document.querySelectorAll('.cs-body .cs-img').forEach(function (el) {
-            el.style.cursor = 'zoom-in';
-            el.addEventListener('click', function () {
-                img.src = el.src;
-                img.alt = el.alt;
-                backdrop.hidden = false;
-                backdrop.offsetHeight;
-                backdrop.classList.add('visible');
-                open = true;
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        function close() {
-            if (!open) return;
-            backdrop.classList.remove('visible');
-            open = false;
-            document.body.style.overflow = '';
-            setTimeout(function () {
-                backdrop.hidden = true;
-                img.src = '';
-            }, 300);
-        }
-
-        closeBtn.addEventListener('click', close);
-        img.addEventListener('click', close);
-        backdrop.addEventListener('click', function (e) {
-            if (e.target === backdrop) close();
-        });
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && open) close();
-        });
-    })();
-    </script>
-</body>
-</html>
+    <div class="cs-body">
+        {{ content | safe }}
+    </div>
+</article>
